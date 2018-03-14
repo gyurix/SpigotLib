@@ -1,0 +1,31 @@
+enchants:
+  ARROW_DAMAGE: power, arrowdamahe, arrowpower, ad, pow
+  ARROW_FIRE: flame, firearrow, af, fl
+  ARROW_INFINITE: infinity, inf, ai
+  ARROW_KNOCKBACK: punch, arrowpunch, arrowkb, arrowknockback, ak
+  DAMAGE_ALL: sharpness, alldamage, alldmg, sharp, dal, s
+  DAMAGE_ARTHROPODS: baneofarthropods, ardmg, baneofarthropod, arthropod, dar, arth, boa
+  DAMAGE_UNDEAD: smite, undeaddamage, du, damageundead, sm
+  DEPTH_STRIDER: depthstrider, ds
+  DIG_SPEED: efficiency, digspeed, minespeed, cutspeed, ds, eff
+  DURABILITY: unbreaking, durability, dura, d
+  FIRE_ASPECT: fireaspect, fire, fa
+  FROST_WALKER: frostwalker, frostwalk, fw
+  KNOCKBACK: knockback, kback, kb, k
+  LOOT_BONUS_BLOCKS: fortune, blockslootbonus, fort, lbb, f
+  LOOT_BONUS_MOBS: looting, mobslootbonus, loot, mobloot, lbm, l
+  LUCK: luck, luckofsea, luckofseas
+  LURE: lure, rodlure
+  MENDING: mending, mend, md
+  OXYGEN: respiration, breathing, o
+  PROTECTION_ENVIRONMENTAL: protection, prot, protect, p
+  PROTECTION_EXPLOSIONS: blastprotection, explosionsprotection, explosionprotection, expprot, bprotection, blastprotect, pe, pblast
+  PROTECTION_FALL: featherfalling, fallprotection, fallprot, pfall
+  PROTECTION_FIRE: fireprotection, flameprotection, fireprotect, flameprotect, fireprot, flameprot, firep, flamep, pf, pfire
+  PROTECTION_PROJECTILE: projectileprotection, projprot, pp
+  SILK_TOUCH: silktouch, softtouch, st
+  THORNS: thorns, highcrit, thorn, highercrit, t
+  WATER_WORKER: aquaaffinity, waterworker,  watermine, ww, aquaa, aa
+names:
+  1: stone, ston
+  2: grass, gras

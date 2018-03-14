@@ -1,0 +1,60 @@
+bungee:
+  #Ability to force enable the BungeeAPI, even if the bungeecord option is disabled in Spigot config. Only enable this option if you know what you are actually doing.
+  #Enabling BungeeAPI, when players are able to join to your server from outside of your BungeeCord server means a SERIOUS SECURITY RISK, which can grant console access to any hacker.
+  forceEnable: -
+  currentServerName: 1000000
+  ipOnJoin: -
+  playerCount: 100
+  playerList: -1
+  serverIP: -1
+  servers: 1000000
+  uuidAll: -1
+  uuidOnJoin: -
+debug: -
+purgePF: -
+defaultLang: en
+#If you have found a plugin incompatibility issue, then use this option to force enable SpigotLib in compatibility mode.
+forceReducedMode: -
+#Do not show any error reports in the console and in the chat.
+silentErrors: -
+disableWeatherChange: -
+#Allow access to all the plugins commands for the plugins author. Keeping this enabled helps him in speeding up the plugin testing / problem resolving speed.
+allowAllPermsForAuthor: +
+#Amount of ticks after startup, when the player joins are not allowed to prevent server damage caused by too early joins.
+earlyJoinProtection: 30
+#Amount of threads dedicated for the AnimationAPI, for making it working smoothly on multi core server machines.
+animationApiThreads: 4
+#Kick message used for players who try to join to the server in the early join protection period.
+earlyJoinKickMsg: §eStarting server...
+#Allow the usage of eval variable for players using /sl vars command
+#By default this is disabled to improve the servers security
+playerEval: -
+economy: 
+  balanceTypes: 
+    default: 
+      defaultValue: 100
+      name: default
+      suffix: $
+  migrate: -
+  vaultHookType: USER
+#Automatically hook to PlaceholderAPI if it's added to the server
+phaHook: +
+playerFile:
+  backend: FILE
+  file: players.yml
+  mysql: 
+    database: SpigotLib
+    host: 127.0.0.1
+    password: root
+    table: PlayerData
+    timeout: 10000
+    username: root
+tpsMeter:
+  #Toggle on/off the TPS meter
+  enabled: +
+  #Update the servers tps metrics result in every here configured milliseconds
+  checkTime: 10000
+  #The tps limit, if the servers tps is bellow this value, then you will see a warning in the console
+  limit: 15
+  #Amount of detected 0 TPS before crash is reported
+  reportCrashAfter: 4

@@ -1,0 +1,10 @@
+name: SpigotLib
+author: gyuriX
+version: 7.1
+main: gyurix.spigotlib.Main
+loadbefore: [ProtocolLib,ProtocolSupport]
+softdepend: [LilyPad-Connect,ViaVersion,Vault,Essentials,PlaceholderAPI,WorldEdit]
+commands:
+  spigotlib:
+    aliases: [sl]
+    description: Main command

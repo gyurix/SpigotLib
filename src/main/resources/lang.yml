@@ -1,0 +1,302 @@
+de: 
+  spigotlib: 
+    debug: 
+      off: &c&lDebugnachrichten wurden deaktiviert.
+      on: &a&lDebugnachrichten wurden aktiviert.
+    executed: Der eingegebene Befehl wurde ausgeführt
+    help: &6&lＳｐｉｇｏｔＬｉｂ&e&l - &6&l<version>&e&l - &6&lvon ＧｙｕｒｉＸ
+    &b&l➯ &e&lKONTAKT:&f auf Skype - gyurixdev
+    &b&l➯ &e&lUNTERBEFEHLE:&f
+    &b&l➯ &e/sl&f cmd
+    &b&l➯ &e/sl&f debug
+    &b&l➯ &e/sl&f item [give]
+    &b&l➯ &e/sl&f lang
+    &b&l➯ &e/sl&f migratetodb
+    &b&l➯ &e/sl&f perm
+    &b&l➯ &e/sl&f reload
+    &b&l➯ &e/sl&f save
+    &b&l➯ &e/sl&f vars
+    &b&l➯ &e/sl&f velocity
+    invalidcmd: &cDer eigegebene Befehl existiert nicht.
+    item:
+      own: Du hälst folgenden Gegenstand in der Hand: <item>\-T&bKlicken um Gegenstandsnamen im Chat einzufügen\-S<item>
+      player: <name>&b hält folgenden Gegenstand in der Hand: <item>\-T&bKlicken um Gegenstandsnamen im Chat einzufügen\-S<item>
+      set: &bDer aktuell gehaltene Gegenstand von <name>&b wurde festgelegt auf: <item>\-T&bKlicken um Gegenstandsnamen im Chat einzufügen\-S<item>
+      give: &b<player>&e hat folgenden Gegenstand erhalten: &f<item>\-T&bKlicken um Gegenstandsnamen im Chat einzufügen\-S<item>
+    lang:
+      list: &b&lVerfügbare Sprachen: &e&l<langs>
+      other: &6&l<player>&e Spracheinstellung wurde auf &6&l<lang>&e festgelegt.
+      own: Deine Spracheinstellung wurde auf &6&l<lang>&e festgelegt.
+      set: &bDie Spracheinstellung von &e&l<player>&b wurde auf &e&l<lang> &bgesetzt.
+        own: &a&lDeine Spracheinstellung wurde auf &e&l<lang> &a&lgesetzt.
+    migrate:
+      end: &bDie Datenimigration wurde beendet
+      start: &bStarte Datenimigration. Bitte habe etwas Geduld. Es könnte eine Weile dauern...
+    noconsole: &cDiese Funktion kann nicht von der Konsole aus genutzt werden.
+    noperm: &c&lDu hast keine Berechtigung SpigotLib-Befehle zu benutzen.
+    notdone: &cTut uns leid, aber diese Funktion ist noch nicht fertig programiert.
+    purge:
+      pf: Player data will be purged on next server startup.
+    perms:
+      allowformat: &a<perm>
+      denyformat: &c<perm>
+      fillformat: &6&l<player>&e hat die Berechtigungen:&f <perms>
+      no: &4<player> &chat nicht die Berechtigung &6&l<perm>&e.
+      yes: &2<player> &ahat die Berechtigung &6&l<perm>&e.
+    player:
+      notfound: &cAngegebener Spieler (&e&l<player>&c) wurde nicht gefunden.
+    prefix: &6&lSpigotLib ► &e
+    reload: &cBenutzung:&6&l /sl reload <lf|pf|config>&e
+      config: &a&lSpigotLib-Konfiguration neu geladen.
+      lf: &a&lSpigotLib-Sprachdatei neu geladen.
+      pf: &a&lSpigotLib-Spielerdaten neu geladen.
+    save: &cUsage:&6&l /sl save pf&e Um die Spielerdateien zu speichern
+      pf: &a&lSpigotLib-Spielerdaten gespeichert.
+    time:
+      d: <d> Tage
+      dp: <d> Tage
+      h: <h> Stunde
+      hp: <h> Stunden
+      m: <m> Minute
+      marks:
+        d: d, Tag, Tage
+        h: h, Stunde, Stunden
+        m: m, min, Minute, Munuten, Minuten
+        s: s, sek, Sekunde, Sekunden
+        w: w, Woche, Wochen
+      mp: <m> Minuten
+      never: niemals
+      s: <s> Sekunde
+      sp: <s> Sekunden
+      w: <w> Woche
+      wp: <w> Wochen
+    vars: verfügbare Variablen:&f <vars>
+      noeval: &cDas Füllen von Evalvariablen ist aus Sicherheitsgründen auf dem Server dekaktivert.
+      filled: Füllergebnis:&f <result>
+      fillformat: &efür <player>: &f<value>
+en:
+  spigotlib:
+    debug:
+      list: &6&l&nDebug system - <plugin>
+            <list>
+      off: &c<type>\-T&aClick to enable &e&l<type>&a debug messages\-R/<cmd> <type>
+      on: &a<type>\-T&cClick to disable &e&l<type>&c debug messages\-R/<cmd> <type>
+      sep: \|&7, &f\|
+    executed: The entered command has been executed successfully.
+    help: &6&lＳｐｉｇｏｔＬｉｂ&e&l - &6&l<version>&e&l - &6&lｂｙ ＧｙｕｒｉＸ
+    &b&l➯ &e&lCONTACT:&f on Skype - gyurixdev
+    &b&l➯ &e&lSUBCOMMANDS:&f
+    &b&l➯ &e/sl&f cmd
+    &b&l➯ &e/sl&f debug
+    &b&l➯ &e/sl&f item [give]
+    &b&l➯ &e/sl&f lang
+    &b&l➯ &e/sl&f migratetodb
+    &b&l➯ &e/sl&f perm
+    &b&l➯ &e/sl&f reload
+    &b&l➯ &e/sl&f save
+    &b&l➯ &e/sl&f vars
+    &b&l➯ &e/sl&f velocity
+    invalidcmd: &cThe requested command doesn't exists!
+    item:
+      own: You are holding the following item: &f<item>\-T&bClick to insert the item name to chat\-S<item>
+      player: &b<player>&e is holding the following item: &f<item>\-T&bClick to insert the item name to chat\-S<item>
+      set: &b<player>&e's currently holding item has been set to: &f<item>\-T&bClick to insert the item name to chat\-S<item>
+      give: &b<player>&e got item: &f<item>\-T&bClick to insert the item name to chat\-S<item>
+    lang:
+      list: &6&lAvailable languages: &e<langs>
+      other: &6&l<player>&e has &6&l<lang>&e language selected.
+      own: You have &6&l<lang>&e language selected.
+      set: &6&l<player>&e players language has been set to language &6&l<lang>&e.
+        own: &eYou have changed your own language to &6&l<lang>&e.
+    migrate:
+      end: &bFinished data migration.
+      start: &bStarted data migration, please wait, it might take a long time...
+    noconsole: &cSorry, this feature is not accessible from the console currently
+    noperm: &4&lACCESS DENIED
+    notdone: &cSorry, this feature is not yet done!
+    perms:
+      allowformat: &a<perm>
+      denyformat: &c<perm>
+      fillformat: Player &6&l<player>&e has the following permissions:&f <perms>
+      no: &6&l<player> &cdoesn't&e have permission &6&l<perm>&e.
+      yes: &6&l<player> &ahas&e  permission &6&l<perm>&e.
+    player:
+      notfound: &cThe given player (&e&l<player>&c) was not found.
+    prefix: &6&lＳＬ ► &e
+    reload: &cUsage:&6&l /sl reload <lf|pf|config>
+      config: &a&lSpigotLibs configuration has been reloaded successfully.
+      lf: &a&lSpigotLibs language file has been reloaded successfully.
+      pf: &a&lPlayer data file has been reloaded successfully.
+    save: &cUsage:&6&l /sl save pf&e for saving the player file
+      pf: &a&lPlayer file has been saved successfully.
+    time: 
+      d: <d> day
+      dp: <d> days
+      h: <h> hour
+      hp: <h> hours
+      m: <m> minute
+      marks:
+        d: d, day, days
+        h: h, hour, hours
+        m: m, min, mins, minutes
+        s: s, sec, secs, second, seconds
+        w: w, week, weeks
+      mp: <m> minutes
+      never: never
+      s: <s> second
+      sp: <s> seconds
+      w: <w> week
+      wp: <w> weeks
+    vars: Available variables:&f <vars>
+      noeval: &cFilling eval variables is disabled on the server for security reasons.
+      filled: Fill result:&f <result>
+      fillformat: &eFor &6<player>&e: &f<value>
+hu:
+  spigotlib:
+    debug:
+      off: &c&lHibajavítási üzenetek letiltva.
+      on: &a&lHibajavítási üzenetek engedélyezve.
+    executed: A megadott parancs sikeresen végrehajtódott.
+    help: &6&lＳｐｉｇｏｔＬｉｂ&e&l - &6&l<version>&e&l - &6&lｂｙ ＧｙｕｒｉＸ
+    &b&l➯ &e&lKAPCSOLAT:&f Skype-on - gyurixdev
+    &b&l➯ &e&lALPARANCSOK:&f
+    &b&l➯ &e/sl&f cmd
+    &b&l➯ &e/sl&f debug
+    &b&l➯ &e/sl&f item [give]
+    &b&l➯ &e/sl&f lang
+    &b&l➯ &e/sl&f migratetodb
+    &b&l➯ &e/sl&f perm
+    &b&l➯ &e/sl&f reload
+    &b&l➯ &e/sl&f save
+    &b&l➯ &e/sl&f vars
+    &b&l➯ &e/sl&f velocity
+    invalidcmd: &cA megadott parancs nem található
+    item:
+      own: Az alábbi itemet tartod a kezedben: &f<item>\-T&bKattints ide, hogy az item neve megjelenjen chat ablakodban\-S<item>
+      player: &b<player>&e jelenleg az alábbi itemet tartja a kezében: &f<item>\-T&bKattints ide, hogy az item neve megjelenjen chat ablakodban\-S<item>
+      set: &b<player>&e kezében lévő item be lett állítva az alábbira: &f<item>\-T&bKattints ide, hogy az item neve megjelenjen chat ablakodban\-S<item>
+      give: &b<player>&e megkapta az alábbi itemet: &f<item>\-T&bKattints ide, hogy az item neve megjelenjen chat ablakodban\-S<item>
+    lang:
+      list: &6&lElérhető nyelvek: &e<langs>
+      other: &6&l<player>&e jelenleg &6&l<lang>&e nyelven látja az üzeneteket.
+      own: Jelenleg &6&l<lang>&e nyelven látod az üzeneteket.
+      set: &6&l<player>&e üzenet megjelenítési nyelve sikeresen beállítva &6&l<lang>&e nyelvre.
+        own: &eÁtállítottad az üzenet megjelenítési nyelvedet &6&l<lang>&e nyelvre.
+    migrate:
+      end: &bAz adatok áthelyezése befejeződött.
+      start: &bAz adatok áthelyezése megkezdődött, légy türelemmel, a művelet sokáig tarthat...
+    noconsole: &cEz a parancs csak a játékosok számára használható.
+    noperm: &4&lHOZZÁFÉRÉS MEGTAGADVA
+    notdone: &cA plugin ezen része még nem teljesen készült el.
+    perms:
+      allowformat: &a<perm>
+      denyformat: &c<perm>
+      fillformat: &6&l<player>&e az alábbi engedélyekkel rendelkezik:&f <perms>
+      no: &6&l<player> &cnem rendelkezik&e a(z) &6&l<perm>&e engedéllyel.
+      yes: &6&l<player> &arendelkezik&e a(z) &6&l<perm>&e engedéllyel.
+    player:
+      notfound: &cA megadott játékos (&e&l<player>&c) nem található.
+    prefix: &6&lＳＬ ► &e
+    reload: &cHasználat:&6&l /sl reload <pf|lf|config>
+      config: &a&lSpigotLib beállításai sikeresen újratöltve.
+      lf: &a&lSpigotLib nyelvi fájla sikeresen újratöltve.
+      pf: &a&lJátékos adatok sikeresen újratöltve.
+    save: &cHasználat:&6&l /sl save pf&e a játékos adatok mentéséhez.
+      pf: &a&lJátékos adatok sikeresen el lettek mentve.
+    time:
+      d: <d> nap
+      dp: <d> nap
+      h: <h> óra
+      hp: <h> óra
+      m: <m> perc
+      mp: <m> perc
+      marks:
+        d: d, day, days, n, nap
+        h: h, hour, hours, o, ó, ora, óra
+        m: m, min, mins, minutes, p, perc
+        s: s, sec, secs, second, seconds, mp, mperc, masodperc, másodperc
+        w: w, week, weeks, h, het, hét
+      mp: <m> perc
+      never: soha
+      s: <s> másodperc
+      sp: <s> másodperc
+      w: <w> hét
+      wp: <w> hét
+    vars: Elérhető változók:&f <vars>
+      noeval: &cBiztonsági okok miatt az eval változó kitöltése le van tiltva a szerveren.
+      filled: Kitöltés eredménye:&f <result>
+      fillformat: &eKitöltés eredménye &6<player>&e játékos számára: &f<value>
+nl:
+  spigotlib:
+    debug:
+      off: &c&lDebug berichten staan nu uit.
+      on: &a&lDebug berichten staat nu aan.
+    executed: Het ingevoerde commando is succesvol uitgevoetd.
+    help: &6&lＳｐｉｇｏｔＬｉｂ&e&l - &6&l<version>&e&l - &6&lｂｙ ＧｙｕｒｉＸ
+    &b&l➯ &e&lCONTACT:&f op Skype - gyurixdev
+    &b&l➯ &e&lSUBCOMMANDS:&f
+    &b&l➯ &e/sl&f cmd
+    &b&l➯ &e/sl&f debug
+    &b&l➯ &e/sl&f item [give]
+    &b&l➯ &e/sl&f lang
+    &b&l➯ &e/sl&f migratetodb
+    &b&l➯ &e/sl&f perm
+    &b&l➯ &e/sl&f reload
+    &b&l➯ &e/sl&f save
+    &b&l➯ &e/sl&f vars
+    &b&l➯ &e/sl&f velocity
+    invalidcmd: &cHet aangevraagde commando bestaat niet.
+    item:
+      own: Je hebt het volgende item in jouw hand: &f<item>\-T&bKlik om de item naam te injecteren in de chat\-S<item>
+      player: &b<player>&e heeft het volgende item in zijn/haar hand: &f<item>\-T&bKlik om de item naam te injecteren in de chat\-S<item>
+      set: &b<player>&e's zijn/haar huidige item is nu: &f<item>\-T&bKlik om de item naam te injecteren in de chat\-S<item>
+      give: &b<player>&e heeft item: &f<item>\-T&bKlik om de item naam te injecteren in de chat\-S<item>
+    lang:
+      list: &6&lBeschikbare talen: &e<langs>
+      other: &6&l<player>&e heeft &6&l<lang>&e als taal geselecteerd.
+      own: Je hebt &6&l<lang>&e als taal geselecteerd.
+      set: &6&l<player>&e spelers taal is gezet naar de taal: &6&l<lang>&e.
+        own: &eJe hebt je eigen taal veranderd naar &6&l<lang>&e.
+    migrate:
+      end: &bData migratie voltooid.
+      start: &bDe data migratie is gestart, Asjeblieft wacht, het kan een lange tijd duren...
+    noconsole: &cSorry, deze functie is momenteel niet vanaf de console beschikbaar.
+    noperm: &4&lTOEGANG GEWEIGERD
+    notdone: &cSorry, deze functie is nog niet klaar.
+    perms:
+      allowformat: &a<perm>
+      denyformat: &c<perm>
+      fillformat: Speler &6&l<player>&e heeft de volgende permissions:&f <perms>
+      no: &6&l<player> heeft de permission &6&l<perm>&c NIET&e.
+      yes: &6&l<player> heeft de permission &6&l<perm>&a WEL&e.
+    player:
+      notfound: &cDe opgegeven speler (&e&l<player>&c) is niet gevonden.
+    prefix: &6&lＳＬ ► &e
+    reload: &cGebruik:&6&l /sl reload <lf|pf|config>
+      config: &a&lSpigotLibs configuratie is succesvol herladen.
+      lf: &a&lSpigotLibs het talen bestand is succesvol herladen.
+      pf: &a&lSpeler data folder is succesvol herladen.
+    save: &cGebruik:&6&l /sl save pf&e voor het opslaan van de speler folder.
+      pf: &a&lSpeler bestand is succesvol opgeslagen.
+    time:
+      d: <d> dag
+      dp: <d> dagen
+      h: <h> uur
+      hp: <h> uren
+      m: <m> minuten
+      marks:
+        d: d, dag, dagen
+        h: h, uur, uren
+        m: m, min, mins, minuten
+        s: s, sec, secs, seconde, secondes
+        w: w, week, weken
+      mp: <m> minuten
+      never: nooit
+      s: <s> seconde
+      sp: <s> seconden
+      w: <w> week
+      wp: <w> weken
+    vars: Beschikbare variabelen:&f <vars>
+      noeval: &cHet vullen van eval variablen is uitgezet in verband met veiligheid redenen.
+      filled: Vul resultaat:&f <result>
+      fillformat: &eVoor &6<player>&e: &f<value>
