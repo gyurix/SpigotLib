@@ -8,6 +8,7 @@ but it's also good for server owners, because they can use it's API
 testing commands, which are really useful.
 
 **Official download page:** https://www.spigotmc.org/resources/spigotlib.5925/
+
 **JavaDoc:** https://gyurix.pro/javadoc/SpigotLib
 
 ##Compatibility
@@ -84,4 +85,5 @@ Before complaining about something doesn't work, please CONTACT ME.
 ###SpigotLib is licensed under the GPL-3 license 
 
 **Short overview:** https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)
+
 **Full text:** https://github.com/gyurix/SpigotLib/blob/master/LICENSE.MD
