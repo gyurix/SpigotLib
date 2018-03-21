@@ -517,7 +517,7 @@ public class ConfigFile {
                 setData(address + "." + k, new ConfigFile(v).data);
             }
         } catch (Throwable e) {
-            cs.sendMessage("§cFailed to load data from MySQL database.\n" +
+            cs.sendMessage("§cFailed to load data from MySQL storage.\n" +
                     "The used querry command:\n");
             error(cs, e, "SpigotLib", "gyurix");
             e.printStackTrace();
@@ -539,7 +539,7 @@ public class ConfigFile {
                 setData(k, new ConfigFile(v).data);
             }
         } catch (Throwable e) {
-            cs.sendMessage("§cFailed to load data from MySQL database.\n" +
+            cs.sendMessage("§cFailed to load data from MySQL storage.\n" +
                     "The used querry command:\n");
             error(cs, e, "SpigotLib", "gyurix");
             e.printStackTrace();
@@ -547,7 +547,7 @@ public class ConfigFile {
     }
 
     /**
-     * Add to the given list the MySQL commands required for updating the database based on this Configuration
+     * Add to the given list the MySQL commands required for updating the storage based on this Configuration
      *
      * @param l    - The list
      * @param args - The arguments which should be passed after MySQL WHERE clause.
@@ -768,6 +768,7 @@ public class ConfigFile {
      * @return The same result as data.toString()
      */
     public String toString() {
-        return data.toString().substring(1);
+        String str = data.toString();
+        return str.startsWith("\n") ? str.substring(1) : str;
     }
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Class representing a MySQL database connection and containing the required methods and utils
+ * Class representing a MySQL storage connection and containing the required methods and utils
  * for executing MySQL querries
  */
 public class MySQLDatabase {
@@ -118,7 +118,7 @@ public class MySQLDatabase {
             con.setAutoReconnect(true);
             con.setConnectTimeout(timeout);
         } catch (Throwable e) {
-            SU.cs.sendMessage("§cFailed to connect to database, please check the plugins configuration.");
+            SU.cs.sendMessage("§cFailed to connect to storage, please check the plugins configuration.");
             return false;
         }
         return true;

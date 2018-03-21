@@ -4,6 +4,7 @@ import gyurix.configfile.ConfigSerialization.ConfigOptions;
 import gyurix.spigotlib.Main;
 import gyurix.spigotlib.SU;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -85,6 +86,9 @@ public class TPSMeter implements Runnable {
                 }
                 sb.append("\n======================================================");
                 SU.cs.sendMessage(sb.toString());
+                for (Plugin p : SU.pm.getPlugins()) {
+                    p.onDisable();
+                }
             }
         } else
             zeroTpsCount = 0;
