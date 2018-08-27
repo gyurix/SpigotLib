@@ -47,7 +47,6 @@ public class BlockUtils {
         }
         return 0;
     }
-
     public static Vector getDirection(float yaw, float pitch) {
         double xz = cos(toRadians(pitch));
         return new Vector(-xz * sin(toRadians(yaw)), -sin(toRadians(pitch)), xz * cos(toRadians(yaw)));

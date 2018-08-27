@@ -21,6 +21,12 @@ import static gyurix.spigotlib.Config.debug;
 public class GlobalLangFile {
     public static final HashMap<String, HashMap<String, String>> map = new HashMap<>();
 
+    /**
+     *
+     * @param lang  - The language
+     * @param adr   - The key to the message
+     * @return The message from the language file. If not found then an error message is returned.
+     */
     public static String get(String lang, String adr) {
         HashMap<String, String> m;
         String msg;
@@ -93,6 +99,13 @@ public class GlobalLangFile {
         put(adr.substring(1), cs.toString());
     }
 
+    /**
+     *
+     * @param pn        - The name of the plugin
+     * @param stream    - InputStream of the language file
+     * @param fn        - The name of the language file
+     * @return The PluginLang or null
+     */
     public static PluginLang loadLF(String pn, InputStream stream, String fn) {
         try {
             byte[] bytes = new byte[stream.available()];
@@ -106,6 +119,12 @@ public class GlobalLangFile {
         }
     }
 
+    /**
+     *
+     * @param pn    - The name of the plugin
+     * @param fn    - The name of the language file
+     * @return The PluginLang or null
+     */
     public static PluginLang loadLF(String pn, String fn) {
         try {
             load(new String(Files.readAllBytes(new File(fn).toPath()), "UTF-8").replaceAll("&([0-9a-fk-or])", "§$1").split("\r?\n"));
@@ -116,10 +135,15 @@ public class GlobalLangFile {
         }
     }
 
+    /**
+     *
+     * @param adr   - The address to be changed
+     * @param value - The new value
+     */
     private static void put(String adr, String value) {
         if (!adr.contains(".")) {
             if (!map.containsKey(adr)) {
-                map.put(adr, new HashMap());
+                map.put(adr, new HashMap<>());
             }
         } else {
             HashMap<String, String> m = map.get(adr.substring(0, adr.indexOf('.')));
@@ -127,6 +151,10 @@ public class GlobalLangFile {
         }
     }
 
+    /**
+     *
+     * @param lng   - The language file
+     */
     public static void unloadLF(PluginLang lng) {
         for (HashMap<String, String> m : map.values()) {
             Iterator<Entry<String, String>> i = m.entrySet().iterator();
@@ -164,6 +192,13 @@ public class GlobalLangFile {
             return msg;
         }
 
+        /**
+         *
+         * @param prefix   - Custom prefix of the message
+         * @param sender   - The receiver of the message
+         * @param msg      - The key of the message in the language file
+         * @param repl     - The variables in the message
+         */
         public void msg(String prefix, CommandSender sender, String msg, Object... repl) {
             Player plr = sender instanceof Player ? (Player) sender : null;
             msg = prefix + get(plr, msg, repl);
@@ -173,16 +208,32 @@ public class GlobalLangFile {
                 ChatAPI.sendJsonMsg(ChatMessageType.CHAT, msg, plr);
             }
         }
-
+        /**
+         *
+         * @param sender   - The receiver of the message
+         * @param msg      - The key of the message in the language file
+         * @param repl     - The variables in the message
+         */
         public void msg(CommandSender sender, String msg, String... repl) {
             msg(sender, msg, (Object[]) repl);
         }
-
+        /**
+         *
+         * @param sender   - The receiver of the message
+         * @param msg      - The key of the message in the language file
+         * @param repl     - The variables in the message
+         */
         public void msg(CommandSender sender, String msg, Object... repl) {
             Player plr = sender instanceof Player ? (Player) sender : null;
             msg(get(plr, "prefix"), sender, msg, repl);
         }
-
+        /**
+         *
+         * @param prefix   - Custom prefix of the message
+         * @param sender   - The receiver of the message
+         * @param msg      - The key of the message in the language file
+         * @param repl     - The variables in the message
+         */
         public void msg(String prefix, CommandSender sender, String msg, String... repl) {
             msg(prefix, sender, msg, (Object[]) repl);
         }

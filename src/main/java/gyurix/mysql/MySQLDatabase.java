@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Class representing a MySQL storage connection and containing the required methods and utils
- * for executing MySQL querries
+ * for executing MySQL queries
  */
 public class MySQLDatabase {
     @ConfigOptions(serialize = false)
@@ -31,6 +31,13 @@ public class MySQLDatabase {
 
     }
 
+    /**
+     *
+     * @param host      - The host of the MySQL server
+     * @param database  - The name of the database
+     * @param username  - The username to the MySQL server
+     * @param password  - The password to the MySQL server
+     */
     public MySQLDatabase(String host, String database, String username, String password) {
         this.host = host;
         this.username = username;
@@ -101,6 +108,10 @@ public class MySQLDatabase {
         return false;
     }
 
+    /**
+     *
+     * @return  - The Connection
+     */
     private Connection getConnection() {
         try {
             if (con == null || !con.isValid(timeout)) {
@@ -112,6 +123,10 @@ public class MySQLDatabase {
         return con;
     }
 
+    /**
+     *
+     * @return True on successful connection otherwise false
+     */
     public boolean openConnection() {
         try {
             con = (Connection) DriverManager.getConnection("jdbc:mysql://" + host + "/" + database + "?autoReconnect=true&useSSL=true", username, password);

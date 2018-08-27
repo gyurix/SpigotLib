@@ -11,8 +11,8 @@ public class Frame implements StringSerializable {
 
     public Frame(String in) {
         if (in.startsWith("{")) {
-            delays = new ArrayList();
-            repeats = new ArrayList();
+            delays = new ArrayList<>();
+            repeats = new ArrayList<>();
             int id = in.indexOf("}");
             for (String s : in.substring(1, id).split("(,+| +) *")) {
                 String[] d2 = s.split(":", 2);

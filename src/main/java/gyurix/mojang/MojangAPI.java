@@ -15,6 +15,12 @@ import static gyurix.mojang.WebApi.post;
  * Created by GyuriX on 2015.12.27..
  */
 public class MojangAPI {
+    /**
+     *
+     * @param userName  - The username of the Mojang account
+     * @param password  - The password of the Mojang account
+     * @return On successful login the ClientSession of the profile otherwise null
+     */
     public static ClientSession clientLogin(String userName, String password) {
         try {
             String s = post("https://authserver.mojang.com/authenticate",
@@ -32,6 +38,11 @@ public class MojangAPI {
         }
     }
 
+    /**
+     *
+     * @param id    - The online UUID of the player
+     * @return A list of NameData which contains usernames of that player
+     */
     public static ArrayList<NameData> getNameHistory(UUID id) {
         try {
             return (ArrayList<NameData>) JsonAPI.deserialize(get("https://api.mojang.com/user/profiles/" + id.toString().replace("-", "") + "/names"), ArrayList.class, NameData.class);
@@ -41,6 +52,11 @@ public class MojangAPI {
         return null;
     }
 
+    /**
+     *
+     * @param name  - The username of the player
+     * @return The GameProfile of the player
+     */
     public static GameProfile getProfile(String name) {
         try {
             return JsonAPI.deserialize(get("https://api.mojang.com/users/profiles/minecraft/" + name), GameProfile.class);
@@ -61,6 +77,10 @@ public class MojangAPI {
         return (ArrayList<GameProfile>) JsonAPI.deserialize(post("https://api.mojang.com/profiles/minecraft", JsonAPI.serialize(names)), ArrayList.class, GameProfile.class);
     }
 
+    /**
+     *
+     * @return The states of the Mojang servers
+     */
     public static HashMap<String, MojangServerState> getServerState() {
         HashMap<String, MojangServerState> out = new HashMap<>();
         String[] d = get("https://status.mojang.com/check").split(",");

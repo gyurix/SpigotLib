@@ -1,6 +1,7 @@
 package gyurix.mojang;
 
 import gyurix.spigotlib.SU;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -15,6 +16,12 @@ import static gyurix.spigotlib.Config.debug;
  * Created by GyuriX on 2016. 06. 10..
  */
 public class WebApi {
+    /**
+     *
+     * @param urlString - The URL to the file
+     * @param filename  - The path to the downloaded file
+     * @return True if successful otherwise false
+     */
     public static boolean download(String urlString, String filename) {
         try {
             URL url = new URL(urlString);
