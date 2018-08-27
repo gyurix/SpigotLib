@@ -4,6 +4,7 @@ import gyurix.nbt.NBTCompound;
 import gyurix.nbt.NBTPrimitive;
 import gyurix.protocol.Reflection;
 import gyurix.spigotlib.SU;
+import gyurix.spigotutils.ServerVersion;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -23,10 +24,10 @@ import static gyurix.protocol.Reflection.getNMSClass;
 public class ItemStackWrapper implements WrappedData {
     @ConfigOptions(serialize = false)
     public static final HashMap<Integer, String> itemNames = new HashMap<>();
-    private static final Constructor bukkitStack;
+    private static final Constructor bukkitStack, nmsStackFromNBTC;
     @ConfigOptions(serialize = false)
     private static final Object cmnObj;
-    private static final Method getType, nmsCopy, saveStack, getID, createStack;
+    private static final Method getType, nmsCopy, saveStack, getID, nmsStackFromNBTM;
     private static final Field itemName;
     private static final Class nmsClass;
 
@@ -37,7 +38,8 @@ public class ItemStackWrapper implements WrappedData {
         Class obc = Reflection.getOBCClass("inventory.CraftItemStack");
         Class cmn = Reflection.getOBCClass("util.CraftMagicNumbers");
         cmnObj = getFieldData(cmn, "INSTANCE");
-        createStack = Reflection.getMethod(nmsClass, "createStack", nbt);
+        nmsStackFromNBTC = Reflection.getConstructor(nmsClass, nbt);
+        nmsStackFromNBTM = Reflection.getMethod(nmsClass, "createStack", nbt);
         saveStack = Reflection.getMethod(nmsClass, "save", nbt);
         nmsCopy = Reflection.getMethod(obc, "asNMSCopy", ItemStack.class);
         bukkitStack = Reflection.getConstructor(obc, nmsClass);
@@ -73,10 +75,6 @@ public class ItemStackWrapper implements WrappedData {
         loadFromVanillaStack(vanillaStack);
     }
 
-    public ItemStackWrapper(String str) {
-
-    }
-
     public byte getCount() {
         return (byte) ((NBTPrimitive) nbtData.get("Count")).getData();
     }
@@ -94,8 +92,12 @@ public class ItemStackWrapper implements WrappedData {
         }
     }
 
-    public void setDamage(short damage) {
-        nbtData.put("Damage", tag(damage));
+    public void setDamage(int damage) {
+        if (Reflection.ver.isAbove(ServerVersion.v1_13)) {
+            getMetaData().set("Damage", damage);
+            return;
+        }
+        nbtData.put("Damage", tag((short) damage));
     }
 
     public String getId() {
@@ -187,7 +189,9 @@ public class ItemStackWrapper implements WrappedData {
     @Override
     public Object toNMS() {
         try {
-            return createStack.invoke(null, nbtData.toNMS());
+            if (nmsStackFromNBTC == null)
+                return nmsStackFromNBTM.invoke(null, nbtData.toNMS());
+            return nmsStackFromNBTC.newInstance(nbtData.toNMS());
         } catch (Throwable e) {
             SU.error(SU.cs, e, "SpigotLib", "gyurix");
             return null;

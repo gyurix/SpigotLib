@@ -32,9 +32,9 @@ public class PacketPlayOutEntityTeleport extends WrappedPacket {
         if (Reflection.ver.isAbove(ServerVersion.v1_9))
             return PacketOutType.EntityTeleport.newPacket(entityId, x, y, z, yaw, pitch, onGround);
         else if (Reflection.ver == ServerVersion.v1_8)
-            return PacketOutType.EntityTeleport.newPacket(entityId, (int) (x / 32), (int) (y / 32), (int) (z / 32), yaw, pitch, onGround);
+            return PacketOutType.EntityTeleport.newPacket(entityId, (int) (x * 32), (int) (y * 32), (int) (z * 32), yaw, pitch, onGround);
         else
-            return PacketOutType.EntityTeleport.newPacket(entityId, (int) (x / 32), (int) (y / 32), (int) (z / 32), yaw, pitch);
+            return PacketOutType.EntityTeleport.newPacket(entityId, (int) (x * 32), (int) (y * 32), (int) (z * 32), yaw, pitch);
     }
 
     @Override

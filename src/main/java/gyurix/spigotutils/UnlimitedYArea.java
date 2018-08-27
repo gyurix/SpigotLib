@@ -75,7 +75,7 @@ public class UnlimitedYArea implements StringSerializable {
     }
 
     public static void resetOutlineBlock(Block block, Player plr) {
-        plr.sendBlockChange(block.getLocation(), block.getTypeId(), block.getData());
+        plr.sendBlockChange(block.getLocation(), block.getType(), block.getData());
     }
 
     public UnlimitedYArea cloneFixed() {
@@ -155,12 +155,12 @@ public class UnlimitedYArea implements StringSerializable {
     public void showOutlineWithBlock(Player plr, BlockData bd) {
         World w = plr.getWorld();
         for (int x = minx; x <= maxx; ++x) {
-            plr.sendBlockChange(getTopY(w, x, minz).getLocation(), bd.id, (byte) bd.data);
-            plr.sendBlockChange(getTopY(w, x, maxz).getLocation(), bd.id, (byte) bd.data);
+            bd.sendChange(plr, getTopY(w, x, minz).getLocation());
+            bd.sendChange(plr, getTopY(w, x, maxz).getLocation());
         }
         for (int z = minz + 1; z < maxz; ++z) {
-            plr.sendBlockChange(getTopY(w, minx, z).getLocation(), bd.id, (byte) bd.data);
-            plr.sendBlockChange(getTopY(w, maxx, z).getLocation(), bd.id, (byte) bd.data);
+            bd.sendChange(plr, getTopY(w, minx, z).getLocation());
+            bd.sendChange(plr, getTopY(w, maxx, z).getLocation());
         }
     }
 

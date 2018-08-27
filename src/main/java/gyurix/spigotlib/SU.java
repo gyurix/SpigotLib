@@ -27,7 +27,9 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import javax.script.ScriptEngine;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -324,17 +326,21 @@ public final class SU {
      * @return The online player / active offline player who has the given name, or null if no such player have found.
      */
     public static Player getPlayer(String name) {
-        if (name.length() > 16) {
-            UUID uuid = UUID.fromString(name);
-            Player p = Bukkit.getPlayer(uuid);
+        try {
+            if (name.length() == 40) {
+                UUID uuid = UUID.fromString(name);
+                Player p = Bukkit.getPlayer(uuid);
+                if (p == null)
+                    p = loadPlayer(uuid);
+                return p;
+            }
+            Player p = Bukkit.getPlayerExact(name);
             if (p == null)
-                p = loadPlayer(uuid);
+                p = loadPlayer(getUUID(name));
             return p;
+        } catch (IllegalArgumentException e) {
+            return null;
         }
-        Player p = Bukkit.getPlayerExact(name);
-        if (p == null)
-            p = loadPlayer(getUUID(name));
-        return p;
     }
 
     public static Player getPlayer(UUID uid) {
@@ -378,6 +384,19 @@ public final class SU {
             }, 3);
         }
         return pf.subConfig(pln);
+    }
+
+    /**
+     * Get the plugin containing the given class
+     *
+     * @param cl - The checkable class
+     * @return The plugin
+     */
+    public static Plugin getPlugin(Class cl) {
+        ClassLoader loader = cl.getClassLoader();
+        if (loader.getClass().getName().equals("org.bukkit.plugin.java.PluginClassLoader"))
+            return (Plugin) Reflection.getFieldData(loader.getClass(), "plugin", loader);
+        return null;
     }
 
     /**
@@ -756,6 +775,19 @@ public final class SU {
             return pf.removeData(key);
         }
         return false;
+    }
+
+    /**
+     * Transloads an InputStream to an OutputStream, closes the InputStream, when it's done
+     *
+     * @param is - The InputStream
+     * @param os - The OutputStream
+     */
+    public static void transloadStream(InputStream is, OutputStream os) throws IOException {
+        byte[] buf = new byte[4096];
+        for (int done = is.read(buf); done > 0; done = is.read(buf))
+            os.write(buf, 0, done);
+        is.close();
     }
 
     /**

@@ -5,6 +5,7 @@ import gyurix.api.VariableAPI;
 import gyurix.nbt.NBTCompound;
 import gyurix.nbt.NBTList;
 import gyurix.protocol.utils.ItemStackWrapper;
+import gyurix.spigotlib.Items;
 import gyurix.spigotlib.Main;
 import gyurix.spigotlib.SU;
 import org.apache.commons.lang.ArrayUtils;
@@ -26,10 +27,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,6 +41,17 @@ import static gyurix.spigotutils.ServerVersion.v1_9;
  * Utils for managing items
  */
 public class ItemUtils {
+    /**
+     * Adds the given item to the given inventory with the default max stack size
+     *
+     * @param inv - The inventory to which the item should be added
+     * @param is  - The addable item
+     * @return The remaining items after the addition
+     */
+    public static int addItem(Inventory inv, ItemStack is) {
+        return addItem(inv, is, is.getMaxStackSize());
+    }
+
     /**
      * Adds the given item to the given inventory
      *
@@ -185,6 +194,34 @@ public class ItemUtils {
         return space;
     }
 
+    public static ItemStack addLore(ItemStack is, String... lore) {
+        if (is == null || is.getType() == Material.AIR)
+            return is;
+        is = is.clone();
+        ItemMeta meta = is.getItemMeta();
+        List<String> fullLore = meta.getLore();
+        if (fullLore == null)
+            fullLore = new ArrayList<>();
+        fullLore.addAll(Arrays.asList(lore));
+        meta.setLore(fullLore);
+        is.setItemMeta(meta);
+        return is;
+    }
+
+    public static ItemStack addLore(ItemStack is, List<String> lore, Object... vars) {
+        if (is == null || is.getType() == Material.AIR)
+            return is;
+        is = is.clone();
+        ItemMeta meta = is.getItemMeta();
+        List<String> fullLore = meta.getLore();
+        if (fullLore == null)
+            fullLore = new ArrayList<>();
+        fullLore.addAll(SU.fillVariables(lore, vars));
+        meta.setLore(fullLore);
+        is.setItemMeta(meta);
+        return is;
+    }
+
     /**
      * Fill variables in a ItemStack
      * Available special variables:
@@ -212,7 +249,7 @@ public class ItemUtils {
                     case "#id":
                         String vs = String.valueOf(v);
                         try {
-                            is.setTypeId(Integer.valueOf(vs));
+                            is.setType(getMaterial(Integer.valueOf(vs)));
                         } catch (Throwable e) {
                             try {
                                 is.setType(Material.valueOf(vs.toUpperCase()));
@@ -284,18 +321,7 @@ public class ItemUtils {
      * @return the numeric id of the requested item or 1, if the given name is incorrect or null
      */
     public static ItemStack getItem(String name) {
-        try {
-            ItemStack bd = nameAliases.get(name.toLowerCase());
-            if (bd != null)
-                return bd.clone();
-            return new ItemStack(Material.valueOf(name.toUpperCase()));
-        } catch (Throwable e) {
-            try {
-                return new ItemStack(Integer.valueOf(name));
-            } catch (Throwable e2) {
-                return new ItemStack(7);
-            }
-        }
+        return Items.getItem(name);
     }
 
     /**
@@ -397,8 +423,7 @@ public class ItemUtils {
         if (in == null)
             return "0:-1 0";
         StringBuilder out = new StringBuilder();
-        ArrayList<String> list = names.get(new BlockData(in.getTypeId(), in.getDurability()));
-        out.append(list == null ? in.getType().name() : list.get(0));
+        out.append(Items.getName(new BlockData(in.getType(), in.getDurability())));
         if (in.getDurability() != 0)
             out.append(':').append(in.getDurability());
         if (in.getAmount() != 1)
@@ -418,9 +443,7 @@ public class ItemUtils {
         if (meta.hasLore())
             out.append(" lore:").append(escapeText(StringUtils.join(meta.getLore(), '\n')));
         for (Entry<Enchantment, Integer> ench : meta.getEnchants().entrySet()) {
-            String ec = ench.getKey().getName();
-            String store = enchants.containsKey(ec) ? enchants.get(ec).get(0) : ec;
-            out.append(' ').append(store).append(':').append(ench.getValue());
+            out.append(' ').append(getEnchantName(ench.getKey())).append(':').append(ench.getValue());
         }
         if (meta instanceof BookMeta) {
             BookMeta bmeta = (BookMeta) meta;
@@ -507,7 +530,7 @@ public class ItemUtils {
                 out.append(" owner:").append(bmeta.getOwner());
         } else if (meta instanceof EnchantmentStorageMeta) {
             for (Entry<Enchantment, Integer> e : ((EnchantmentStorageMeta) meta).getStoredEnchants().entrySet()) {
-                out.append(" +").append(enchants.get(e.getKey().getName()).get(0)).append(':').append(e.getValue());
+                out.append(" +").append(getEnchantName(e.getKey())).append(':').append(e.getValue());
             }
         }
 
@@ -550,8 +573,29 @@ public class ItemUtils {
      */
     public static int removeItem(Inventory inv, ItemStack is) {
         int left = is.getAmount();
-        int size = inv instanceof PlayerInventory ? 36 : inv.getSize();
-        for (int i = 0; i < size; i++) {
+        boolean pi = inv instanceof PlayerInventory;
+        int size = pi ? 36 : inv.getSize();
+        Iterator<Integer> it = new Iterator<Integer>() {
+            boolean first;
+            int id;
+
+            @Override
+            public boolean hasNext() {
+                return id < size;
+            }
+
+            @Override
+            public Integer next() {
+                if (first) {
+                    if (pi)
+                        return ((PlayerInventory) inv).getHeldItemSlot();
+                    first = false;
+                }
+                return id++;
+            }
+        };
+        while (it.hasNext()) {
+            Integer i = it.next();
             ItemStack current = inv.getItem(i);
             if (itemSimilar(current, is)) {
                 int am = current.getAmount();
@@ -603,7 +647,7 @@ public class ItemUtils {
             String[] s = parts[i].split(":", 2);
             s[0] = s[0].toUpperCase();
             try {
-                Enchantment enc = enchantAliases.get(s[0].toLowerCase());
+                Enchantment enc = getEnchant(s[0]);
                 if (enc == null)
                     enc = Enchantment.getByName(s[0].toUpperCase());
                 if (enc == null) {
@@ -640,12 +684,16 @@ public class ItemUtils {
             for (String[] s : remaining) {
                 try {
                     String text = unescapeText(s[1]);
-                    if (s[0].equals("AUTHOR")) {
-                        bmeta.setAuthor(text);
-                    } else if (s[0].equals("TITLE")) {
-                        bmeta.setTitle(text);
-                    } else if (s[0].equals("PAGE")) {
-                        bmeta.addPage(text);
+                    switch (s[0]) {
+                        case "AUTHOR":
+                            bmeta.setAuthor(text);
+                            break;
+                        case "TITLE":
+                            bmeta.setTitle(text);
+                            break;
+                        case "PAGE":
+                            bmeta.addPage(text);
+                            break;
                     }
                 } catch (Throwable e) {
                     log(Main.pl, "§cError on deserializing §eBookMeta§c data of item \"§f" + in + "§c\"");
@@ -704,20 +752,25 @@ public class ItemUtils {
                         Builder build = FireworkEffect.builder().with(type);
                         for (String d : s[1].toUpperCase().split("\\|")) {
                             String[] d2 = d.split(":", 2);
-                            if (d2[0].equals("COLORS")) {
-                                for (String colors : d2[1].split(";")) {
-                                    String[] color = colors.split(",", 3);
-                                    build.withColor(Color.fromRGB(Integer.valueOf(color[0]), Integer.valueOf(color[1]), Integer.valueOf(color[2])));
-                                }
-                            } else if (d2[0].equals("FADES")) {
-                                for (String fades : d2[1].split(";")) {
-                                    String[] fade = fades.split(",", 3);
-                                    build.withFade(Color.fromRGB(Integer.valueOf(fade[0]), Integer.valueOf(fade[1]), Integer.valueOf(fade[2])));
-                                }
-                            } else if (d2[0].equals("FLICKER")) {
-                                build.withFlicker();
-                            } else if (d2[0].equals("TRAIL")) {
-                                build.withTrail();
+                            switch (d2[0]) {
+                                case "COLORS":
+                                    for (String colors : d2[1].split(";")) {
+                                        String[] color = colors.split(",", 3);
+                                        build.withColor(Color.fromRGB(Integer.valueOf(color[0]), Integer.valueOf(color[1]), Integer.valueOf(color[2])));
+                                    }
+                                    break;
+                                case "FADES":
+                                    for (String fades : d2[1].split(";")) {
+                                        String[] fade = fades.split(",", 3);
+                                        build.withFade(Color.fromRGB(Integer.valueOf(fade[0]), Integer.valueOf(fade[1]), Integer.valueOf(fade[2])));
+                                    }
+                                    break;
+                                case "FLICKER":
+                                    build.withFlicker();
+                                    break;
+                                case "TRAIL":
+                                    build.withTrail();
+                                    break;
                             }
                         }
                         bmeta.addEffect(build.build());
@@ -785,9 +838,7 @@ public class ItemUtils {
             for (String[] s : remaining) {
                 try {
                     String en = s[0].substring(1);
-                    Enchantment enc = enchantAliases.get(en.toLowerCase());
-                    if (enc == null)
-                        enc = Enchantment.getByName(en.toUpperCase());
+                    Enchantment enc = getEnchant(en);
                     if (enc != null)
                         bmeta.addStoredEnchant(enc, Integer.valueOf(s[1]), true);
                 } catch (Throwable e) {
@@ -813,8 +864,8 @@ public class ItemUtils {
                 attr.set("Name", "a" + (id.incrementAndGet()));
                 attr.set("Operation", operation);
                 attr.set("Amount", am);
-                attr.set("UUIDLeast", SU.rand.nextLong());
-                attr.set("UUIDMost", SU.rand.nextLong());
+                attr.set("UUIDLeast", rand.nextLong());
+                attr.set("UUIDMost", rand.nextLong());
                 attrs.add(attr);
             });
             wr.getMetaData().set("AttributeModifiers", attrs);

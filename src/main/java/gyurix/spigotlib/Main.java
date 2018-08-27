@@ -7,7 +7,9 @@ import gyurix.commands.CustomCommandMap;
 import gyurix.commands.SpigotLibCommands;
 import gyurix.configfile.ConfigFile;
 import gyurix.configfile.ConfigSerialization;
+import gyurix.datareader.DataReader;
 import gyurix.economy.EconomyAPI;
+import gyurix.inventory.CloseableGUI;
 import gyurix.inventory.CustomGUI;
 import gyurix.protocol.Reflection;
 import gyurix.protocol.event.PacketInType;
@@ -18,7 +20,6 @@ import gyurix.protocol.utils.WrapperFactory;
 import gyurix.scoreboard.PlayerBars;
 import gyurix.scoreboard.ScoreboardAPI;
 import gyurix.scoreboard.ScoreboardBar;
-import gyurix.sign.SignGUI;
 import gyurix.spigotlib.Config.PlayerFile;
 import gyurix.spigotlib.GlobalLangFile.PluginLang;
 import gyurix.spigotutils.BackendType;
@@ -30,7 +31,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -60,17 +60,14 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static gyurix.economy.EconomyAPI.VaultHookType.*;
 import static gyurix.economy.EconomyAPI.vaultHookType;
 import static gyurix.protocol.Reflection.ver;
 import static gyurix.spigotlib.Config.PlayerFile.backend;
 import static gyurix.spigotlib.Config.PlayerFile.mysql;
 import static gyurix.spigotlib.Config.forceReducedMode;
-import static gyurix.spigotlib.Items.enchants;
 import static gyurix.spigotlib.SU.*;
-import static gyurix.spigotutils.ServerVersion.UNKNOWN;
-import static gyurix.spigotutils.ServerVersion.v1_8;
+import static gyurix.spigotutils.ServerVersion.*;
 
 /**
  * Main SpigotLib plugin class containing all the command handlers, loaders and delegators needed for starting up the API
@@ -119,7 +116,7 @@ public class Main extends JavaPlugin implements Listener {
         return classes;
     }
 
-    public void load() throws Throwable {
+    public void load() {
         cs.sendMessage("§2[§aStartup§2]§e Loading §aconfiguration§e and §alanguage file§e...");
         saveResources(this, "lang.yml", "config.yml", "items.yml");
         kf = new ConfigFile(getResource("config.yml"));
@@ -132,15 +129,6 @@ public class Main extends JavaPlugin implements Listener {
         cs.sendMessage("§2[§aStartup§2]§e Loading §aenchants file§e...");
         itemf = new ConfigFile(new File(dir + File.separator + "items.yml"));
         itemf.data.deserialize(Items.class);
-        boolean saveIf = false;
-        for (Enchantment e : Enchantment.values()) {
-            if (!enchants.containsKey(e.getName())) {
-                enchants.put(e.getName(), newArrayList(e.getName().toLowerCase().replace("_", "")));
-                saveIf = true;
-            }
-        }
-        if (saveIf)
-            itemf.save();
         if (backend == BackendType.FILE) {
             cs.sendMessage("§2[§aStartup§2]§e Loading §aFILE§e backend for §aplayer data storage§e...");
             if (Config.purgePF) {
@@ -169,13 +157,13 @@ public class Main extends JavaPlugin implements Listener {
         }
         cs.sendMessage("§2[§aStartup§2]§e Loading §aReflectionAPI§e...");
         Reflection.init();
-        if (Reflection.ver.isAbove(v1_8))
+        if (ver.isAbove(v1_8))
             tp = new ProtocolImpl();
-        else if (Reflection.ver != UNKNOWN)
+        else if (ver != UNKNOWN)
             tp = new ProtocolLegacyImpl();
         else
-            Config.forceReducedMode = true;
-        if (!Config.forceReducedMode)
+            forceReducedMode = true;
+        if (!forceReducedMode)
             startPacketAPI();
         cs.sendMessage("§2[§aStartup§2]§e Loading §aAnimationAPI§e...");
         AnimationAPI.init();
@@ -209,22 +197,21 @@ public class Main extends JavaPlugin implements Listener {
                 ((CustomGUI) top.getHolder()).onClick(e.getSlot(), e.isRightClick(), e.isShiftClick());
             } catch (Throwable err) {
                 Player plr = (Player) e.getWhoClicked();
-                error(plr.hasPermission("spigotlib.debug") ? plr : cs, err, "SpigotLib", "gyurix");
+                error(plr.hasPermission("spigotlib.debug") ? plr : cs, err, SU.getPlugin(top.getHolder().getClass()).getName(), "gyurix");
             }
     }
 
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
         Inventory top = e.getView().getTopInventory();
-        if (top == null || top.getHolder() == null || !(top.getHolder() instanceof CustomGUI))
+        if (top == null || top.getHolder() == null || !(top.getHolder() instanceof CloseableGUI))
             return;
         try {
-            ((CustomGUI) top.getHolder()).onClose();
+            ((CloseableGUI) top.getHolder()).close();
         } catch (Throwable err) {
             Player plr = (Player) e.getPlayer();
-            error(plr.hasPermission("spigotlib.debug") ? plr : cs, err, "SpigotLib", "gyurix");
+            error(plr.hasPermission("spigotlib.debug") ? plr : cs, err, SU.getPlugin(top.getHolder().getClass()).getName(), "gyurix");
         }
-
     }
 
     public void onLoad() {
@@ -303,7 +290,7 @@ public class Main extends JavaPlugin implements Listener {
             try {
                 tp.close();
             } catch (Throwable e) {
-                SU.error(SU.cs, e, "SpigotLib", "gyurix");
+                error(cs, e, "SpigotLib", "gyurix");
             }
         }
         log(this, "§4[§cShutdown§4]§e Stopping AnimationAPI...");
@@ -322,8 +309,10 @@ public class Main extends JavaPlugin implements Listener {
                     sb.unload(p);
             }
         }
-        log(this, "§4[§cShutdown§4]§e Stopping CommandAPI...");
-        CustomCommandMap.unhook();
+        if (Reflection.ver.isBellow(v1_12)) {
+            log(this, "§4[§cShutdown§4]§e Stopping CommandAPI...");
+            CustomCommandMap.unhook();
+        }
         log(this, "§4[§cShutdown§4]§a The SpigotLib has shutted down properly.");
     }
 
@@ -334,11 +323,11 @@ public class Main extends JavaPlugin implements Listener {
         cmd.setTabCompleter(exec);
         if (cs == null)
             onLoad();
-        else
+        else if (ver.isBellow(v1_12))
             cm = new CustomCommandMap();
         if (!forceReducedMode) {
             cs.sendMessage("§2[§aStartup§2]§e Initializing §aoffline player manager§e...");
-            SU.pm.registerEvents(SU.tp, this);
+            pm.registerEvents(tp, this);
             initOfflinePlayerManager();
         }
         pm.registerEvents(this, this);
@@ -369,7 +358,7 @@ public class Main extends JavaPlugin implements Listener {
                 if (rspEcon != null)
                     econ = rspEcon.getProvider();
                 if (EconomyAPI.migrate) {
-                    SU.cs.sendMessage("§2[§aStartup§2]§e Migrating economy data from old Economy " + econ.getName() + "... ");
+                    cs.sendMessage("§2[§aStartup§2]§e Migrating economy data from old Economy " + econ.getName() + "... ");
                     vaultHookType = NONE;
                     for (OfflinePlayer op : Bukkit.getOfflinePlayers()) {
                         EconomyAPI.setBalance(op.getUniqueId(), new BigDecimal(econ.getBalance(op)));
@@ -384,7 +373,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
         sch.scheduleSyncDelayedTask(this, () -> {
-            if (!Config.forceReducedMode && schedulePacketAPI)
+            if (!forceReducedMode && schedulePacketAPI)
                 startPacketAPI();
             if (vault) {
                 if (vaultHookType == USER) {
@@ -418,15 +407,12 @@ public class Main extends JavaPlugin implements Listener {
         AnimationAPI.stopRunningAnimations(plr);
         if (!forceReducedMode && ver.isAbove(v1_8))
             ScoreboardAPI.playerLeave(plr);
-        SignGUI sg = SignGUI.openSignGUIs.remove(plr.getName());
-        if (sg != null)
-            sg.cancel();
+        DataReader.cancel(plr);
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerLogin(PlayerLoginEvent e) {
         Player plr = e.getPlayer();
-
         if (!forceReducedMode && ver.isAbove(v1_8))
             ScoreboardAPI.playerJoin(plr);
     }
@@ -435,11 +421,13 @@ public class Main extends JavaPlugin implements Listener {
     public void onPluginUnload(PluginDisableEvent e) {
         Plugin pl = e.getPlugin();
         AnimationAPI.stopRunningAnimations(pl);
+        DataReader.cancel(pl);
+        CloseableGUI.cancel(pl);
         if (tp != null) {
             tp.unregisterIncomingListener(pl);
             tp.unregisterOutgoingListener(pl);
         }
-        SU.pf.data.unWrapAll();
+        pf.data.unWrapAll();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -462,7 +450,6 @@ public class Main extends JavaPlugin implements Listener {
     public void registerServiceEvent(ServiceRegisterEvent e) {
         RegisteredServiceProvider p = e.getProvider();
         String sn = p.getService().getName();
-        log(this, "Register service - " + sn);
         switch (sn) {
             case "net.milkbowl.vault.chat.Chat":
                 chat = (Chat) p.getProvider();
@@ -510,7 +497,7 @@ public class Main extends JavaPlugin implements Listener {
             tp.init();
         } catch (Throwable e) {
             if (schedulePacketAPI) {
-                SU.error(SU.cs, e, "SpigotLib", "gyurix");
+                error(cs, e, "SpigotLib", "gyurix");
                 cs.sendMessage("§2[§aStartup§2]§c Failed to start PacketAPI.");
             }
             schedulePacketAPI = true;
@@ -522,7 +509,6 @@ public class Main extends JavaPlugin implements Listener {
     public void unregisterServiceEvent(ServiceUnregisterEvent e) {
         RegisteredServiceProvider p = e.getProvider();
         String sn = p.getService().getName();
-        log(this, "Unregister service - " + sn);
         switch (sn) {
             case "net.milkbowl.vault.chat.Chat":
                 chat = null;

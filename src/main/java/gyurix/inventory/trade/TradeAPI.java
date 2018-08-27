@@ -103,15 +103,23 @@ public class TradeAPI implements Listener {
             IMerchantHook imh = new IMerchantHook(nmsPlr, title);
             Object im = Proxy.newProxyInstance(nmsPlr.getClass().getClassLoader(), new Class[]{imc}, imh);
             ArrayList<Object> mrl = imh.offers;
-            for (MerchantRecipe r : recipes) {
-                Object cmr = cmrC.newInstance(r.getResult(), r.getUses(), r.getMaxUses(), false);
-                ingredientsF.set(cmr, ingredientsF.get(r));
-                mrl.add(toMinecraftM.invoke(cmr));
-            }
+            for (MerchantRecipe r : recipes)
+                mrl.add(toNMSMerchantRecipe(r));
             openTradeM.invoke(nmsPlr, im);
             return (MerchantInventory) plr.getOpenInventory().getTopInventory();
         } catch (Throwable e) {
             SU.error(SU.cs, e, "MythaliumCore", "mythalium");
+        }
+        return null;
+    }
+
+    public static Object toNMSMerchantRecipe(MerchantRecipe r) {
+        try {
+            Object cmr = cmrC.newInstance(r.getResult(), r.getUses(), r.getMaxUses(), false);
+            ingredientsF.set(cmr, ingredientsF.get(r));
+            return toMinecraftM.invoke(cmr);
+        } catch (Throwable e) {
+            SU.error(SU.cs, e, "SpigotLib", "gyurix");
         }
         return null;
     }

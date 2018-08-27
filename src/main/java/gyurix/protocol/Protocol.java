@@ -36,7 +36,7 @@ public abstract class Protocol implements Listener {
         }
         ArrayList<PacketInListener> ll = inListeners.get(event.getType());
         if (ll != null)
-            for (PacketInListener l : ll) {
+            for (PacketInListener l : new ArrayList<>(ll)) {
                 try {
                     l.onPacketIN(event);
                 } catch (Throwable e) {
@@ -58,7 +58,7 @@ public abstract class Protocol implements Listener {
         }
         ArrayList<PacketOutListener> ll = outListeners.get(event.getType());
         if (ll != null)
-            for (PacketOutListener l : ll) {
+            for (PacketOutListener l : new ArrayList<>(ll)) {
                 try {
                     l.onPacketOUT(event);
                 } catch (Throwable e) {

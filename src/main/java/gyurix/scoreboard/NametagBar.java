@@ -31,7 +31,7 @@ public class NametagBar extends ScoreboardBar {
         updateTeam(team, td);
     }
 
-    private TeamData getTeam(String team) {
+    public TeamData getTeam(String team) {
         TeamData curTeam = currentData.teams.get(team);
         if (curTeam == null) {
             curTeam = new TeamData(currentData.barname + "-" + ++nextId, team, "", "", false, true, NameTagVisibility.always, CollisionRule.always, 0, new ConcurrentSkipListSet<String>());

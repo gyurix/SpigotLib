@@ -5,6 +5,7 @@ import gyurix.configfile.ConfigData;
 import gyurix.protocol.Reflection;
 import gyurix.spigotlib.ChatAPI.ChatMessageType;
 import gyurix.spigotutils.ServerVersion;
+import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -138,7 +139,8 @@ public class GlobalLangFile {
     }
 
     public static class PluginLang {
-        public final String pluginName;
+        @Getter
+        private final String pluginName;
 
         private PluginLang(String plugin) {
             pluginName = plugin;

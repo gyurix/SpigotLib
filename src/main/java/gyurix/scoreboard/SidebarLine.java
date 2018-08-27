@@ -53,32 +53,34 @@ public class SidebarLine {
             bar.currentData.scores.remove(oldUser);
         if (hidden)
             return;
-        Iterator<Map.Entry<String, BarData>> it = bar.active.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, BarData> e = it.next();
-            String pln = e.getKey();
-            BarData bd = e.getValue();
-            TeamData td = bd.teams.get(team.name);
-            Player plr = Bukkit.getPlayer(pln);
-            if (plr == null) {
-                it.remove();
-                continue;
+        synchronized (bar.active) {
+            Iterator<Map.Entry<String, BarData>> it = bar.active.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, BarData> e = it.next();
+                String pln = e.getKey();
+                BarData bd = e.getValue();
+                TeamData td = bd.teams.get(team.name);
+                Player plr = Bukkit.getPlayer(pln);
+                if (plr == null) {
+                    it.remove();
+                    continue;
+                }
+                team.update(plr, td);
+                td.prefix = set[0];
+                td.players.clear();
+                td.players.add(set[1]);
+                td.suffix = set[2];
             }
-            team.update(plr, td);
-            td.prefix = set[0];
-            td.players.clear();
-            td.players.add(set[1]);
-            td.suffix = set[2];
-        }
-        if (!set[1].equals(oldUser)) {
-            bar.currentData.scores.put(set[1], number);
-            Object packet = new PacketPlayOutScoreboardScore(ScoreAction.REMOVE, bar.currentData.barname, oldUser, number).getVanillaPacket();
-            Object packet2 = new PacketPlayOutScoreboardScore(PacketPlayOutScoreboardScore.ScoreAction.CHANGE, bar.currentData.barname, set[1], number).getVanillaPacket();
-            for (Map.Entry<String, BarData> e : bar.active.entrySet()) {
-                e.getValue().scores.remove(oldUser);
-                e.getValue().scores.put(set[1], number);
-                SU.tp.sendPacket(Bukkit.getPlayer(e.getKey()), packet2);
-                SU.tp.sendPacket(Bukkit.getPlayer(e.getKey()), packet);
+            if (!set[1].equals(oldUser)) {
+                bar.currentData.scores.put(set[1], number);
+                Object packet = new PacketPlayOutScoreboardScore(ScoreAction.REMOVE, bar.currentData.barname, oldUser, number).getVanillaPacket();
+                Object packet2 = new PacketPlayOutScoreboardScore(PacketPlayOutScoreboardScore.ScoreAction.CHANGE, bar.currentData.barname, set[1], number).getVanillaPacket();
+                for (Map.Entry<String, BarData> e : bar.active.entrySet()) {
+                    e.getValue().scores.remove(oldUser);
+                    e.getValue().scores.put(set[1], number);
+                    SU.tp.sendPacket(Bukkit.getPlayer(e.getKey()), packet2);
+                    SU.tp.sendPacket(Bukkit.getPlayer(e.getKey()), packet);
+                }
             }
         }
     }

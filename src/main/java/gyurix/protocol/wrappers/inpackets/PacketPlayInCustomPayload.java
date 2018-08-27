@@ -26,7 +26,7 @@ public class PacketPlayInCustomPayload extends WrappedPacket implements StringSe
     public void loadVanillaPacket(Object packet) {
         Object[] d = PacketInType.CustomPayload.getPacketData(packet);
         channel = (String) d[0];
-        data = Reflection.ver.isAbove(ServerVersion.v1_8) ? ((ByteBuf) d[2]).array() : (byte[]) d[2];
+        data = Reflection.ver.isAbove(ServerVersion.v1_8) ? ((ByteBuf) d[d.length - 1]).array() : (byte[]) d[d.length - 1];
     }
 
     @Override

@@ -107,7 +107,7 @@ public class CuboidArea implements StringSerializable, Cloneable {
     }
 
     public static void resetOutlineBlock(Block block, Player plr) {
-        plr.sendBlockChange(block.getLocation(), block.getTypeId(), block.getData());
+        plr.sendBlockChange(block.getLocation(), block.getType(), block.getData());
     }
 
     /**
@@ -225,22 +225,22 @@ public class CuboidArea implements StringSerializable, Cloneable {
             return;
         World w = plr.getWorld();
         for (int x = pos1.x + 1; x < pos2.x; x++) {
-            plr.sendBlockChange(new Location(w, x, pos1.y, pos1.z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, x, pos1.y, pos2.z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, x, pos2.y, pos1.z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, x, pos2.y, pos2.z), bd.id, (byte) bd.data);
+            bd.sendChange(plr, new Location(w, x, pos1.y, pos1.z));
+            bd.sendChange(plr, new Location(w, x, pos1.y, pos2.z));
+            bd.sendChange(plr, new Location(w, x, pos2.y, pos1.z));
+            bd.sendChange(plr, new Location(w, x, pos2.y, pos2.z));
         }
         for (int y = pos1.y + 1; y < pos2.y; y++) {
-            plr.sendBlockChange(new Location(w, pos1.x, y, pos1.z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, pos1.x, y, pos2.z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, pos2.x, y, pos1.z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, pos2.x, y, pos2.z), bd.id, (byte) bd.data);
+            bd.sendChange(plr, new Location(w, pos1.x, y, pos1.z));
+            bd.sendChange(plr, new Location(w, pos1.x, y, pos2.z));
+            bd.sendChange(plr, new Location(w, pos2.x, y, pos1.z));
+            bd.sendChange(plr, new Location(w, pos2.x, y, pos2.z));
         }
         for (int z = pos1.z; z <= pos2.z; z++) {
-            plr.sendBlockChange(new Location(w, pos1.x, pos1.y, z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, pos1.x, pos2.y, z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, pos2.x, pos1.y, z), bd.id, (byte) bd.data);
-            plr.sendBlockChange(new Location(w, pos2.x, pos2.y, z), bd.id, (byte) bd.data);
+            bd.sendChange(plr, new Location(w, pos1.x, pos1.y, z));
+            bd.sendChange(plr, new Location(w, pos1.x, pos2.y, z));
+            bd.sendChange(plr, new Location(w, pos2.x, pos1.y, z));
+            bd.sendChange(plr, new Location(w, pos2.x, pos2.y, z));
         }
     }
 

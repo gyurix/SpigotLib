@@ -52,10 +52,10 @@ public class PacketPlayOutMap extends WrappedPacket {
     }
 
     public PacketPlayOutMap(MapData mapData) {
-        mapId = mapData.mapId;
-        scale = mapData.scale.getValue();
-        showIcons = mapData.showIcons;
-        icons = mapData.icons;
+        mapId = mapData.getMapId();
+        scale = mapData.getScale().getValue();
+        showIcons = mapData.isShowIcons();
+        icons = mapData.getIcons();
         columns = 0;
         rows = 0;
         x = 128;
@@ -94,8 +94,7 @@ public class PacketPlayOutMap extends WrappedPacket {
             showIcons = (boolean) d[st++];
         Object[] nmsIcons = (Object[]) d[st++];
         icons.clear();
-        for (int i = 0; i < nmsIcons.length; i++)
-            icons.add(new MapIcon(nmsIcons[i]));
+        for (Object nmsIcon : nmsIcons) icons.add(new MapIcon(nmsIcon));
         columns = (int) d[st++];
         rows = (int) d[st++];
         x = (int) d[st++];

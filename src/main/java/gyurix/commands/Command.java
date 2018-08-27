@@ -121,9 +121,7 @@ public class Command implements StringSerializable {
         customCommands.put("GPARTICLE", (cs, text, args) -> {
             String[] data = text.split(" ");
             Location loc = new Location(Bukkit.getWorld(data[0]), Double.valueOf(data[1]), Double.valueOf(data[2]), Double.valueOf(data[3]));
-            loc.getWorld().spigot().playEffect(loc, Effect.valueOf(data[4]), Integer.valueOf(data[5]), Integer.valueOf(data[6]),
-                    Float.valueOf(data[7]), Float.valueOf(data[8]), Float.valueOf(data[9]), Float.valueOf(data[10]),
-                    Integer.valueOf(data[11]), Integer.valueOf(data[12]));
+            loc.getWorld().playEffect(loc, Effect.valueOf(data[4]), Integer.valueOf(data[5]));
             return true;
         });
         customCommands.put("GSOUND", (cs, text, args) -> {
@@ -250,9 +248,7 @@ public class Command implements StringSerializable {
                 Player plr = (Player) cs;
                 String[] data = text.split(" ");
                 Location loc = new Location(plr.getWorld(), Double.valueOf(data[0]), Double.valueOf(data[1]), Double.valueOf(data[2]));
-                plr.spigot().playEffect(loc, Effect.valueOf(data[3]), Integer.valueOf(data[4]), Integer.valueOf(data[5]),
-                        Float.valueOf(data[6]), Float.valueOf(data[7]), Float.valueOf(data[8]), Float.valueOf(data[9]),
-                        Integer.valueOf(data[10]), Integer.valueOf(data[11]));
+                plr.playEffect(loc, Effect.valueOf(data[3]), Integer.valueOf(data[4]));
                 return true;
             }
             return false;

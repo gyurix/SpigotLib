@@ -1,10 +1,13 @@
 package gyurix.spigotutils;
 
 import gyurix.configfile.ConfigSerialization.StringSerializable;
+import gyurix.spigotlib.Items;
 import gyurix.spigotlib.SU;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -30,7 +33,7 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      * @param b - Target Block
      */
     public BlockData(Block b) {
-        id = b.getTypeId();
+        id = b.getType().getId();
         data = b.getData();
         anydata = false;
     }
@@ -41,7 +44,7 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      * @param b - Target Block
      */
     public BlockData(BlockState b) {
-        id = b.getTypeId();
+        id = b.getType().getId();
         data = b.getRawData();
         anydata = false;
     }
@@ -85,16 +88,38 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
         }
         if (s.length == 2)
             try {
-                data = Byte.valueOf(s[1]);
+                data = Short.valueOf(s[1]);
                 anydata = false;
             } catch (Throwable e) {
                 SU.error(SU.cs, e, "SpigotLib", "gyurix");
             }
     }
 
+    /**
+     * Makes a new BlockData from an ItemStack
+     *
+     * @param is - The convertable ItemStack
+     */
+    public BlockData(ItemStack is) {
+        if (is == null || is.getType() == Material.AIR)
+            return;
+        id = is.getType().getId();
+        data = is.getDurability();
+        anydata = false;
+    }
+
+    public BlockData(Material type, short durability) {
+        id = type.getId();
+        data = durability;
+    }
+
     @Override
     public int compareTo(BlockData o) {
         return ((Integer) hashCode()).compareTo(o.hashCode());
+    }
+
+    public Material getType() {
+        return Items.getMaterial(id);
     }
 
     public int hashCode() {
@@ -118,13 +143,6 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
         return anydata ? new BlockData(id) : new BlockData(id, data);
     }
 
-    @Override
-    public String toString() {
-        Material m = Material.getMaterial(id);
-        String sid = m == null ? "" + id : m.name();
-        return anydata ? sid : sid + ':' + data;
-    }
-
     /**
      * Checks if the given block has the same type as this block data.
      *
@@ -132,9 +150,13 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      * @return True if the block's type is the same as this block data
      */
     public boolean isBlock(Block b) {
-        int bid = b.getTypeId();
+        int bid = b.getType().getId();
         byte bdata = b.getData();
         return id == bid && (anydata || bdata == data);
+    }
+
+    public void sendChange(Player plr, Location loc) {
+        plr.sendBlockChange(loc, getType(), (byte) data);
     }
 
     /**
@@ -143,7 +165,8 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      * @param b - Setable block
      */
     public void setBlock(Block b) {
-        b.setTypeIdAndData(id, (byte) data, true);
+        b.setType(getType());
+        b.setData((byte) data);
     }
 
     /**
@@ -152,7 +175,9 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      * @param b - Setable block
      */
     public void setBlockNoPhysics(Block b) {
-        b.setTypeIdAndData(id, (byte) data, false);
+        b.setType(getType());
+        b.setData((byte) data, false);
+        return;
     }
 
     /**
@@ -161,7 +186,15 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      * @return The conversion result
      */
     public ItemStack toItem() {
-        return new ItemStack(id, 1, data);
+        Material type = getType();
+        return new ItemStack(getType(), 1, (short) data);
+    }
+
+    @Override
+    public String toString() {
+        Material m = Items.getMaterial(id);
+        String sid = m == null ? "" + id : m.name();
+        return anydata ? sid : sid + ':' + data;
     }
 }
 

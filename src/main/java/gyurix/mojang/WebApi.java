@@ -1,7 +1,10 @@
 package gyurix.mojang;
 
+import gyurix.spigotlib.SU;
 import org.apache.commons.io.IOUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -12,6 +15,22 @@ import static gyurix.spigotlib.Config.debug;
  * Created by GyuriX on 2016. 06. 10..
  */
 public class WebApi {
+    public static boolean download(String urlString, String filename) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            File f = new File(filename).getAbsoluteFile();
+            f.getParentFile().mkdirs();
+            FileOutputStream fos = new FileOutputStream(filename);
+            SU.transloadStream(con.getInputStream(), fos);
+            fos.close();
+            return true;
+        } catch (Throwable e) {
+            SU.error(SU.cs, e, "SpigotLib", "gyurix");
+            return false;
+        }
+    }
+
     public static String get(String urlString) {
         try {
             URL url = new URL(urlString);

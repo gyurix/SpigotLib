@@ -3,6 +3,9 @@ package gyurix.map;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutMap;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.EntityUtils;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapView;
@@ -16,6 +19,9 @@ import static gyurix.protocol.Reflection.*;
 /**
  * Created by GyuriX on 2016. 07. 06..
  */
+@Builder
+@Getter
+@Setter
 public class MapData {
     private static final Object itemWorldMap, worldMap;
     private static final Method mapGenMethod;
@@ -33,12 +39,15 @@ public class MapData {
         mapGenMethod = getMethod(cl, "a", getNMSClass("World"), getNMSClass("Entity"), cl2);
     }
 
-    public final ArrayList<MapIcon> icons = new ArrayList<>();
+    private final ArrayList<MapIcon> icons = new ArrayList<>();
     private final byte[] colors = new byte[16384];
-    public int mapId = 1, centerX, centerZ;
-    public Scale scale;
-    public boolean showIcons = true;
-    public World world;
+    @Builder.Default
+    private int mapId = 1, centerX, centerZ;
+    @Builder.Default
+    private Scale scale = Scale.CLOSEST;
+    @Builder.Default
+    private boolean showIcons = true;
+    private World world;
 
     public void clear(byte color) {
         if (color < 0 && color > -113)
@@ -52,15 +61,11 @@ public class MapData {
     }
 
     public void setColor(int x, int y, byte color) {
-        if (color < 0 && color > -113)
-            color = 0;
         if (x > -1 && x < 128 && y > -1 && y < 128)
             colors[x + y * 128] = color;
     }
 
     public void setColor(int x, int y, int xLen, int yLen, byte color) {
-        if (color < 0 && color > -113)
-            color = 0;
         for (int cx = 0; cx < xLen; cx++) {
             for (int cy = 0; cy < yLen; cy++) {
                 if (x + cx > -1 && x + cx < 128 && y + cy > -1 && y + cy < 128)

@@ -428,7 +428,7 @@ public class DefaultSerializers {
 
     public static class ObjectSerializer implements Serializer {
         public Object fromData(ConfigData input, Class fixClass, Type... parameters) {
-            if (Thread.currentThread().getStackTrace().length > 50) {
+            if (Thread.currentThread().getStackTrace().length > 100) {
                 SU.cs.sendMessage("§ePossible infinite loop - " + fixClass.getName());
                 return null;
             }
@@ -483,17 +483,17 @@ public class DefaultSerializers {
                 }
             }
             try {
-                if (ArrayUtils.contains(fixClass.getInterfaces(), PostLoadable.class))
+                if (obj instanceof PostLoadable)
                     ((PostLoadable) obj).postLoad();
             } catch (Throwable e) {
                 SU.log(Main.pl, "§cError on post loading §e" + fixClass.getName() + "§c object.");
-                SU.error(SU.cs, e, "SpigotLib", "gyurix");
+                SU.error(SU.cs, e, SU.getPlugin(fixClass).getName(), "gyurix");
             }
             return obj;
         }
 
         public ConfigData toData(Object obj, Type... parameters) {
-            if (Thread.currentThread().getStackTrace().length > 50) {
+            if (Thread.currentThread().getStackTrace().length > 100) {
                 SU.cs.sendMessage("§ePossible infinite loop - " + obj.getClass().getName());
                 return null;
             }

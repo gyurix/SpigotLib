@@ -6,6 +6,7 @@ import gyurix.spigotlib.SU;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
@@ -40,6 +41,11 @@ public class TPSMeter implements Runnable {
     @ConfigOptions(serialize = false)
     public static int ticks;
     /**
+     * Total elapsed tick count from server startup
+     */
+    @ConfigOptions(serialize = false)
+    public static int totalTicks;
+    /**
      * The current tps value of the server
      */
     @ConfigOptions(serialize = false)
@@ -60,20 +66,23 @@ public class TPSMeter implements Runnable {
             ++zeroTpsCount;
             if (zeroTpsCount == reportCrashAfter) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("============== SpigotLib Crash Reporter ==============\n" +
-                        "Your server has been detected having 0 TPS " + reportCrashAfter + " times a row, which means that with high probability it crashed / frozen down. " +
-                        "This crash report will help for your developers to detect what's causing the crash. This is NOT an error in SpigotLib, but it's one of it's " +
-                        "features, so only contact gyuriX for fixing the error caused this crash if you have budget for it.\n" +
-                        "\n");
-                TreeMap<Thread, StackTraceElement[]> map = new TreeMap<>(new java.util.Comparator<Thread>() {
-                    @Override
-                    public int compare(Thread o1, Thread o2) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
+                sb.append("============== SpigotLib Crash Reporter ==============\n" + "Your server has been detected having 0 TPS ")
+                        .append(reportCrashAfter)
+                        .append(" times a row, which means that with high probability it crashed / frozen down. ")
+                        .append("This crash report will help for your developers to detect what's causing the crash." +
+                                " This is NOT an error in SpigotLib, but it's one of it's features, so only contact gyuriX" +
+                                " for fixing the error caused this crash if you can pay for it.\n").append("\n");
+                TreeMap<Thread, StackTraceElement[]> map = new TreeMap<>(Comparator.comparing(Thread::getName));
                 map.putAll(Thread.getAllStackTraces());
                 for (Map.Entry<Thread, StackTraceElement[]> e : map.entrySet()) {
-                    sb.append("\n \n \n§e=====@ §bTHREAD " + e.getKey().getName() + "(§fstate=" + e.getKey().getState() + ", priority=" + e.getKey().getPriority() + "§b)" + " §e@=====");
+                    sb.append("\n \n \n§e=====@ §bTHREAD ")
+                            .append(e.getKey().getName())
+                            .append("(§fstate=")
+                            .append(e.getKey().getState())
+                            .append(", priority=")
+                            .append(e.getKey().getPriority())
+                            .append("§b)")
+                            .append(" §e@=====");
                     int i = 0;
                     for (StackTraceElement el : e.getValue()) {
                         sb.append("\n§c #").append(++i)
@@ -97,7 +106,10 @@ public class TPSMeter implements Runnable {
 
     public void start() {
         meter = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this, checkTime, checkTime, TimeUnit.MILLISECONDS);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.pl, () -> ++ticks, 0, 1);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.pl, () -> {
+            ++ticks;
+            ++totalTicks;
+        }, 0, 1);
     }
 
 }
