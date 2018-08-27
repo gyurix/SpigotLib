@@ -9,6 +9,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static gyurix.spigotlib.SU.rand;
 import static java.lang.Integer.MIN_VALUE;
 
@@ -16,7 +19,7 @@ import static java.lang.Integer.MIN_VALUE;
  * Class representing a CuboidArea, with a first and second block location and
  * with or without world parameter
  */
-public class CuboidArea implements StringSerializable, Cloneable {
+public class CuboidArea extends Area implements StringSerializable, Cloneable {
     /**
      * The first position of this CuboidArea, containing the minX, minY and minZ coordinates
      */
@@ -117,6 +120,25 @@ public class CuboidArea implements StringSerializable, Cloneable {
      */
     public CuboidArea clone() {
         return new CuboidArea(world, pos1.clone(), pos2.clone());
+    }
+
+    @Override
+    public List<Block> getBlocks() {
+        World w = world == null ? null : Bukkit.getWorld(world);
+        if (w == null)
+            return super.getBlocks();
+        return getBlocks(w);
+    }
+
+    @Override
+    public List<Block> getBlocks(World w) {
+        List<Block> blocks = new ArrayList<>();
+        for (int x = pos1.x; x <= pos2.x; ++x)
+            for (int z = pos1.z; z <= pos2.z; ++z)
+                for (int y = pos1.y; y <= pos2.y; ++y) {
+                    blocks.add(w.getBlockAt(x, y, z));
+                }
+        return blocks;
     }
 
     @Override
@@ -247,6 +269,7 @@ public class CuboidArea implements StringSerializable, Cloneable {
     public int size() {
         return (pos2.x - pos1.x + 1) * (pos2.y - pos1.y + 1) * (pos2.z - pos1.z + 1);
     }
+
 
     /**
      * Converts this CuboidArea to an @see UnlimitedYArea

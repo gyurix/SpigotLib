@@ -471,7 +471,7 @@ public final class SU {
             pingF = Reflection.getNMSClass("EntityPlayer").getField("ping");
             mcServer = mcServerClass.getMethod("getServer").invoke(null);
             playerInterractManagerC = pIMClass.getConstructor(Reflection.getNMSClass("World"));
-            worldServer = mcServerClass.getMethod("getWorldServer", Integer.TYPE).invoke(mcServer, 0);
+            worldServer = Reflection.getFieldData(Reflection.getOBCClass("CraftWorld"), "world", Bukkit.getWorlds().iterator().next());
             entityPlayerC = entityPlayerClass.getConstructor(mcServerClass, worldServerClass, Reflection.getUtilClass("com.mojang.authlib.GameProfile"), pIMClass);
             getBukkitEntityM = entityPlayerClass.getMethod("getBukkitEntity");
             loadDataM = craftPlayerClass.getMethod("loadData");

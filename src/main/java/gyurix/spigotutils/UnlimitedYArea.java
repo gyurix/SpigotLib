@@ -8,6 +8,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static gyurix.spigotutils.BlockUtils.getYMax;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
@@ -15,7 +18,7 @@ import static java.lang.Integer.MIN_VALUE;
 /**
  * Created by GyuriX on 2016.05.15..
  */
-public class UnlimitedYArea implements StringSerializable {
+public class UnlimitedYArea extends Area implements StringSerializable {
     public int minx = MIN_VALUE, minz = MIN_VALUE, maxx = MIN_VALUE, maxz = MIN_VALUE;
 
     public UnlimitedYArea(String in) {
@@ -104,6 +107,19 @@ public class UnlimitedYArea implements StringSerializable {
             minz = maxz;
             maxz = tmp;
         }
+    }
+
+    @Override
+    public List<Block> getBlocks(World w) {
+        List<Block> blocks = new ArrayList<>();
+        for (int x = minx; x <= maxx; ++x) {
+            for (int z = minx; z <= maxz; ++z) {
+                for (int y = 0; y <= 255; ++y) {
+                    blocks.add(w.getBlockAt(x, y, z));
+                }
+            }
+        }
+        return blocks;
     }
 
     public Location getYMaxPos1(World world) {

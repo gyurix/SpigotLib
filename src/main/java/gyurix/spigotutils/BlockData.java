@@ -1,6 +1,7 @@
 package gyurix.spigotutils;
 
 import gyurix.configfile.ConfigSerialization.StringSerializable;
+import gyurix.protocol.Reflection;
 import gyurix.spigotlib.Items;
 import gyurix.spigotlib.SU;
 import org.bukkit.Location;
@@ -166,7 +167,8 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      */
     public void setBlock(Block b) {
         b.setType(getType());
-        b.setData((byte) data);
+        if (Reflection.ver.isBellow(ServerVersion.v1_12))
+            b.setData((byte) data);
     }
 
     /**
@@ -176,8 +178,8 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      */
     public void setBlockNoPhysics(Block b) {
         b.setType(getType());
-        b.setData((byte) data, false);
-        return;
+        if (Reflection.ver.isBellow(ServerVersion.v1_12))
+            b.setData((byte) data, false);
     }
 
     /**
@@ -186,7 +188,6 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      * @return The conversion result
      */
     public ItemStack toItem() {
-        Material type = getType();
         return new ItemStack(getType(), 1, (short) data);
     }
 

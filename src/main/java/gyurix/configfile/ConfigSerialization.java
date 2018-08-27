@@ -15,9 +15,9 @@ import java.util.List;
 
 
 public class ConfigSerialization {
-    private static final DualMap<Class, String> aliases = new DualMap();
-    private static final DualMap<Class, Class> interfaceBasedClasses = new DualMap();
-    private static final HashMap<Class, Serializer> serializers = new HashMap();
+    private static final DualMap<Class, String> aliases = new DualMap<>();
+    private static final DualMap<Class, Class> interfaceBasedClasses = new DualMap<>();
+    private static final HashMap<Class, Serializer> serializers = new HashMap<>();
 
     static {
         DefaultSerializers.init();
