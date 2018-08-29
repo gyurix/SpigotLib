@@ -17,6 +17,10 @@ public class Config {
      */
     public static boolean allowAllPermsForAuthor;
     /**
+     * Disable plugins on crash
+     */
+    public static boolean disablePluginOnCrash;
+    /**
      * Amount of async threads used in AnimationAPI for running animations smoothly
      */
     public static int animationApiThreads;
