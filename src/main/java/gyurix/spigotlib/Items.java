@@ -36,10 +36,31 @@ public class Items implements PostLoadable {
      */
     @ConfigOptions(serialize = false)
     private static HashMap<String, ItemStack> nameAliases = new HashMap<>();
+
     /**
      * The in config editable item type (key), item name aliases (value) map.
      */
     private static HashMap<BlockData, ArrayList<String>> names = new HashMap<>();
+
+    /**
+     * Add an item name alias to item to string and item from string converters
+     *
+     * @param name - The items name
+     * @param item - The item
+     */
+    public static void addItemNameAlias(String name, ItemStack item) {
+        nameAliases.put(name, item);
+    }
+
+    /**
+     * Remove an item name alias from the item to string and item from string converters
+     *
+     * @param name - The items name
+     * @return True if the item name alias was removed successfully, false otherwise
+     */
+    public static boolean removeItemNameAlias(String name) {
+        return nameAliases.remove(name) != null;
+    }
 
     public static Enchantment getEnchant(String name) {
         name = name.toLowerCase();
