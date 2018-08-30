@@ -96,7 +96,7 @@ public class TPSMeter implements Runnable {
                 }
                 sb.append("\n======================================================");
                 SU.cs.sendMessage(sb.toString());
-                if(Config.disablePluginOnCrash) {
+                if (Config.disablePluginsOnCrash) {
                     for (Plugin p : SU.pm.getPlugins()) {
                         p.onDisable();
                     }

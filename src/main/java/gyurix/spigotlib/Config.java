@@ -19,7 +19,7 @@ public class Config {
     /**
      * Disable plugins on crash
      */
-    public static boolean disablePluginOnCrash;
+    public static boolean disablePluginsOnCrash;
     /**
      * Amount of async threads used in AnimationAPI for running animations smoothly
      */

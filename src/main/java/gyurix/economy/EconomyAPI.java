@@ -63,6 +63,8 @@ public class EconomyAPI {
         try {
             if (balanceType.equals("default"))
                 return getBalance(plr);
+            else if (balanceType.equals("exp"))
+                return new BigDecimal(SU.getPlayer(plr).getLevel());
             BigDecimal bal = SU.getPlayerConfig(plr).get("balance." + balanceType, BigDecimal.class);
             if (bal == null) {
                 bal = balanceTypes.get(balanceType).defaultValue;
@@ -172,6 +174,10 @@ public class EconomyAPI {
             BalanceUpdateEvent e = new BalanceUpdateEvent(plr, getBalance(plr, balanceType), balance, balanceTypes.get(balanceType));
             SU.pm.callEvent(e);
             if (!e.isCancelled()) {
+                if (balanceType.equals("exp")) {
+                    SU.getPlayer(plr).setLevel(balance.intValue());
+                    return true;
+                }
                 SU.getPlayerConfig(plr).setObject("balance." + balanceType, balance);
                 return true;
             }

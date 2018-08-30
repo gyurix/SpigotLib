@@ -21,7 +21,7 @@ disableWeatherChange: -
 #Allow access to all the plugins commands for the plugins author. Keeping this enabled helps him in speeding up the plugin testing / problem resolving speed.
 allowAllPermsForAuthor: +
 #Disable plugins on crash
-disablePluginOnCrash: true
+disablePluginsOnCrash: +
 #Amount of ticks after startup, when the player joins are not allowed to prevent server damage caused by too early joins.
 earlyJoinProtection: 30
 #Amount of threads dedicated for the AnimationAPI, for making it working smoothly on multi core server machines.
@@ -37,6 +37,10 @@ economy:
       defaultValue: 100
       name: default
       suffix: $
+    exp:
+      defaultValue: 0
+      name: exp
+      suffix: EXP
   migrate: -
   vaultHookType: USER
 #Automatically hook to PlaceholderAPI if it's added to the server
