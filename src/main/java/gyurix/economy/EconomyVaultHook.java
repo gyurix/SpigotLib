@@ -46,15 +46,15 @@ public class EconomyVaultHook implements Economy {
     }
 
     public String format(double v) {
-        return EconomyAPI.balanceTypes.get("default").format(new BigDecimal(v));
+        return EconomyAPI.getBalanceType("default").format(new BigDecimal(v));
     }
 
     public String currencyNamePlural() {
-        return EconomyAPI.balanceTypes.get("default").suffix;
+        return EconomyAPI.getBalanceType("default").getSuffixPlural();
     }
 
     public String currencyNameSingular() {
-        return EconomyAPI.balanceTypes.get("default").suffix;
+        return EconomyAPI.getBalanceType("default").getSuffix();
     }
 
     public boolean hasAccount(String s) {

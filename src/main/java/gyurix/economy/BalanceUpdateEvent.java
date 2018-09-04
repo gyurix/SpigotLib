@@ -1,6 +1,5 @@
 package gyurix.economy;
 
-import gyurix.economy.EconomyAPI.BalanceData;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

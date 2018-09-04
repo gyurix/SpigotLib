@@ -877,4 +877,21 @@ public class ItemUtils {
         }
         return out;
     }
+
+    /**
+     * Makes item glowing by adding luck 1 enchant to it and hide enchants attribute
+     *
+     * @param item - The glowable item
+     * @return The glowing item
+     */
+    public static ItemStack glow(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR)
+            return item;
+        item = item.clone();
+        ItemMeta meta = item.getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        item.setItemMeta(meta);
+        item.addUnsafeEnchantment(Enchantment.LUCK, 1);
+        return item;
+    }
 }

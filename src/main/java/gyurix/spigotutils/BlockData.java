@@ -4,6 +4,7 @@ import gyurix.configfile.ConfigSerialization.StringSerializable;
 import gyurix.protocol.Reflection;
 import gyurix.spigotlib.Items;
 import gyurix.spigotlib.SU;
+import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -27,6 +28,7 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      * The requested type of the block
      */
     public int id;
+
 
     /**
      * Constructs a new BlockData representing the type of the given block
@@ -165,10 +167,11 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      *
      * @param b - Setable block
      */
+    @SneakyThrows
     public void setBlock(Block b) {
         b.setType(getType());
         if (Reflection.ver.isBellow(ServerVersion.v1_12))
-            b.setData((byte) data);
+            Reflection.getMethod(Block.class, "setData", byte.class).invoke(b, data);
     }
 
     /**
@@ -176,10 +179,11 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
      *
      * @param b - Setable block
      */
+    @SneakyThrows
     public void setBlockNoPhysics(Block b) {
         b.setType(getType());
         if (Reflection.ver.isBellow(ServerVersion.v1_12))
-            b.setData((byte) data, false);
+            Reflection.getMethod(Block.class, "setData", byte.class, boolean.class).invoke(b, data, false);
     }
 
     /**

@@ -61,7 +61,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static gyurix.economy.EconomyAPI.VaultHookType.*;
-import static gyurix.economy.EconomyAPI.vaultHookType;
 import static gyurix.protocol.Reflection.ver;
 import static gyurix.spigotlib.Config.PlayerFile.backend;
 import static gyurix.spigotlib.Config.PlayerFile.mysql;
@@ -84,7 +83,7 @@ public class Main extends JavaPlugin implements Listener {
     /**
      * Current version of the plugin, stored here to not be able to be abused so easily by server owners, by changing the plugin.yml file
      */
-    public static final String version = "8.0.1";
+    public static final String version = "8.1";
     /**
      * Data directory of the plugin (plugins/SpigotLib folder)
      */
@@ -346,6 +345,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
         vault = pm.getPlugin("Vault") != null;
+        EconomyAPI.VaultHookType vaultHookType = EconomyAPI.getVaultHookType();
         if (!vault)
             cs.sendMessage("§2[§aStartup§2]§e The plugin §aVault§e is not present, skipping hook...");
         else {
@@ -357,15 +357,15 @@ public class Main extends JavaPlugin implements Listener {
                 RegisteredServiceProvider<Economy> rspEcon = srv.getServicesManager().getRegistration(Economy.class);
                 if (rspEcon != null)
                     econ = rspEcon.getProvider();
-                if (EconomyAPI.migrate) {
+                if (EconomyAPI.isMigrate()) {
                     cs.sendMessage("§2[§aStartup§2]§e Migrating economy data from old Economy " + econ.getName() + "... ");
-                    vaultHookType = NONE;
+                    EconomyAPI.setVaultHookType(NONE);
                     for (OfflinePlayer op : Bukkit.getOfflinePlayers()) {
                         EconomyAPI.setBalance(op.getUniqueId(), new BigDecimal(econ.getBalance(op)));
                         log(this, "Done player " + op.getName());
                     }
-                    vaultHookType = PROVIDER;
-                    EconomyAPI.migrate = false;
+                    EconomyAPI.setVaultHookType(PROVIDER);
+                    EconomyAPI.setMigrate(false);
                     log(this, "Finished data migration, please restart the server!");
                     setEnabled(false);
                     return;
@@ -376,7 +376,7 @@ public class Main extends JavaPlugin implements Listener {
             if (!forceReducedMode && schedulePacketAPI)
                 startPacketAPI();
             if (vault) {
-                if (vaultHookType == USER) {
+                if (EconomyAPI.getVaultHookType() == USER) {
                     RegisteredServiceProvider<Economy> rspEcon = srv.getServicesManager().getRegistration(Economy.class);
                     if (rspEcon != null)
                         econ = rspEcon.getProvider();

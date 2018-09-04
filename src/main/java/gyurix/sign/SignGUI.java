@@ -80,7 +80,7 @@ public class SignGUI implements PacketInListener {
                 try {
                     cancel();
                     Block b = plr.getWorld().getBlockAt(bl.x, bl.y, bl.z);
-                    tp.sendPacket(plr, new PacketPlayOutBlockChange(bl, b.getTypeId(), b.getData()));
+                    tp.sendPacket(plr, new PacketPlayOutBlockChange(bl, b.getType().getId(), b.getData()));
                     dr.done(SignGUI.this);
                 } catch (Throwable e1) {
                     SU.error(SU.cs, e1, "SignGUI", "gyurix");

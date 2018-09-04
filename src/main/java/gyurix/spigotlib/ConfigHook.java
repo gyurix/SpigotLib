@@ -181,10 +181,11 @@ public class ConfigHook {
         });
         handlers.put("balf", (plr, inside, oArgs) -> {
             if (inside == null || inside.isEmpty()) {
-                return EconomyAPI.balanceTypes.get("default").format(EconomyAPI.getBalance(plr.getUniqueId()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                return EconomyAPI.getBalanceType("default").format(EconomyAPI.getBalance(plr.getUniqueId()));
             }
-            String str = StringUtils.join(inside, "");
-            return EconomyAPI.balanceTypes.get(str).format(EconomyAPI.getBalance(plr.getUniqueId(), str).setScale(2, BigDecimal.ROUND_HALF_UP));
+            String balanceType = StringUtils.join(inside, "");
+            return EconomyAPI.getBalanceType(balanceType).format(
+                    EconomyAPI.getBalance(plr.getUniqueId(), balanceType).setScale(2, BigDecimal.ROUND_HALF_UP));
         });
     }
 

@@ -747,6 +747,27 @@ public final class SU {
         return out;
     }
 
+    public static String toCamelCase(String name) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : name.split("[ _]")) {
+            sb.append(' ').append(Character.toUpperCase(s.charAt(0))).append(s.substring(1).toLowerCase());
+        }
+        return sb.substring(1);
+    }
+
+    /**
+     * Transloads an InputStream to an OutputStream, closes the InputStream, when it's done
+     *
+     * @param is - The InputStream
+     * @param os - The OutputStream
+     */
+    public static void transloadStream(InputStream is, OutputStream os) throws IOException {
+        byte[] buf = new byte[4096];
+        for (int done = is.read(buf); done > 0; done = is.read(buf))
+            os.write(buf, 0, done);
+        is.close();
+    }
+
     /**
      * Unescape multi line to single line escaped text
      *
@@ -775,19 +796,6 @@ public final class SU {
             return pf.removeData(key);
         }
         return false;
-    }
-
-    /**
-     * Transloads an InputStream to an OutputStream, closes the InputStream, when it's done
-     *
-     * @param is - The InputStream
-     * @param os - The OutputStream
-     */
-    public static void transloadStream(InputStream is, OutputStream os) throws IOException {
-        byte[] buf = new byte[4096];
-        for (int done = is.read(buf); done > 0; done = is.read(buf))
-            os.write(buf, 0, done);
-        is.close();
     }
 
     /**

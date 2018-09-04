@@ -39,10 +39,11 @@ public class MapData {
         mapGenMethod = getMethod(cl, "a", getNMSClass("World"), getNMSClass("Entity"), cl2);
     }
 
-    private final ArrayList<MapIcon> icons = new ArrayList<>();
     private final byte[] colors = new byte[16384];
+    private final ArrayList<MapIcon> icons = new ArrayList<>();
+    private int centerX, centerZ;
     @Builder.Default
-    private int mapId = 1, centerX, centerZ;
+    private int mapId = 1;
     @Builder.Default
     private Scale scale = Scale.CLOSEST;
     @Builder.Default

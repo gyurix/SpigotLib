@@ -37,8 +37,10 @@ economy:
       defaultValue: 100
       name: default
       suffix: $
+      fullName: ingame money
     exp:
       defaultValue: 0
+      fullName: experience levels
       name: exp
       suffix: EXP
   migrate: -
