@@ -2,12 +2,14 @@ package gyurix.spigotutils;
 
 import com.google.common.collect.Lists;
 import gyurix.api.VariableAPI;
+import gyurix.chat.ChatTag;
 import gyurix.nbt.NBTCompound;
 import gyurix.nbt.NBTList;
 import gyurix.protocol.utils.ItemStackWrapper;
 import gyurix.spigotlib.Items;
 import gyurix.spigotlib.Main;
 import gyurix.spigotlib.SU;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
@@ -34,8 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static gyurix.protocol.Reflection.ver;
 import static gyurix.spigotlib.Items.*;
 import static gyurix.spigotlib.SU.*;
-import static gyurix.spigotutils.ServerVersion.v1_8;
-import static gyurix.spigotutils.ServerVersion.v1_9;
+import static gyurix.spigotutils.ServerVersion.*;
 
 /**
  * Utils for managing items
@@ -451,17 +452,20 @@ public class ItemUtils {
                 out.append(" author:").append(bmeta.getAuthor());
             if (bmeta.hasTitle())
                 out.append(" title:").append(bmeta.getTitle());
-            for (String page : bmeta.getPages())
-                out.append(" page:").append(escapeText(page));
-        }
-        if (ver.isAbove(v1_8))
-            if (meta instanceof BannerMeta) {
-                BannerMeta bmeta = (BannerMeta) meta;
-                out.append(" color:").append(bmeta.getBaseColor() == null ? "BLACK" : bmeta.getBaseColor().name());
-                for (Pattern p : bmeta.getPatterns())
-                    out.append(' ').append(p.getPattern().getIdentifier()).append(':').append(p.getColor().name());
+            if (ver.isAbove(v1_13)) {
+                for (BaseComponent[] components : bmeta.spigot().getPages())
+                    out.append(" page:").append(escapeText(ChatTag.fromBaseComponents(components).toExtraString()));
+            } else {
+                for (String page : bmeta.getPages())
+                    out.append(" page:").append(escapeText(page));
             }
-        if (meta instanceof LeatherArmorMeta) {
+        }
+        if (ver.isAbove(v1_8) && (meta instanceof BannerMeta)) {
+            BannerMeta bmeta = (BannerMeta) meta;
+            out.append(" color:").append(bmeta.getBaseColor() == null ? "BLACK" : bmeta.getBaseColor().name());
+            for (Pattern p : bmeta.getPatterns())
+                out.append(' ').append(p.getPattern().getIdentifier()).append(':').append(p.getColor().name());
+        } else if (meta instanceof LeatherArmorMeta) {
             LeatherArmorMeta bmeta = (LeatherArmorMeta) meta;
             Color c = bmeta.getColor();
             if (!c.equals(Bukkit.getItemFactory().getDefaultLeatherColor()))

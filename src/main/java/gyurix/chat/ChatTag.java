@@ -6,9 +6,12 @@ import gyurix.json.JsonSettings;
 import gyurix.spigotlib.ChatAPI;
 import gyurix.spigotlib.SU;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 
 import java.util.ArrayList;
+
+import static gyurix.spigotutils.NullUtils.to0;
 
 public class ChatTag {
     @JsonSettings(defaultValue = "false")
@@ -29,12 +32,35 @@ public class ChatTag {
         text = in;
     }
 
-    public static ChatTag fromBaseComponents(BaseComponent[] comps) {
-        StringBuilder data = new StringBuilder();
-        for (BaseComponent bc : comps) {
-            data.append(bc.toLegacyText());
+    public static ChatTag fromBaseComponent(BaseComponent comp) {
+        ChatTag tag = new ChatTag();
+        net.md_5.bungee.api.ChatColor color = comp.getColorRaw();
+        if (color != null)
+            tag.color = ChatColor.valueOf(color.name().toLowerCase());
+        tag.obfuscated = to0(comp.isObfuscatedRaw());
+        tag.bold = to0(comp.isObfuscatedRaw());
+        tag.strikethrough = to0(comp.isStrikethroughRaw());
+        tag.underlined = to0(comp.isUnderlinedRaw());
+        tag.italic = to0(comp.isItalicRaw());
+        if (comp instanceof TextComponent) {
+            tag.text = ((TextComponent) comp).getText();
+        } else if (comp instanceof TranslatableComponent) {
+            TranslatableComponent tc = (TranslatableComponent) comp;
+            tag.translate = tc.getTranslate();
+            tag.with = new ArrayList<>();
+            tc.getWith().forEach(c -> tag.with.add(ChatTag.fromBaseComponent(c)));
         }
-        return fromColoredText(data.toString());
+        return tag;
+    }
+
+    public static ChatTag fromBaseComponents(BaseComponent[] comps) {
+        if (comps.length == 1)
+            return fromBaseComponent(comps[0]);
+        ChatTag tag = new ChatTag();
+        tag.extra = new ArrayList<>();
+        for (BaseComponent c : comps)
+            tag.extra.add(ChatTag.fromBaseComponent(c));
+        return tag;
     }
 
     public static ChatTag fromColoredText(String colText) {
@@ -160,40 +186,85 @@ public class ChatTag {
 
     /**
      * Sets an extra data for this ChatTag. Available extra types:
-     * T - Hover event, show text
-     * I - Hover event, show item
+     * # - Translation
+     * \@ - Selector
      * A - Hover event, show achievement
-     * E - Hover event, show entity
-     * S - Click event, suggest command
-     * R - Click event, run command
-     * U - Click event, open url
-     * F - Click event, open file
-     * P - Click event, change page
      * D - Click event, twitch user data
+     * E - Hover event, show entity
+     * F - Click event, open file
+     * I - Hover event, show item
+     * P - Click event, change page
+     * R - Click event, run command
+     * S - Click event, suggest command
+     * T - Hover event, show text
+     * U - Click event, open url
+     * W - Translate with
      * + - Insertion (on shift click)
      *
      * @param extraType The character representing the extra type
      * @param value     A String representing the value of this extra
-     *                  \@ - Selector
      * @return This chat tag
      */
     public ChatTag setExtra(char extraType, String value) {
-        if (extraType == '+')
-            insertion = value;
-        else if (extraType == '@') {
-            text = null;
-            selector = value;
-        } else {
-            ChatHoverEventType he = ChatHoverEventType.forId(extraType);
-            if (he == null) {
-                ChatClickEventType ce = ChatClickEventType.forId(extraType);
-                if (ce != null)
-                    clickEvent = new ChatClickEvent(ce, value);
-            } else {
-                hoverEvent = new ChatHoverEvent(he, value);
-            }
+        switch (extraType) {
+            case '#':
+                translate = value;
+                return this;
+            case 'W':
+                with.add(ChatTag.fromColoredText(value));
+                return this;
+            case '@':
+                selector = value;
+                return this;
+            case '+':
+                insertion = value;
+                return this;
         }
+        ChatHoverEventType he = ChatHoverEventType.forId(extraType);
+        if (he != null) {
+            hoverEvent = new ChatHoverEvent(he, value);
+            return this;
+        }
+        ChatClickEventType ce = ChatClickEventType.forId(extraType);
+        if (ce != null)
+            clickEvent = new ChatClickEvent(ce, value);
         return this;
+    }
+
+    public BaseComponent toBaseComponent() {
+        BaseComponent out = translate != null ? toTranslatableComponent() : toTextComponent();
+        if (obfuscated)
+            out.setObfuscated(obfuscated);
+        if (bold)
+            out.setBold(bold);
+        if (strikethrough)
+            out.setStrikethrough(strikethrough);
+        if (underlined)
+            out.setUnderlined(underlined);
+        if (italic)
+            out.setItalic(italic);
+        if (color != null)
+            out.setColor(color.toSpigotChatColor());
+        if (clickEvent != null)
+            out.setClickEvent(clickEvent.toSpigotClickEvent());
+        if (hoverEvent != null)
+            out.setHoverEvent(hoverEvent.toSpigotHoverEvent());
+        if (insertion != null)
+            out.setInsertion(insertion);
+        if (extra != null)
+            extra.forEach(e -> out.addExtra(e.toBaseComponent()));
+        return out;
+    }
+
+    public BaseComponent[] toBaseComponents() {
+        if (extra == null) {
+            return new BaseComponent[]{toBaseComponent()};
+        }
+        BaseComponent[] baseComponents = new BaseComponent[extra.size()];
+        for (int i = 0; i < extra.size(); ++i) {
+            baseComponents[i] = extra.get(i).toBaseComponent();
+        }
+        return baseComponents;
     }
 
     public String toColoredString() {
@@ -203,9 +274,38 @@ public class ChatTag {
             if (tag.text != null) {
                 out.append(tag.getFormatPrefix());
                 out.append(tag.text);
+            } else if (tag.translate != null) {
+                out.append(tag.translate);
             }
         }
         return SU.optimizeColorCodes(out.toString());
+    }
+
+    public String toExtraString() {
+        ArrayList<ChatTag> tags = extra == null ? Lists.newArrayList(this) : extra;
+        StringBuilder out = new StringBuilder();
+        for (ChatTag tag : tags) {
+            out.append("\\|");
+            out.append(tag.getFormatPrefix());
+            if (tag.text != null)
+                out.append(tag.text);
+            if (tag.selector != null)
+                out.append("\\-@").append(tag.selector);
+            if (tag.translate != null)
+                out.append("\\-#").append(tag.translate);
+            if (tag.with != null) {
+                StringBuilder sb2 = new StringBuilder();
+                tag.with.forEach(w -> sb2.append(w.toColoredString()));
+                out.append(SU.optimizeColorCodes(sb2.toString()));
+            }
+            if (tag.hoverEvent != null)
+                out.append("\\-").append(tag.hoverEvent.action.id).append(tag.hoverEvent.value.toColoredString());
+            if (tag.clickEvent != null)
+                out.append("\\-").append(tag.clickEvent.action.id).append(tag.clickEvent.value);
+            if (tag.insertion != null)
+                out.append("\\-+").append(tag.insertion);
+        }
+        return out.substring(2);
     }
 
     public String toFormatlessString() {
@@ -222,40 +322,19 @@ public class ChatTag {
         return ChatAPI.toICBC(JsonAPI.serialize(this));
     }
 
-    private BaseComponent toBaseComponent() {
-        BaseComponent component = new ComponentBuilder(text)
-                .obfuscated(obfuscated)
-                .bold(bold)
-                .strikethrough(strikethrough)
-                .underlined(underlined)
-                .italic(italic).create()[0];
-        if (color != null)
-            component.setColor(color.toSpigotChatColor());
-        if (extra != null)
-            extra.forEach(e -> component.addExtra(e.toBaseComponent()));
-        if (clickEvent != null)
-            component.setClickEvent(clickEvent.toSpigotClickEvent());
-        if (hoverEvent != null)
-            component.setHoverEvent(hoverEvent.toSpigotHoverEvent());
-        if (insertion != null)
-            component.setInsertion(insertion);
-        return component;
-    }
-
-    public BaseComponent[] toBaseComponents() {
-        if (extra == null) {
-            return new BaseComponent[]{toBaseComponent()};
-        }
-        BaseComponent[] baseComponents = new BaseComponent[extra.size()];
-        for (int i = 0; i < extra.size(); ++i) {
-            baseComponents[i] = extra.get(i).toBaseComponent();
-        }
-        return baseComponents;
-    }
-
     @Override
     public String toString() {
         return JsonAPI.serialize(this);
+    }
+
+    private TextComponent toTextComponent() {
+        return new TextComponent(text);
+    }
+
+    private TranslatableComponent toTranslatableComponent() {
+        TranslatableComponent out = new TranslatableComponent(translate);
+        with.forEach(t -> out.addWith(t.toBaseComponent()));
+        return out;
     }
 }
 
