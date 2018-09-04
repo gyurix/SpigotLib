@@ -455,6 +455,7 @@ public class ItemUtils {
             if (ver.isAbove(v1_13)) {
                 for (BaseComponent[] components : bmeta.spigot().getPages())
                     out.append(" page:").append(escapeText(ChatTag.fromBaseComponents(components).toExtraString()));
+                out.append(" generation:").append(bmeta.getGeneration());
             } else {
                 for (String page : bmeta.getPages())
                     out.append(" page:").append(escapeText(page));
@@ -696,7 +697,13 @@ public class ItemUtils {
                             bmeta.setTitle(text);
                             break;
                         case "PAGE":
-                            bmeta.addPage(text);
+                            if (ver.isAbove(v1_13))
+                                bmeta.spigot().addPage(ChatTag.fromExtraText(text).toBaseComponents());
+                            else
+                                bmeta.addPage(text);
+                            break;
+                        case "GENERATION":
+                            bmeta.setGeneration(BookMeta.Generation.valueOf(text.toUpperCase()));
                             break;
                     }
                 } catch (Throwable e) {
