@@ -6,6 +6,7 @@ import gyurix.json.JsonSettings;
 import gyurix.spigotlib.ChatAPI;
 import gyurix.spigotlib.SU;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 
 import java.util.ArrayList;
 
@@ -219,6 +220,37 @@ public class ChatTag {
 
     public Object toICBC() {
         return ChatAPI.toICBC(JsonAPI.serialize(this));
+    }
+
+    private BaseComponent toBaseComponent() {
+        BaseComponent component = new ComponentBuilder(text)
+                .obfuscated(obfuscated)
+                .bold(bold)
+                .strikethrough(strikethrough)
+                .underlined(underlined)
+                .italic(italic).create()[0];
+        if (color != null)
+            component.setColor(color.toSpigotChatColor());
+        if (extra != null)
+            extra.forEach(e -> component.addExtra(e.toBaseComponent()));
+        if (clickEvent != null)
+            component.setClickEvent(clickEvent.toSpigotClickEvent());
+        if (hoverEvent != null)
+            component.setHoverEvent(hoverEvent.toSpigotHoverEvent());
+        if (insertion != null)
+            component.setInsertion(insertion);
+        return component;
+    }
+
+    public BaseComponent[] toBaseComponents() {
+        if (extra == null) {
+            return new BaseComponent[]{toBaseComponent()};
+        }
+        BaseComponent[] baseComponents = new BaseComponent[extra.size()];
+        for (int i = 0; i < extra.size(); ++i) {
+            baseComponents[i] = extra.get(i).toBaseComponent();
+        }
+        return baseComponents;
     }
 
     @Override

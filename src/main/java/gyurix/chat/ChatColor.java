@@ -45,4 +45,8 @@ public enum ChatColor {
     public boolean isFormat() {
         return format;
     }
+
+    public net.md_5.bungee.api.ChatColor toSpigotChatColor() {
+        return net.md_5.bungee.api.ChatColor.valueOf(name().toUpperCase());
+    }
 }

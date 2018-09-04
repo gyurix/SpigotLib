@@ -1,5 +1,7 @@
 package gyurix.chat;
 
+import net.md_5.bungee.api.chat.HoverEvent;
+
 import java.util.HashMap;
 
 /**
@@ -30,4 +32,7 @@ public enum ChatHoverEventType {
     }
 
 
+    public HoverEvent.Action toSpigotHoverAction() {
+        return HoverEvent.Action.valueOf(name().toUpperCase());
+    }
 }

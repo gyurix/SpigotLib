@@ -1,5 +1,7 @@
 package gyurix.chat;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+
 import java.util.HashMap;
 
 public enum ChatClickEventType {
@@ -29,6 +31,10 @@ public enum ChatClickEventType {
 
     public char getId() {
         return id;
+    }
+
+    public ClickEvent.Action toSpigotClickAction() {
+        return ClickEvent.Action.valueOf(name().toUpperCase());
     }
 }
 
