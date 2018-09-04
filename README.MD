@@ -1,17 +1,33 @@
-# SpigotLib
+```
 
-## Introduction
+  ██████  ██▓███   ██▓  ▄████  ▒█████  ▄▄▄█████▓    ██▓     ██▓ ▄▄▄▄   
+▒██    ▒ ▓██░  ██▒▓██▒ ██▒ ▀█▒▒██▒  ██▒▓  ██▒ ▓▒   ▓██▒    ▓██▒▓█████▄ 
+░ ▓██▄   ▓██░ ██▓▒▒██▒▒██░▄▄▄░▒██░  ██▒▒ ▓██░ ▒░   ▒██░    ▒██▒▒██▒ ▄██
+  ▒   ██▒▒██▄█▓▒ ▒░██░░▓█  ██▓▒██   ██░░ ▓██▓ ░    ▒██░    ░██░▒██░█▀  
+▒██████▒▒▒██▒ ░  ░░██░░▒▓███▀▒░ ████▓▒░  ▒██▒ ░    ░██████▒░██░░▓█  ▀█▓
+▒ ▒▓▒ ▒ ░▒▓▒░ ░  ░░▓   ░▒   ▒ ░ ▒░▒░▒░   ▒ ░░      ░ ▒░▓  ░░▓  ░▒▓███▀▒
+░ ░▒  ░ ░░▒ ░      ▒ ░  ░   ░   ░ ▒ ▒░     ░       ░ ░ ▒  ░ ▒ ░▒░▒   ░ 
+░  ░  ░  ░░        ▒ ░░ ░   ░ ░ ░ ░ ▒    ░           ░ ░    ▒ ░ ░    ░ 
+      ░            ░        ░     ░ ░                  ░  ░ ░   ░      
+                                                                     ░ 
+
+```
+
+# Introduction
 
 SpigotLib is a collection of several useful libraries and APIs
 for Spigot plugin development. It's not only perfect for developers,
 but it's also good for server owners, because they can use it's API
 testing commands, which are really useful.
 
-#### [**Official download page**](https://www.spigotmc.org/resources/spigotlib.5925/)
-#### [**JavaDoc**](https://gyurix.github.io/SpigotLib/)
-#### [**Discord Group**](https://discord.gg/Jr3bKpq)
 
-## Why should you use SpigotLib?
+|`Important links`|
+|---|
+[**Official Discord Group**](https://discord.gg/Jr3bKpq) |
+[**Official Download Page**](https://www.spigotmc.org/resources/spigotlib.5925/) |
+[**Online JavaDoc**](https://gyurix.github.io/SpigotLib/) |
+
+# Why should you use SpigotLib?
 If you are a **Minecraft server owner**, then you should use it for one of the following purposes:
 1. You would like to use a plugin on your server which depends on it
 2. For using some of it's commands by server owners, admins. You may even put them to a sign or an NPC with other plugins, what can be very helpful
@@ -24,7 +40,7 @@ If you are a **Spigot plugin developer**, then you should use it for one of the 
 4. To avoid the possibility of so many bugs appearing in your plugin
 5. For coding plugins working on the packet level super easily
 
-## Troubleshooting Issues
+# Troubleshooting Issues
 
 If the plugin does not work for you then please do not panic, do **NOT** leave a bad review, or a comment, just read and follow these steps:
 
@@ -32,17 +48,17 @@ If the plugin does not work for you then please do not panic, do **NOT** leave a
 
 1. **Incorrect server version:** Please use the Spigots BuildTools to build yourself one of the following server versions: 1.8.8; 1.9; 1.9.2; 1.9.4; 1.10; 1.10.2; 1.11; 1.11.2; 1.12; 1.12.2; 1.13; 1.13.1.
 
-For any other version there is no guarantee that SpigotLib will work without any issues. On 1.7.10 and older servers the SpigotLib works might only work in a limited "safe" mode, which means that only some of it's funtionalities will work, which does not directly depend on the Spigot API.
+    For any other version there is no guarantee that SpigotLib will work without any issues. On 1.7.10 and older servers the SpigotLib works might only work in a limited "safe" mode, which means that only some of it's funtionalities will work, which does not directly depend on the Spigot API.
 
 2. **Using other plugins which causes issues:**
  
-I will list you a few already known problematic plugins, of which some versions might cause issues:
+    I will list you a few already known problematic plugins, of which some versions might cause issues:
 
-  - **ChatControl** plugins packet related features: Please stop your server and disable these features in **ChatControl** plugins configuration
+  - **ChatControl plugins packet related features:** Please stop your server and disable these features in ChatControl plugins configuration
   
   - **ProtocolSupport, ProtocolLib, ViaVersion:** All of these plugins works with packets, so it's possible that some of them causes compatibility issues with SpigotLib. To resolve these issues it's suggested to make a new test server using just SpigotLib, and try to add these 3 plugins to it step by step. After these are added and working properly you may add the other plugins to your server. If they are not working, then check if you are using the correct versions of both of these plugins.
 
-I have tested and verified already, that using the right versions of ProtocolSupport, ProtocolLib and ViaVersion together with SpigotLib are working fine, however I believe, that the combination of these 4 plugins incorrectly causes the most of the problems.
+    I have tested and verified already, that using the right versions of ProtocolSupport, ProtocolLib and ViaVersion together with SpigotLib are working fine, however I believe, that the combination of these 4 plugins incorrectly causes the most of the problems.
 
 3. **Remove old SpigotLib folder:** After each update it's suggested to remove the old SpigotLib folder for letting the plugin extract the latest configuration and language file from the new SpigotLib jar.
 
@@ -51,7 +67,7 @@ I have tested and verified already, that using the right versions of ProtocolSup
 5. **If you are absolutely sure about that none of the above mentioned points helped you:** Still do NOT leave a bad review or write a comment, just contact me and I will help you.
 
 
-## Features
+# Features
 
 - **Animation API** (make your animations and run them easily)
 - **BungeeAPI** (Communicate super easily with the BungeeCord or with other servers connected to BungeeCord)
@@ -75,7 +91,7 @@ I have tested and verified already, that using the right versions of ProtocolSup
 - **VariableAPI** (for handling unlimited amount of variables cross plugins, with a really simple and easy to use way)
 - **TimeAPI** (for showing times in chat easily)
 
-## Commands
+# Commands
 - **/sl cmd** [p:player] <command>
 - **/sl debug** 
 - **/sl item [give]** [p:player] [item]
@@ -87,33 +103,33 @@ I have tested and verified already, that using the right versions of ProtocolSup
 - **/sl vars** [p:player] [message]
 - **/sl velocity** [p:player] <x> <y> <z>
 
-## Permissions
+# Permissions
 - **spigotlib.debug** (for getting debug messages, like error reports in the chat)
 - **spigotlib.command.commandname** (for using a SpigotLib command)
 
-## Translations
+# Translations
 
 - **Available:** English, German, Hungarian, Dutch (outdated, looking for new translators)
 
 If you are able to, please translate this plugin to your language! In translation, you should keep the plugins colors, commands and variable names. You should only change the sentences in messages.
 
-## Contact
+# Contact
 
 Before complaining about something doesn't work, please CONTACT ME.
 
-#### [**Discord Group**](https://discord.gg/Jr3bKpq)
+[**Discord Group**](https://discord.gg/Jr3bKpq)
 
-#### [Author's Discord](discord:gyuriX#8413)
+**Author's Discord:** gyuriX#8413
 
-#### [Skype](skype:gyurixdev?chat)
+**Skype:** gyurixdev
 
-#### [Email](mailto:barathgy@gmail.com?subject=SpigotLib&body=Hello%2C%0A%0AI%20need%20some%20support%20in%20using%20your%20SpigotLib%20plugin.%0A%0AMy%20server%20version%20is%3A%201.8.8%0A%0AI%20am%20using%20the%20following%20plugins%20on%20my%20server%3A%0A-%20SpigotLib%0A-%20Vault%0A-%20Essentials%0A%0AThanks%2C%0ASpigotMc-Username)
+[Email](mailto:barathgy@gmail.com?subject=SpigotLib&body=Hello%2C%0A%0AI%20need%20some%20support%20in%20using%20your%20SpigotLib%20plugin.%0A%0AMy%20server%20version%20is%3A%201.8.8%0A%0AI%20am%20using%20the%20following%20plugins%20on%20my%20server%3A%0A-%20SpigotLib%0A-%20Vault%0A-%20Essentials%0A%0AThanks%2C%0ASpigotMc-Username)
 
-## ​License
+# ​License
 
-SpigotLib is licensed under the GPL-3 license 
+SpigotLib is licensed under the **GPL-3** license 
 
-## [Short overview](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3))
+[Short overview](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3))
 ![](https://s6.postimg.cc/ipih76mi9/Spigot_Lib_License_Short.png)
 
-## [Full text](https://github.com/gyurix/SpigotLib/blob/master/LICENSE.MD)
+[Full text](https://github.com/gyurix/SpigotLib/blob/master/LICENSE.MD)
