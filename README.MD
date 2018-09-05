@@ -123,7 +123,7 @@ Before complaining about something doesn't work, please CONTACT ME.
 
 **Skype:** gyurixdev
 
-[Email](mailto:barathgy@gmail.com?subject=SpigotLib&body=Hello%2C%0A%0AI%20need%20some%20support%20in%20using%20your%20SpigotLib%20plugin.%0A%0AMy%20server%20version%20is%3A%201.8.8%0A%0AI%20am%20using%20the%20following%20plugins%20on%20my%20server%3A%0A-%20SpigotLib%0A-%20Vault%0A-%20Essentials%0A%0AThanks%2C%0ASpigotMc-Username)
+**[Email](mailto:barathgy@gmail.com?subject=SpigotLib&body=Hello%2C%0A%0AI%20need%20some%20support%20in%20using%20your%20SpigotLib%20plugin.%0A%0AMy%20server%20version%20is%3A%201.8.8%0A%0AI%20am%20using%20the%20following%20plugins%20on%20my%20server%3A%0A-%20SpigotLib%0A-%20Vault%0A-%20Essentials%0A%0AThanks%2C%0ASpigotMc-Username)**
 
 # ​License
 

@@ -13,7 +13,7 @@ public class GUIConfig {
     public int size;
     public String title;
 
-    public Inventory getInventory(CustomGUI gui, int size, Object... vars) {
+    public Inventory getInventory(int size, CustomGUI gui, Object... vars) {
         size = (size + 8) / 9 * 9;
         Inventory inv = Bukkit.createInventory(gui, size, SU.fillVariables(title, vars));
         if (separator != null && separator.getType() != Material.AIR) {
@@ -25,6 +25,6 @@ public class GUIConfig {
     }
 
     public Inventory getInventory(CustomGUI gui, Object... vars) {
-        return getInventory(gui, size, vars);
+        return getInventory(size, gui, vars);
     }
 }
