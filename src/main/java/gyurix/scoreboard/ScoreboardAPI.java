@@ -32,15 +32,13 @@ public class ScoreboardAPI {
         if (plr == null || info == null)
             return false;
         ScoreboardBar from = info.active;
-        info.active = to;
         if (from == to)
             return false;
-        if (to == null) {
+        info.active = to;
+        if (from != null)
             from.unload(plr);
-            return true;
-        }
-        if (!to.load(plr))
-            to.activate(plr);
+        if (to != null)
+            to.load(plr);
         return true;
     }
 

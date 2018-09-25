@@ -50,13 +50,23 @@ public class ChatTag {
             tag.with = new ArrayList<>();
             tc.getWith().forEach(c -> tag.with.add(ChatTag.fromBaseComponent(c)));
         }
+        if (comp.getHoverEvent() != null)
+            tag.hoverEvent = new ChatHoverEvent(comp.getHoverEvent());
+        if (comp.getClickEvent() != null)
+            tag.clickEvent = new ChatClickEvent(comp.getClickEvent());
+        tag.insertion = comp.getInsertion();
+        if (comp.getExtra() != null) {
+            tag.extra = new ArrayList<>();
+            for (BaseComponent c : comp.getExtra())
+                tag.extra.add(ChatTag.fromBaseComponent(c));
+        }
         return tag;
     }
 
     public static ChatTag fromBaseComponents(BaseComponent[] comps) {
         if (comps.length == 1)
             return fromBaseComponent(comps[0]);
-        ChatTag tag = new ChatTag();
+        ChatTag tag = new ChatTag("");
         tag.extra = new ArrayList<>();
         for (BaseComponent c : comps)
             tag.extra.add(ChatTag.fromBaseComponent(c));
@@ -285,6 +295,12 @@ public class ChatTag {
         ArrayList<ChatTag> tags = extra == null ? Lists.newArrayList(this) : extra;
         StringBuilder out = new StringBuilder();
         for (ChatTag tag : tags) {
+            if (tag.extra != null) {
+                for (ChatTag t : tag.extra) {
+                    out.append("\\|").append(t.toExtraString());
+                }
+                continue;
+            }
             out.append("\\|");
             out.append(tag.getFormatPrefix());
             if (tag.text != null)

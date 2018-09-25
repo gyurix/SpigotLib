@@ -126,7 +126,7 @@ public class EntityUtils {
     public static Player getPlayerDamager(Entity ent) {
         if (ent instanceof Player)
             return (Player) ent;
-        if (ent instanceof Projectile) {
+        else if (ent instanceof Projectile) {
             ProjectileSource src = ((Projectile) ent).getShooter();
             if (src instanceof Player)
                 return (Player) src;

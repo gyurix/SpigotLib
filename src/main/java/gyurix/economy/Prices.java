@@ -41,7 +41,7 @@ public class Prices implements Iterable<Price> {
         TreeSet<String> notHave = new TreeSet<>();
         for (Price p : prices)
             if (!p.has(plr))
-                notHave.add(p.getType());
+                notHave.add(EconomyAPI.getBalanceType(p.getType()).getFullName());
         return StringUtils.join(notHave, ", ");
     }
 

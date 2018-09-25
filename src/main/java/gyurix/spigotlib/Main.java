@@ -116,7 +116,7 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void load() {
-        cs.sendMessage("§2[§aStartup§2]§e Loading §aconfiguration§e and §alanguage file§e...");
+        cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aconfiguration§e and §alanguage file§e...");
         saveResources(this, "lang.yml", "config.yml", "items.yml");
         kf = new ConfigFile(getResource("config.yml"));
         kf.load(new File(dir + File.separator + "config.yml"));
@@ -125,36 +125,36 @@ public class Main extends JavaPlugin implements Listener {
         kf.save();
         lang = GlobalLangFile.loadLF("spigotlib", getResource("lang.yml"), dir + File.separator + "lang.yml");
 
-        cs.sendMessage("§2[§aStartup§2]§e Loading §aenchants file§e...");
+        cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aenchants file§e...");
         itemf = new ConfigFile(new File(dir + File.separator + "items.yml"));
         itemf.data.deserialize(Items.class);
         if (backend == BackendType.FILE) {
-            cs.sendMessage("§2[§aStartup§2]§e Loading §aFILE§e backend for §aplayer data storage§e...");
+            cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aFILE§e backend for §aplayer data storage§e...");
             if (Config.purgePF) {
                 Config.purgePF = false;
                 kf.save();
                 if (new File(dir + File.separator + PlayerFile.file).delete())
-                    cs.sendMessage("§2[§aStartup§2]§b Purged player file.");
+                    cs.sendMessage("§2[§aSpigotLib§2]§b Purged player file.");
                 else
-                    cs.sendMessage("§2[§aStartup§2]§c Failed to purge player file.");
+                    cs.sendMessage("§2[§aSpigotLib§2]§c Failed to purge player file.");
             }
             pf = new ConfigFile(new File(dir + File.separator + PlayerFile.file));
         } else if (backend == BackendType.MYSQL) {
-            cs.sendMessage("§2[§aStartup§2]§e Loading §aMySQL§e backend for §aplayer data storage§e...");
+            cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aMySQL§e backend for §aplayer data storage§e...");
             if (Config.purgePF) {
                 Config.purgePF = false;
                 kf.save();
                 if (mysql.command("DROP TABLE " + mysql.table))
-                    cs.sendMessage("§2[§aStartup§2]§b Dropped " + mysql.table + " table.");
+                    cs.sendMessage("§2[§aSpigotLib§2]§b Dropped " + mysql.table + " table.");
                 else
-                    cs.sendMessage("§2[§aStartup§2]§c Failed to drop " + mysql.table + " table.");
+                    cs.sendMessage("§2[§aSpigotLib§2]§c Failed to drop " + mysql.table + " table.");
             }
             mysql.command("CREATE TABLE IF NOT EXISTS " + mysql.table + " (uuid TEXT, `key` LONGTEXT, `value` LONGTEXT)");
             pf = new ConfigFile(mysql, mysql.table, "key", "value");
             loadPlayerConfig(null);
             Bukkit.getOnlinePlayers().forEach((p) -> loadPlayerConfig(p.getUniqueId()));
         }
-        cs.sendMessage("§2[§aStartup§2]§e Loading §aReflectionAPI§e...");
+        cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aReflectionAPI§e...");
         Reflection.init();
         if (ver.isAbove(v1_8))
             tp = new ProtocolImpl();
@@ -164,11 +164,11 @@ public class Main extends JavaPlugin implements Listener {
             forceReducedMode = true;
         if (!forceReducedMode)
             startPacketAPI();
-        cs.sendMessage("§2[§aStartup§2]§e Loading §aAnimationAPI§e...");
+        cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aAnimationAPI§e...");
         AnimationAPI.init();
         ConfigSerialization.getInterfaceBasedClasses().put(ItemStack.class, Reflection.getOBCClass("inventory.CraftItemStack"));
         if (!forceReducedMode) {
-            cs.sendMessage("§2[§aStartup§2]§e Starting SpigotLib in §afully compatible§e mode, starting " +
+            cs.sendMessage("§2[§aSpigotLib§2]§e Starting SpigotLib in §afully compatible§e mode, starting " +
                     "Offline player management, ChatAPI, TitleAPI, NBTApi, ScoreboardAPI...");
             WrapperFactory.init();
             PacketInType.init();
@@ -178,10 +178,10 @@ public class Main extends JavaPlugin implements Listener {
                 for (Player p : Bukkit.getOnlinePlayers())
                     ScoreboardAPI.playerJoin(p);
         } else {
-            cs.sendMessage("§2[§aStartup§2]§e Starting SpigotLib in §csemi compatible mode§e, skipping the load of " +
+            cs.sendMessage("§2[§aSpigotLib§2]§e Starting SpigotLib in §csemi compatible mode§e, skipping the load of " +
                     "PacketAPI, Offline player management, ChatAPI, TitleAPI, NBTApi, ScoreboardAPI.");
         }
-        cs.sendMessage("§2[§aStartup§2]§e Preparing §aPlaceholderAPI§e and §aVault§e hooks...");
+        cs.sendMessage("§2[§aSpigotLib§2]§e Preparing §aPlaceholderAPI§e and §aVault§e hooks...");
         VariableAPI.phaHook = pm.getPlugin("PlaceholderAPI") != null && Config.phaHook;
     }
 
@@ -325,21 +325,21 @@ public class Main extends JavaPlugin implements Listener {
         else if (ver.isBellow(v1_12))
             cm = new CustomCommandMap();
         if (!forceReducedMode) {
-            cs.sendMessage("§2[§aStartup§2]§e Initializing §aoffline player manager§e...");
+            cs.sendMessage("§2[§aSpigotLib§2]§e Initializing §aoffline player manager§e...");
             pm.registerEvents(tp, this);
             initOfflinePlayerManager();
         }
         pm.registerEvents(this, this);
         BungeeAPI.enabled = Config.BungeeAPI.forceEnable || srv.spigot().getConfig().getBoolean("settings.bungeecord");
         if (BungeeAPI.enabled) {
-            cs.sendMessage("§2[§aStartup§2]§e Starting §aBungeeAPI§e...");
+            cs.sendMessage("§2[§aSpigotLib§2]§e Starting §aBungeeAPI§e...");
             msg.registerOutgoingPluginChannel(this, "BungeeCord");
             msg.registerIncomingPluginChannel(this, "BungeeCord", new BungeeAPI());
         } else {
-            cs.sendMessage("§2[§aStartup§2]§e Your server is §cnot connected§e to a BungeeCord server, §cskipping BungeeAPI§e load...");
+            cs.sendMessage("§2[§aSpigotLib§2]§e Your server is §cnot connected§e to a BungeeCord server, §cskipping BungeeAPI§e load...");
         }
         if (backend == BackendType.MYSQL) {
-            cs.sendMessage("§2[§aStartup§2]§e Loading player data of online players from the MySQL...");
+            cs.sendMessage("§2[§aSpigotLib§2]§e Loading player data of online players from the MySQL...");
             for (Player p : Bukkit.getOnlinePlayers()) {
                 loadPlayerConfig(p.getUniqueId());
             }
@@ -347,18 +347,18 @@ public class Main extends JavaPlugin implements Listener {
         vault = pm.getPlugin("Vault") != null;
         EconomyAPI.VaultHookType vaultHookType = EconomyAPI.getVaultHookType();
         if (!vault)
-            cs.sendMessage("§2[§aStartup§2]§e The plugin §aVault§e is not present, skipping hook...");
+            cs.sendMessage("§2[§aSpigotLib§2]§e The plugin §aVault§e is not present, skipping hook...");
         else {
             if (vaultHookType == NONE) {
-                cs.sendMessage("§2[§aStartup§2]§e The plugin §aVault§e is present, but the hook is disabled in config, so skipping hook...");
+                cs.sendMessage("§2[§aSpigotLib§2]§e The plugin §aVault§e is present, but the hook is disabled in config, so skipping hook...");
             }
             if (vaultHookType == USER) {
-                cs.sendMessage("§2[§aStartup§2]§e The plugin §aVault§e is present, hooking to it as §aEconomy USER§e...");
+                cs.sendMessage("§2[§aSpigotLib§2]§e The plugin §aVault§e is present, hooking to it as §aEconomy USER§e...");
                 RegisteredServiceProvider<Economy> rspEcon = srv.getServicesManager().getRegistration(Economy.class);
                 if (rspEcon != null)
                     econ = rspEcon.getProvider();
                 if (EconomyAPI.isMigrate()) {
-                    cs.sendMessage("§2[§aStartup§2]§e Migrating economy data from old Economy " + econ.getName() + "... ");
+                    cs.sendMessage("§2[§aSpigotLib§2]§e Migrating economy data from old Economy " + econ.getName() + "... ");
                     EconomyAPI.setVaultHookType(NONE);
                     for (OfflinePlayer op : Bukkit.getOfflinePlayers()) {
                         EconomyAPI.setBalance(op.getUniqueId(), new BigDecimal(econ.getBalance(op)));
@@ -389,12 +389,12 @@ public class Main extends JavaPlugin implements Listener {
                     chat = (Chat) rspChat.getProvider();
             }
             if (TPSMeter.enabled) {
-                cs.sendMessage("§2[§aStartup§2]§e Starting TPSMeter...");
+                cs.sendMessage("§2[§aSpigotLib§2]§e Starting TPSMeter...");
                 Config.tpsMeter.start();
             }
-            cs.sendMessage("§2[§aStartup§2]§e Starting PlaceholderAPI hook...");
+            cs.sendMessage("§2[§aSpigotLib§2]§e Starting PlaceholderAPI hook...");
             VariableAPI.init();
-            cs.sendMessage("§2[§aStartup§2]§a Started SpigotLib §e" + version + "§a properly.");
+            cs.sendMessage("§2[§aSpigotLib§2]§a Started SpigotLib §e" + version + "§a properly.");
         }, 1);
     }
 
@@ -492,16 +492,16 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void startPacketAPI() {
-        cs.sendMessage("§2[§aStartup§2]§e Starting PacketAPI...");
+        cs.sendMessage("§2[§aSpigotLib§2]§e Starting PacketAPI...");
         try {
             tp.init();
         } catch (Throwable e) {
             if (schedulePacketAPI) {
                 error(cs, e, "SpigotLib", "gyurix");
-                cs.sendMessage("§2[§aStartup§2]§c Failed to start PacketAPI.");
+                cs.sendMessage("§2[§aSpigotLib§2]§c Failed to start PacketAPI.");
             }
             schedulePacketAPI = true;
-            cs.sendMessage("§2[§aStartup§2]§e Scheduled PacketAPI startup.");
+            cs.sendMessage("§2[§aSpigotLib§2]§e Scheduled PacketAPI SpigotLib.");
         }
     }
 

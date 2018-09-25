@@ -11,6 +11,11 @@ public class ChatHoverEvent {
         this.value = action == ChatHoverEventType.show_text ? ChatTag.fromColoredText(value) : new ChatTag(value);
     }
 
+    public ChatHoverEvent(HoverEvent spigotHoverEvent) {
+        action = ChatHoverEventType.valueOf(spigotHoverEvent.getAction().name().toLowerCase());
+        value = ChatTag.fromBaseComponents(spigotHoverEvent.getValue());
+    }
+
     public HoverEvent toSpigotHoverEvent() {
         return new HoverEvent(action.toSpigotHoverAction(), value.toBaseComponents());
     }
