@@ -129,7 +129,7 @@ en:
       pf: &a&lPlayer data file has been reloaded successfully.
     save: &cUsage:&6&l /sl save pf&e for saving the player file
       pf: &a&lPlayer file has been saved successfully.
-    time: 
+    time:
       d: <d> day
       dp: <d> days
       h: <h> hour
