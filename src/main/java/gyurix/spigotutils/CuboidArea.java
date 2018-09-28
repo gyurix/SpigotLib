@@ -1,6 +1,8 @@
 package gyurix.spigotutils;
 
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gyurix.configfile.ConfigSerialization.StringSerializable;
 import gyurix.protocol.utils.BlockLocation;
 import org.bukkit.Bukkit;
@@ -89,6 +91,15 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
     public CuboidArea(Selection sel) {
         pos1 = new BlockLocation(sel.getMinimumPoint());
         pos2 = new BlockLocation(sel.getMaximumPoint());
+        fix();
+    }
+    /**
+     *
+     * @param region - The WorldGuard region
+     */
+    public CuboidArea(ProtectedRegion region) {
+        pos1 = new BlockLocation(region.getMinimumPoint().getBlockX(), region.getMinimumPoint().getBlockY(), region.getMinimumPoint().getBlockZ());
+        pos2 = new BlockLocation(region.getMaximumPoint().getBlockX(), region.getMaximumPoint().getBlockY(), region.getMaximumPoint().getBlockZ());
         fix();
     }
 
