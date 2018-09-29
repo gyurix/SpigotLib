@@ -1,6 +1,5 @@
 package gyurix.spigotutils;
 
-import com.sk89q.worldedit.bukkit.selections.Selection;
 import gyurix.configfile.ConfigSerialization.StringSerializable;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -63,9 +62,6 @@ public class UnlimitedYArea extends Area implements StringSerializable {
         fix();
     }
 
-    public UnlimitedYArea(Selection sel) {
-        this(sel.getMinimumPoint().getBlockX(), sel.getMinimumPoint().getBlockZ(), sel.getMaximumPoint().getBlockX(), sel.getMaximumPoint().getBlockZ());
-    }
 
     public static Block getTopY(World w, int x, int z) {
         Block b = null;

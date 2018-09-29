@@ -750,6 +750,8 @@ public final class SU {
     public static String toCamelCase(String name) {
         StringBuilder sb = new StringBuilder();
         for (String s : name.split("[ _]")) {
+            if (s.isEmpty())
+                continue;
             sb.append(' ').append(Character.toUpperCase(s.charAt(0))).append(s.substring(1).toLowerCase());
         }
         return sb.substring(1);

@@ -1,8 +1,5 @@
 package gyurix.spigotutils;
 
-import com.sk89q.worldedit.bukkit.selections.Selection;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gyurix.configfile.ConfigSerialization.StringSerializable;
 import gyurix.protocol.utils.BlockLocation;
 import org.bukkit.Bukkit;
@@ -68,39 +65,6 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Construct a new CuboidArea from a WorldEdit selection
-     *
-     * @param sel       - The WorldEdit selection
-     * @param saveWorld - True if not only the min, and max points, but also
-     *                  the World should be saved
-     */
-    public CuboidArea(Selection sel, boolean saveWorld) {
-        this(sel);
-        if (saveWorld)
-            world = sel.getWorld().getName();
-    }
-
-    /**
-     * Construct a new CuboidArea from a WorldEdit selection WITHOUT saving the world of it
-     *
-     * @param sel - The WorldEdit selection
-     */
-    public CuboidArea(Selection sel) {
-        pos1 = new BlockLocation(sel.getMinimumPoint());
-        pos2 = new BlockLocation(sel.getMaximumPoint());
-        fix();
-    }
-    /**
-     *
-     * @param region - The WorldGuard region
-     */
-    public CuboidArea(ProtectedRegion region) {
-        pos1 = new BlockLocation(region.getMinimumPoint().getBlockX(), region.getMinimumPoint().getBlockY(), region.getMinimumPoint().getBlockZ());
-        pos2 = new BlockLocation(region.getMaximumPoint().getBlockX(), region.getMaximumPoint().getBlockY(), region.getMaximumPoint().getBlockZ());
-        fix();
     }
 
     public CuboidArea(String world, BlockLocation pos1, BlockLocation pos2) {
