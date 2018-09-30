@@ -3,11 +3,14 @@ package gyurix.commands.plugin;
 import com.google.gson.internal.Primitives;
 import gyurix.protocol.Reflection;
 import gyurix.spigotlib.SU;
+import gyurix.spigotutils.ItemUtils;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.*;
 import java.util.Collection;
@@ -71,6 +74,8 @@ public class CommandMatcher {
             }
             return Bukkit.getPlayer(arg);
         }, Player.class);
+        addCustomMatcher((arg, type) -> Bukkit.getWorld(arg), World.class);
+        addCustomMatcher((arg, type) -> ItemUtils.stringToItemStack(arg), ItemStack.class);
         addCustomMatcher((arg, type) -> arg.equalsIgnoreCase("on") ||
                 arg.equalsIgnoreCase("true") ||
                 arg.equalsIgnoreCase("enable") ||
