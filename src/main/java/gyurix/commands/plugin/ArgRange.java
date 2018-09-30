@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 public @interface ArgRange {
     String max() default "1000000000";
 
-    String min() default "0";
+    String min() default "1";
 }

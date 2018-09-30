@@ -13,25 +13,33 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static gyurix.spigotlib.Main.lang;
 import static gyurix.spigotlib.Main.pl;
+import static java.util.Collections.EMPTY_LIST;
 
 public class CommandMatcher {
+    private static final String[] noSub = new String[0];
     private static HashMap<Class, CustomMatcher> customMatchers = new HashMap<>();
     @Getter
+    private TreeSet<String> aliases = new TreeSet<>();
     private boolean async;
+    private TreeMap<String, CommandMatcher> children = new TreeMap<>();
+    @Getter
     private String command;
     private Method executor;
     private Object executorOwner;
+    private List<CommandMatcher> matchers = new ArrayList<>();
     private Parameter[] parameters;
     private String pluginName;
     private Class senderType;
     private String subOf;
+
+    public CommandMatcher(String pluginName, String command) {
+        this.pluginName = pluginName;
+        this.command = command;
+    }
 
     public CommandMatcher(String pluginName, String command, String subOf, Object executorOwner, Method executor) {
         this.pluginName = pluginName;
@@ -39,9 +47,12 @@ public class CommandMatcher {
         this.subOf = subOf;
         this.executorOwner = executorOwner;
         this.executor = executor;
+        Aliases al = executor.getAnnotation(Aliases.class);
+        if (al != null)
+            aliases.addAll(Arrays.asList(al.value()));
         Async async = executorOwner.getClass().getAnnotation(Async.class);
-        if (async != null && async.async())
-            this.async = true;
+        if (async != null)
+            this.async = async.async();
 
         Parameter[] pars = executor.getParameters();
         for (Parameter p : pars) {
@@ -66,30 +77,7 @@ public class CommandMatcher {
             customMatchers.put(cl, m);
     }
 
-    public static void registerCustomMatchers() {
-        addCustomMatcher((arg, type) -> {
-            try {
-                return Bukkit.getPlayer(UUID.fromString(arg));
-            } catch (Throwable ignored) {
-            }
-            return Bukkit.getPlayer(arg);
-        }, Player.class);
-        addCustomMatcher((arg, type) -> Bukkit.getWorld(arg), World.class);
-        addCustomMatcher((arg, type) -> ItemUtils.stringToItemStack(arg), ItemStack.class);
-        addCustomMatcher((arg, type) -> arg.equalsIgnoreCase("on") ||
-                arg.equalsIgnoreCase("true") ||
-                arg.equalsIgnoreCase("enable") ||
-                arg.equalsIgnoreCase("yes") ||
-                arg.equalsIgnoreCase("y") ||
-                arg.equalsIgnoreCase(""), boolean.class, Boolean.class);
-    }
-
-    public static void removeCustomMatcher(Class... classes) {
-        for (Class cl : classes)
-            customMatchers.remove(cl);
-    }
-
-    public Object convert(String arg, Type type) {
+    private static Object convert(String arg, Type type) {
         Class cl = (Class) (type instanceof ParameterizedType ? ((ParameterizedType) type).getRawType() : type);
         cl = Primitives.wrap(cl);
         if (cl == String.class)
@@ -100,6 +88,10 @@ public class CommandMatcher {
         if (Collection.class.isAssignableFrom(cl)) {
             String[] d = arg.split(",");
             Type target = (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
+            if (cl == List.class)
+                cl = ArrayList.class;
+            if (cl == Set.class)
+                cl = LinkedHashSet.class;
             Collection out = (Collection) Reflection.newInstance(cl);
             for (String subArg : d)
                 out.add(convert(subArg, target));
@@ -116,6 +108,8 @@ public class CommandMatcher {
             String[] d = arg.split(",");
             Type targetKey = (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
             Type targetValue = (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
+            if (cl == Map.class)
+                cl = LinkedHashMap.class;
             Map out = (Map) Reflection.newInstance(cl);
             for (String subArg : d) {
                 String[] d2 = subArg.split("=", 2);
@@ -155,22 +149,106 @@ public class CommandMatcher {
         return null;
     }
 
+    private static String getParameterName(Parameter p) {
+        Arg a = p.getAnnotation(Arg.class);
+        if (a != null)
+            return a.value();
+        a = p.getType().getAnnotation(Arg.class);
+        if (a != null)
+            return a.value();
+        return p.getType().getSimpleName().toLowerCase();
+    }
+
+    public static void registerCustomMatchers() {
+        addCustomMatcher((arg, type) -> {
+            try {
+                return Bukkit.getPlayer(UUID.fromString(arg));
+            } catch (Throwable ignored) {
+            }
+            return Bukkit.getPlayer(arg);
+        }, Player.class);
+        addCustomMatcher((arg, type) -> Bukkit.getWorld(arg), World.class);
+        addCustomMatcher((arg, type) -> ItemUtils.stringToItemStack(arg), ItemStack.class);
+        addCustomMatcher((arg, type) -> arg.equalsIgnoreCase("on") ||
+                arg.equalsIgnoreCase("true") ||
+                arg.equalsIgnoreCase("enable") ||
+                arg.equalsIgnoreCase("yes") ||
+                arg.equalsIgnoreCase("y") ||
+                arg.equalsIgnoreCase(""), boolean.class, Boolean.class);
+    }
+
+    public static void removeCustomMatcher(Class... classes) {
+        for (Class cl : classes)
+            customMatchers.remove(cl);
+    }
+
+    public void addMatcher(CommandMatcher cm) {
+        matchers.add(cm);
+    }
+
+    public boolean checkParameters(CommandSender sender, String[] args) {
+        if (args.length > 0) {
+            CommandMatcher child = children.get(args[0].toLowerCase());
+            if (child != null)
+                return child.checkParameters(sender, subArgs(args));
+        }
+        for (CommandMatcher m : matchers)
+            if (m.checkParameters(sender, args))
+                return true;
+        if (executor == null)
+            return false;
+        if (!senderMatch(sender))
+            return false;
+        if (args.length < parameters.length)
+            return false;
+        if (parameters.length > 0 && args.length > parameters.length)
+            args[parameters.length - 1] = StringUtils.join(args, parameters.length - 1, args.length);
+        for (int id = 0; id < parameters.length; ++id) {
+            Object res = convert(args[id], parameters[id].getParameterizedType());
+            if (res == null)
+                return false;
+            ArgRange as = parameters[id].getAnnotation(ArgRange.class);
+            if (as != null) {
+                Comparable min = (Comparable) convert(as.min(), parameters[id].getParameterizedType());
+                Comparable max = (Comparable) convert(as.min(), parameters[id].getParameterizedType());
+                return min.compareTo(res) <= 0 && max.compareTo(res) >= 0;
+            }
+        }
+        return true;
+    }
+
     public void execute(CommandSender sender, String[] args) {
+        if (args.length > 0) {
+            CommandMatcher m = children.get(args[0].toLowerCase());
+            if (m != null) {
+                m.execute(sender, subArgs(args));
+                return;
+            }
+        }
+        for (CommandMatcher m : matchers) {
+            if (m.checkParameters(sender, args)) {
+                m.execute(sender, args);
+                return;
+            }
+        }
+        if (executor == null)
+            return;
         if (!senderType.isAssignableFrom(sender.getClass())) {
             lang.msg("", sender, "command.noconsole");
             return;
         }
+        if (async)
+            executeNow(sender, args);
+        SU.sch.scheduleSyncDelayedTask(pl, () -> executeNow(sender, args));
+    }
+
+    private void executeNow(CommandSender sender, String[] args) {
         Object[] out = new Object[parameters.length + 1];
         out[0] = sender;
-        if (args.length > parameters.length)
+        if (parameters.length > 0 && args.length > parameters.length)
             args[parameters.length - 1] = StringUtils.join(args, ' ', parameters.length - 1, args.length);
         System.arraycopy(args, 0, out, 1, parameters.length);
         for (int i = 0; i < parameters.length; ++i) {
-            Equals eq = parameters[i].getAnnotation(Equals.class);
-            if (eq != null && !(eq.ignoreCase() ? args[i].equalsIgnoreCase(eq.value()) : args[i].equals(eq.value()))) {
-                lang.msg("", sender, "command.wrongarg", "type", getParameterName(parameters[i]), "value", args[i]);
-                return;
-            }
             Object res = convert(args[i], parameters[i].getParameterizedType());
             if (res == null) {
                 lang.msg("", sender, "command.wrongarg", "type", getParameterName(parameters[i]), "value", args[i]);
@@ -203,52 +281,72 @@ public class CommandMatcher {
         }
     }
 
-    public String[] getAliases() {
-        Aliases al = executor.getAnnotation(Aliases.class);
-        return al == null ? null : al.value();
+    public CommandMatcher getOrAddChild(String pluginName, String command) {
+        return children.computeIfAbsent(command, (cmd) -> new CommandMatcher(pluginName, command));
     }
 
-    public int getParameterCount() {
-        return parameters.length;
+    public List<String> getUsage(CommandSender sender, String[] args) {
+        StringBuilder prefixBuilder = new StringBuilder(
+                subOf == null ? "§a/" + command : "§a/" + subOf + " §a<" + command);
+        for (String s : getAliases())
+            prefixBuilder.append('|').append(s);
+        if (subOf != null)
+            prefixBuilder.append('>');
+        String prefix = prefixBuilder.toString();
+        List<String> out = new ArrayList<>();
+        if (!children.isEmpty()) {
+            String[] sub = subArgs(args);
+            if (args.length > 0) {
+                CommandMatcher c = children.get(args[0].toLowerCase());
+                if (c != null) {
+                    for (String s : c.getUsage(sender, sub))
+                        out.add(prefix + " " + s.substring(3));
+                    return out;
+                }
+            }
+            for (CommandMatcher cm : new LinkedHashSet<>(children.values())) {
+                for (String s : cm.getUsage(sender, sub))
+                    out.add(prefix + " §6" + s.substring(3).replaceFirst("§6", "§e"));
+            }
+        }
+        for (CommandMatcher cm : matchers)
+            out.addAll(cm.getUsage(sender, args));
+        if (executor != null)
+            out.add(getUsageOfThis(prefix, sender, args));
+        return out;
     }
 
-    public String getParameterName(Parameter p) {
-        Arg a = p.getAnnotation(Arg.class);
-        if (a != null)
-            return a.value();
-        a = p.getType().getAnnotation(Arg.class);
-        if (a != null)
-            return a.value();
-        return p.getType().getSimpleName().toLowerCase();
-    }
-
-    public String getUsage(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        if (subOf == null)
-            sb.append(" §a/").append(command);
-        else
-            sb.append(" §a/").append(subOf).append(" §a<").append(command).append('>');
+    private String getUsageOfThis(String prefix, CommandSender sender, String[] args) {
+        StringBuilder sb = new StringBuilder(prefix);
         int i = 0;
         for (Parameter p : parameters) {
             if (args.length == i)
                 sb.append(" §6<");
             else if (args.length < i)
                 sb.append(" §e<");
-            else if (isValidParameter(i, args[i]))
+            else if (isValidParameter(sender, args, i))
                 sb.append(" §a<");
             else
                 sb.append(" §4<");
             sb.append(getParameterName(p)).append('>');
             ++i;
         }
-        return sb.substring(1);
+        return sb.toString();
     }
 
-    public boolean isValidParameter(int id, String value) {
-        Equals eq = parameters[id].getAnnotation(Equals.class);
-        if (eq != null)
-            return eq.ignoreCase() ? value.equalsIgnoreCase(eq.value()) : value.equals(eq.value());
-        Object res = convert(value, parameters[id].getParameterizedType());
+    public boolean isValidParameter(CommandSender sender, String[] args, int id) {
+        if (args.length > 0) {
+            CommandMatcher child = children.get(args[0].toLowerCase());
+            if (child != null)
+                return child.isValidParameter(sender, subArgs(args), id - 1);
+        }
+        if (executor == null)
+            return false;
+        if (!senderMatch(sender))
+            return false;
+        if (parameters.length > 0 && args.length > parameters.length)
+            args[parameters.length - 1] = StringUtils.join(args, parameters.length - 1, args.length);
+        Object res = convert(args[id], parameters[id].getParameterizedType());
         if (res == null)
             return false;
         ArgRange as = parameters[id].getAnnotation(ArgRange.class);
@@ -262,5 +360,19 @@ public class CommandMatcher {
 
     public boolean senderMatch(CommandSender sender) {
         return senderType.isAssignableFrom(sender.getClass());
+    }
+
+    private String[] subArgs(String[] args) {
+        if (args.length < 2)
+            return noSub;
+        String[] out = new String[args.length - 1];
+        System.arraycopy(args, 1, out, 0, out.length);
+        return out;
+    }
+
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 1)
+            return SU.filterStart(children.keySet(), args[0]);
+        return EMPTY_LIST;
     }
 }

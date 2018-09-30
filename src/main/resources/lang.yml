@@ -105,7 +105,7 @@ en:
       wrongarg: &cThe entered &e<type>&c (&6<value>&c) is incorrect.
       toolow: &cThe entered &e<type>&c should be at least &e<value>&c.
       toohigh: &cThe entered &e<type>&c should be at most &e<value>&c.
-      usage: &cUsage:&e <usage>
+      usage: &cPossible Usages:&e
     item:
       own: You are holding the following item: &f<item>\-T&bClick to insert the item name to chat\-S<item>
       player: &b<player>&e is holding the following item: &f<item>\-T&bClick to insert the item name to chat\-S<item>
