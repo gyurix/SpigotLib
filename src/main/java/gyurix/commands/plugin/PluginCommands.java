@@ -1,6 +1,5 @@
 package gyurix.commands.plugin;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -82,18 +81,10 @@ public class PluginCommands {
         return new ExtendedCommandExecutor() {
             public void executeNow(CommandSender sender, String[] args) {
                 try {
-                    CommandMatcher last = matchers.get(matchers.size() - 1);
-                    int argsLen = args.length;
-                    int lastParCount = last.getParameterCount();
-                    if (lastParCount < args.length) {
-                        if (lastParCount > 0)
-                            args[lastParCount - 1] = StringUtils.join(args, ' ', lastParCount - 1, argsLen);
-                        argsLen = lastParCount;
-                    }
                     for (CommandMatcher m : matchers) {
-                        if (m.getParameterCount() != argsLen)
-                            continue;
                         if (!m.senderMatch(sender))
+                            continue;
+                        if (m.getParameterCount() != args.length)
                             continue;
                         int pars = m.getParameterCount();
                         boolean allParsValid = true;
@@ -109,7 +100,27 @@ public class PluginCommands {
                         }
                     }
                     for (CommandMatcher m : matchers) {
-                        if (m.getParameterCount() != argsLen)
+                        if (!m.senderMatch(sender))
+                            continue;
+                        if (m.getParameterCount() > args.length)
+                            continue;
+                        int pars = m.getParameterCount();
+                        boolean allParsValid = true;
+                        for (int i = 0; i < pars; ++i) {
+                            if (!m.isValidParameter(i, args[i])) {
+                                allParsValid = false;
+                                break;
+                            }
+                        }
+                        if (allParsValid) {
+                            m.execute(sender, args);
+                            return;
+                        }
+                    }
+                    for (CommandMatcher m : matchers) {
+                        if (!m.senderMatch(sender))
+                            continue;
+                        if (m.getParameterCount() != args.length)
                             continue;
                         m.execute(sender, args);
                         return;
@@ -117,14 +128,14 @@ public class PluginCommands {
                     for (CommandMatcher m : matchers) {
                         if (!m.senderMatch(sender))
                             continue;
-                        if (m.getParameterCount() > argsLen) {
+                        if (m.getParameterCount() > args.length) {
                             lang.msg("", sender, "command.usage", "usage", m.getUsage(args));
                             return;
                         }
                     }
                     lang.msg("", sender, "command.noconsole");
                 } catch (Throwable e) {
-                    error(sender, e, "BanManager", "gyurix");
+                    error(sender, e, "SpigotLib", "gyurix");
                 }
             }
 

@@ -162,6 +162,8 @@ public class CommandMatcher {
         }
         Object[] out = new Object[parameters.length + 1];
         out[0] = sender;
+        if (args.length > parameters.length)
+            args[parameters.length - 1] = StringUtils.join(args, ' ', parameters.length - 1, args.length);
         System.arraycopy(args, 0, out, 1, parameters.length);
         for (int i = 0; i < parameters.length; ++i) {
             Equals eq = parameters[i].getAnnotation(Equals.class);

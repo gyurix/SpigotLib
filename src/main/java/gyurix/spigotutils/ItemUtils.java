@@ -632,6 +632,8 @@ public class ItemUtils {
         String[] parts = in.split(" ");
         String[] idParts = parts[0].split(":");
         ItemStack out = getItem(idParts[0]);
+        if (out == null)
+            return null;
         int st = 1;
         try {
             out.setDurability(Short.valueOf(idParts[1]));
