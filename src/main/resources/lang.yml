@@ -1,6 +1,6 @@
-de: 
-  spigotlib: 
-    debug: 
+de:
+  spigotlib:
+    debug:
       off: &c&lDebugnachrichten wurden deaktiviert.
       on: &a&lDebugnachrichten wurden aktiviert.
     executed: Der eingegebene Befehl wurde ausgeführt
@@ -78,7 +78,7 @@ en:
   spigotlib:
     debug:
       list: &6&l&nDebug system - <plugin>
-            <list>
+        <list>
       off: &c<type>\-T&aClick to enable &e&l<type>&a debug messages\-R/<cmd> <type>
       on: &a<type>\-T&cClick to disable &e&l<type>&c debug messages\-R/<cmd> <type>
       sep: \|&7, &f\|
@@ -97,6 +97,15 @@ en:
     &b&l➯ &e/sl&f vars
     &b&l➯ &e/sl&f velocity
     invalidcmd: &cThe requested command doesn't exists!
+    command:
+      noperm: &cYou don't have permission for using this command.
+      wrongsub: &cThe entered subcommand is incorrect.
+      noconsole: &cThis command can only be used by players.
+      wrongplayer: &cPlayer &e<player>&c is not online.
+      wrongarg: &cThe entered &e<type>&c (&6<value>&c) is incorrect.
+      toolow: &cThe entered &e<type>&c should be at least &e<value>&c.
+      toohigh: &cThe entered &e<type>&c should be at most &e<value>&c.
+      usage: &cUsage:&e <usage>
     item:
       own: You are holding the following item: &f<item>\-T&bClick to insert the item name to chat\-S<item>
       player: &b<player>&e is holding the following item: &f<item>\-T&bClick to insert the item name to chat\-S<item>

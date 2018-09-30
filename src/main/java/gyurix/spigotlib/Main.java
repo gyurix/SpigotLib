@@ -5,6 +5,7 @@ import gyurix.api.BungeeAPI;
 import gyurix.api.VariableAPI;
 import gyurix.commands.CustomCommandMap;
 import gyurix.commands.SpigotLibCommands;
+import gyurix.commands.plugin.CommandMatcher;
 import gyurix.configfile.ConfigFile;
 import gyurix.configfile.ConfigSerialization;
 import gyurix.datareader.DataReader;
@@ -237,6 +238,7 @@ public class Main extends JavaPlugin implements Listener {
         try {
             ConfigHook.registerSerializers();
             ConfigHook.registerVariables();
+            CommandMatcher.registerCustomMatchers();
         } catch (Throwable e) {
             log(this, "§cFailed to load config hook :-( The plugin is shutting down...");
             error(cs, e, "SpigotLib", "gyurix");

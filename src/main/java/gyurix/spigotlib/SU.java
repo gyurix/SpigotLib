@@ -754,7 +754,7 @@ public final class SU {
                 continue;
             sb.append(' ').append(Character.toUpperCase(s.charAt(0))).append(s.substring(1).toLowerCase());
         }
-        return sb.substring(1);
+        return sb.length() == 0 ? sb.toString() : sb.substring(1);
     }
 
     /**
