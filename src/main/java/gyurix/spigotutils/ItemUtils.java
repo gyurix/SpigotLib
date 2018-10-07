@@ -19,6 +19,7 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -558,6 +559,30 @@ public class ItemUtils {
         im.setLore(Arrays.asList(lore));
         is.setItemMeta(im);
         return is;
+    }
+
+    /**
+     *
+     * @param inv - The inventory
+     * @return The map
+     */
+    public static Map<Integer, ItemStack> mapToInv(Inventory inv) {
+        TreeMap<Integer, ItemStack> temp = new TreeMap<>();
+        for(int i = 0; i<inv.getSize();++i) {
+            temp.put(i, inv.getItem(i));
+        }
+        return temp;
+    }
+
+    /**
+     *
+     * @param map - The map
+     * @return The inventory
+     */
+    public static Inventory invToMap(Map<Integer, ItemStack> map) {
+        Inventory inv = Bukkit.createInventory(null, map.size());
+        map.forEach(inv::setItem);
+        return inv;
     }
 
     public static ItemStack makeItem(Material type, int amount, short sub, String name, ArrayList<String> lore, Object... vars) {
