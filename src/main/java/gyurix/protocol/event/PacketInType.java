@@ -22,6 +22,7 @@ public enum PacketInType {
     AutoRecipe,
     BlockDig,
     BlockPlace,
+    BEdit,
     BoatMove,
     Chat,
     ClientCommand,

@@ -87,7 +87,7 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
                 id = Integer.valueOf(s[0]);
             }
         } catch (Throwable e) {
-            SU.error(SU.cs, e, "SpigotLib", "gyurix");
+            SU.cs.sendMessage("§cInvalid item: §e" + in);
         }
         if (s.length == 2)
             try {

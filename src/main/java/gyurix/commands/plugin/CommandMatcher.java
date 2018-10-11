@@ -19,9 +19,10 @@ import static gyurix.spigotlib.Main.lang;
 import static gyurix.spigotlib.Main.pl;
 import static java.util.Collections.EMPTY_LIST;
 
-public class CommandMatcher {
+public class CommandMatcher implements Comparable<CommandMatcher> {
     private static final String[] noSub = new String[0];
     private static HashMap<Class, CustomMatcher> customMatchers = new HashMap<>();
+    private static HashMap<Class, Integer> parameterWeights = new HashMap<>();
     @Getter
     private TreeSet<String> aliases = new TreeSet<>();
     private boolean async;
@@ -30,7 +31,7 @@ public class CommandMatcher {
     private String command;
     private Method executor;
     private Object executorOwner;
-    private List<CommandMatcher> matchers = new ArrayList<>();
+    private TreeSet<CommandMatcher> matchers = new TreeSet<>();
     private Parameter[] parameters;
     private String pluginName;
     private Class senderType;
@@ -75,6 +76,29 @@ public class CommandMatcher {
     public static void addCustomMatcher(CustomMatcher m, Class... classes) {
         for (Class cl : classes)
             customMatchers.put(cl, m);
+    }
+
+    public static void registerCustomMatchers() {
+        setParameterWeight(9, String.class, StringBuilder.class);
+        setParameterWeight(8, Float.class, Double.class, Long.class);
+        setParameterWeight(7, Integer.class);
+        setParameterWeight(6, Byte.class);
+        setParameterWeight(5, Boolean.class);
+        addCustomMatcher((arg, type) -> {
+            try {
+                return Bukkit.getPlayer(UUID.fromString(arg));
+            } catch (Throwable ignored) {
+            }
+            return Bukkit.getPlayer(arg);
+        }, Player.class);
+        addCustomMatcher((arg, type) -> Bukkit.getWorld(arg), World.class);
+        addCustomMatcher((arg, type) -> ItemUtils.stringToItemStack(arg), ItemStack.class);
+        addCustomMatcher((arg, type) -> arg.equalsIgnoreCase("on") ||
+                arg.equalsIgnoreCase("true") ||
+                arg.equalsIgnoreCase("enable") ||
+                arg.equalsIgnoreCase("yes") ||
+                arg.equalsIgnoreCase("y") ||
+                arg.equalsIgnoreCase(""), boolean.class, Boolean.class);
     }
 
     private static Object convert(String arg, Type type) {
@@ -159,22 +183,9 @@ public class CommandMatcher {
         return p.getType().getSimpleName().toLowerCase();
     }
 
-    public static void registerCustomMatchers() {
-        addCustomMatcher((arg, type) -> {
-            try {
-                return Bukkit.getPlayer(UUID.fromString(arg));
-            } catch (Throwable ignored) {
-            }
-            return Bukkit.getPlayer(arg);
-        }, Player.class);
-        addCustomMatcher((arg, type) -> Bukkit.getWorld(arg), World.class);
-        addCustomMatcher((arg, type) -> ItemUtils.stringToItemStack(arg), ItemStack.class);
-        addCustomMatcher((arg, type) -> arg.equalsIgnoreCase("on") ||
-                arg.equalsIgnoreCase("true") ||
-                arg.equalsIgnoreCase("enable") ||
-                arg.equalsIgnoreCase("yes") ||
-                arg.equalsIgnoreCase("y") ||
-                arg.equalsIgnoreCase(""), boolean.class, Boolean.class);
+    public static void setParameterWeight(int weight, Class... classes) {
+        for (Class cl : classes)
+            parameterWeights.put(cl, weight);
     }
 
     public static void removeCustomMatcher(Class... classes) {
@@ -201,10 +212,16 @@ public class CommandMatcher {
             return false;
         if (args.length < parameters.length)
             return false;
-        if (parameters.length > 0 && args.length > parameters.length)
-            args[parameters.length - 1] = StringUtils.join(args, parameters.length - 1, args.length);
+        String[] usedArgs = new String[parameters.length];
+        if (parameters.length > 0) {
+            if (args.length > parameters.length) {
+                System.arraycopy(args, 0, usedArgs, 0, parameters.length - 1);
+                usedArgs[parameters.length - 1] = StringUtils.join(args, ' ', parameters.length - 1, args.length);
+            } else
+                System.arraycopy(args, 0, usedArgs, 0, parameters.length);
+        }
         for (int id = 0; id < parameters.length; ++id) {
-            Object res = convert(args[id], parameters[id].getParameterizedType());
+            Object res = convert(usedArgs[id], parameters[id].getParameterizedType());
             if (res == null)
                 return false;
             ArgRange as = parameters[id].getAnnotation(ArgRange.class);
@@ -215,6 +232,21 @@ public class CommandMatcher {
             }
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(CommandMatcher o) {
+        int parL = -Integer.compare(parameters.length, o.parameters.length);
+        if (parL != 0)
+            return parL;
+        return Long.compare(getParameterWeight(), o.getParameterWeight());
+    }
+
+    private long getParameterWeight() {
+        long weight = 0;
+        for (Parameter p : parameters)
+            weight = weight * 10 + parameterWeights.getOrDefault(p.getType(), 0);
+        return weight;
     }
 
     public void execute(CommandSender sender, String[] args) {

@@ -58,6 +58,10 @@ public class CloseableGUI implements InventoryHolder {
         return inv;
     }
 
+    public Player getPlayer() {
+        return plr;
+    }
+
     public Plugin getPlugin() {
         return SU.getPlugin(getClass());
     }

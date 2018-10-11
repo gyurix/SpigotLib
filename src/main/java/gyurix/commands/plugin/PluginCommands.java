@@ -106,7 +106,7 @@ public class PluginCommands {
                         return;
                     }
                     lang.msg("", sender, "command.usage");
-                    for (String s : m.getUsage(sender, args))
+                    for (String s : new TreeSet<>(m.getUsage(sender, args)))
                         sender.sendMessage(s);
                 } catch (Throwable e) {
                     error(sender, e, "SpigotLib", "gyurix");
