@@ -19,7 +19,6 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -562,27 +561,32 @@ public class ItemUtils {
     }
 
     /**
+     * Converts a map representation of a saved inventory to an actual Inventory.
+     * Completely overrides all the existing items in the inventory.
      *
-     * @param inv - The inventory
-     * @return The map
+     * @param map - The map containing the items and their slots of the saved inventory
      */
-    public static Map<Integer, ItemStack> mapToInv(Inventory inv) {
-        TreeMap<Integer, ItemStack> temp = new TreeMap<>();
-        for(int i = 0; i<inv.getSize();++i) {
-            temp.put(i, inv.getItem(i));
-        }
-        return temp;
+    public static void loadInv(Map<Integer, ItemStack> map, Inventory inv) {
+        int size = inv instanceof PlayerInventory ? ver.isAbove(v1_9) ? 41 : 40 : inv.getSize();
+        for (int i = 0; i < size; ++i)
+            inv.setItem(i, map.get(i));
     }
 
     /**
+     * Saves an inventory to a TreeMap containing the slots and the items of the given inventory
      *
-     * @param map - The map
-     * @return The inventory
+     * @param inv - The saveable inventory
+     * @return The saving result
      */
-    public static Inventory invToMap(Map<Integer, ItemStack> map) {
-        Inventory inv = Bukkit.createInventory(null, map.size());
-        map.forEach(inv::setItem);
-        return inv;
+    public static TreeMap<Integer, ItemStack> saveInv(Inventory inv) {
+        int size = inv instanceof PlayerInventory ? ver.isAbove(v1_9) ? 41 : 40 : inv.getSize();
+        TreeMap<Integer, ItemStack> out = new TreeMap<>();
+        for (int i = 0; i < size; ++i) {
+            ItemStack is = inv.getItem(i);
+            if (is != null && is.getType() != Material.AIR)
+                out.put(i, is);
+        }
+        return out;
     }
 
     public static ItemStack makeItem(Material type, int amount, short sub, String name, ArrayList<String> lore, Object... vars) {
