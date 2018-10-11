@@ -5,6 +5,7 @@ gyurix.api
 gyurix.chat
 gyurix.commands
 gyurix.commands.event
+gyurix.commands.plugin
 gyurix.configfile
 gyurix.datareader
 gyurix.debug

@@ -96,6 +96,34 @@ public class ItemUtils {
         return left;
     }
 
+    public static ItemStack addLore(ItemStack is, String... lore) {
+        if (is == null || is.getType() == Material.AIR)
+            return is;
+        is = is.clone();
+        ItemMeta meta = is.getItemMeta();
+        List<String> fullLore = meta.getLore();
+        if (fullLore == null)
+            fullLore = new ArrayList<>();
+        fullLore.addAll(Arrays.asList(lore));
+        meta.setLore(fullLore);
+        is.setItemMeta(meta);
+        return is;
+    }
+
+    public static ItemStack addLore(ItemStack is, List<String> lore, Object... vars) {
+        if (is == null || is.getType() == Material.AIR)
+            return is;
+        is = is.clone();
+        ItemMeta meta = is.getItemMeta();
+        List<String> fullLore = meta.getLore();
+        if (fullLore == null)
+            fullLore = new ArrayList<>();
+        fullLore.addAll(SU.fillVariables(lore, vars));
+        meta.setLore(fullLore);
+        is.setItemMeta(meta);
+        return is;
+    }
+
     /**
      * Adds the given lore storage meta to the given item
      *
@@ -193,34 +221,6 @@ public class ItemUtils {
                 space += maxStack - current.getAmount();
         }
         return space;
-    }
-
-    public static ItemStack addLore(ItemStack is, String... lore) {
-        if (is == null || is.getType() == Material.AIR)
-            return is;
-        is = is.clone();
-        ItemMeta meta = is.getItemMeta();
-        List<String> fullLore = meta.getLore();
-        if (fullLore == null)
-            fullLore = new ArrayList<>();
-        fullLore.addAll(Arrays.asList(lore));
-        meta.setLore(fullLore);
-        is.setItemMeta(meta);
-        return is;
-    }
-
-    public static ItemStack addLore(ItemStack is, List<String> lore, Object... vars) {
-        if (is == null || is.getType() == Material.AIR)
-            return is;
-        is = is.clone();
-        ItemMeta meta = is.getItemMeta();
-        List<String> fullLore = meta.getLore();
-        if (fullLore == null)
-            fullLore = new ArrayList<>();
-        fullLore.addAll(SU.fillVariables(lore, vars));
-        meta.setLore(fullLore);
-        is.setItemMeta(meta);
-        return is;
     }
 
     /**
@@ -348,6 +348,23 @@ public class ItemUtils {
                 return s.substring(prefix.length(), s.length() - suffix.length());
         }
         return def;
+    }
+
+    /**
+     * Makes item glowing by adding luck 1 enchant to it and hide enchants attribute
+     *
+     * @param item - The glowable item
+     * @return The glowing item
+     */
+    public static ItemStack glow(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR)
+            return item;
+        item = item.clone();
+        ItemMeta meta = item.getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        item.setItemMeta(meta);
+        item.addUnsafeEnchantment(Enchantment.LUCK, 1);
+        return item;
     }
 
     /**
@@ -542,6 +559,18 @@ public class ItemUtils {
         return out.toString();
     }
 
+    /**
+     * Converts a map representation of a saved inventory to an actual Inventory.
+     * Completely overrides all the existing items in the inventory.
+     *
+     * @param map - The map containing the items and their slots of the saved inventory
+     */
+    public static void loadInv(Map<Integer, ItemStack> map, Inventory inv) {
+        int size = inv instanceof PlayerInventory ? ver.isAbove(v1_9) ? 41 : 40 : inv.getSize();
+        for (int i = 0; i < size; ++i)
+            inv.setItem(i, map.get(i));
+    }
+
     public static ItemStack makeItem(Material type, int amount, short sub, String name, String... lore) {
         ItemStack is = new ItemStack(type, amount, sub);
         ItemMeta im = is.getItemMeta();
@@ -558,35 +587,6 @@ public class ItemUtils {
         im.setLore(Arrays.asList(lore));
         is.setItemMeta(im);
         return is;
-    }
-
-    /**
-     * Converts a map representation of a saved inventory to an actual Inventory.
-     * Completely overrides all the existing items in the inventory.
-     *
-     * @param map - The map containing the items and their slots of the saved inventory
-     */
-    public static void loadInv(Map<Integer, ItemStack> map, Inventory inv) {
-        int size = inv instanceof PlayerInventory ? ver.isAbove(v1_9) ? 41 : 40 : inv.getSize();
-        for (int i = 0; i < size; ++i)
-            inv.setItem(i, map.get(i));
-    }
-
-    /**
-     * Saves an inventory to a TreeMap containing the slots and the items of the given inventory
-     *
-     * @param inv - The saveable inventory
-     * @return The saving result
-     */
-    public static TreeMap<Integer, ItemStack> saveInv(Inventory inv) {
-        int size = inv instanceof PlayerInventory ? ver.isAbove(v1_9) ? 41 : 40 : inv.getSize();
-        TreeMap<Integer, ItemStack> out = new TreeMap<>();
-        for (int i = 0; i < size; ++i) {
-            ItemStack is = inv.getItem(i);
-            if (is != null && is.getType() != Material.AIR)
-                out.put(i, is);
-        }
-        return out;
     }
 
     public static ItemStack makeItem(Material type, int amount, short sub, String name, ArrayList<String> lore, Object... vars) {
@@ -647,6 +647,23 @@ public class ItemUtils {
             }
         }
         return left;
+    }
+
+    /**
+     * Saves an inventory to a TreeMap containing the slots and the items of the given inventory
+     *
+     * @param inv - The saveable inventory
+     * @return The saving result
+     */
+    public static TreeMap<Integer, ItemStack> saveInv(Inventory inv) {
+        int size = inv instanceof PlayerInventory ? ver.isAbove(v1_9) ? 41 : 40 : inv.getSize();
+        TreeMap<Integer, ItemStack> out = new TreeMap<>();
+        for (int i = 0; i < size; ++i) {
+            ItemStack is = inv.getItem(i);
+            if (is != null && is.getType() != Material.AIR)
+                out.put(i, is);
+        }
+        return out;
     }
 
     /**
@@ -914,22 +931,5 @@ public class ItemUtils {
             out = wr.toBukkitStack();
         }
         return out;
-    }
-
-    /**
-     * Makes item glowing by adding luck 1 enchant to it and hide enchants attribute
-     *
-     * @param item - The glowable item
-     * @return The glowing item
-     */
-    public static ItemStack glow(ItemStack item) {
-        if (item == null || item.getType() == Material.AIR)
-            return item;
-        item = item.clone();
-        ItemMeta meta = item.getItemMeta();
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        item.setItemMeta(meta);
-        item.addUnsafeEnchantment(Enchantment.LUCK, 1);
-        return item;
     }
 }
