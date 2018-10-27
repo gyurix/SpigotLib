@@ -195,6 +195,7 @@ public class Main extends JavaPlugin implements Listener {
         if (e.getClickedInventory() == top)
             try {
                 ((CustomGUI) top.getHolder()).onClick(e.getSlot(), e.isRightClick(), e.isShiftClick());
+                sch.scheduleSyncDelayedTask(pl, () -> ((Player) e.getView().getPlayer()).updateInventory());
             } catch (Throwable err) {
                 Player plr = (Player) e.getWhoClicked();
                 error(plr.hasPermission("spigotlib.debug") ? plr : cs, err, SU.getPlugin(top.getHolder().getClass()).getName(), "gyurix");
@@ -310,7 +311,7 @@ public class Main extends JavaPlugin implements Listener {
                     sb.unload(p);
             }
         }
-        if (Reflection.ver.isBellow(v1_12)) {
+        if (ver.isBellow(v1_12)) {
             log(this, "§4[§cShutdown§4]§e Stopping CommandAPI...");
             CustomCommandMap.unhook();
         }

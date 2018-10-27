@@ -4,6 +4,7 @@ import gyurix.protocol.Reflection;
 import gyurix.protocol.event.PacketOutType;
 import gyurix.protocol.utils.WrappedData;
 import gyurix.protocol.wrappers.WrappedPacket;
+import gyurix.spigotutils.ServerVersion;
 
 import java.lang.reflect.Method;
 
@@ -41,7 +42,9 @@ public class PacketPlayOutScoreboardScore extends WrappedPacket {
         CHANGE,
         REMOVE;
 
-        private static final Method valueOf = Reflection.getMethod(Reflection.getNMSClass("PacketPlayOutScoreboardScore$EnumScoreboardAction"), "valueOf", String.class);
+        private static final Method valueOf = Reflection.getMethod(Reflection.getNMSClass(
+                Reflection.ver.isAbove(ServerVersion.v1_13) ? "ScoreboardServer$Action" :
+                        "PacketPlayOutScoreboardScore$EnumScoreboardAction"), "valueOf", String.class);
 
         ScoreAction() {
         }

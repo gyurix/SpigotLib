@@ -196,7 +196,7 @@ public class ItemUtils {
         int size = inv instanceof PlayerInventory ? 36 : inv.getSize();
         for (int i = 0; i < size; i++) {
             ItemStack current = inv.getItem(i);
-            if (current != null && current.getType() == is.getType() && current.getDurability() == is.getDurability())
+            if (ItemUtils.itemSimilar(is, current))
                 count += current.getAmount();
         }
         return count;
@@ -610,8 +610,8 @@ public class ItemUtils {
         boolean pi = inv instanceof PlayerInventory;
         int size = pi ? 36 : inv.getSize();
         Iterator<Integer> it = new Iterator<Integer>() {
-            boolean first;
-            int id;
+            boolean first = true;
+            int id = 0;
 
             @Override
             public boolean hasNext() {
@@ -621,9 +621,9 @@ public class ItemUtils {
             @Override
             public Integer next() {
                 if (first) {
+                    first = false;
                     if (pi)
                         return ((PlayerInventory) inv).getHeldItemSlot();
-                    first = false;
                 }
                 return id++;
             }

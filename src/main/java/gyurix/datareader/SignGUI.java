@@ -8,6 +8,7 @@ import gyurix.protocol.wrappers.outpackets.PacketPlayOutBlockChange;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutOpenSignEditor;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutUpdateSign;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -44,7 +45,7 @@ public class SignGUI extends DataReader<String[]> {
         super(plr, resultConsumer);
         Location loc = plr.getLocation();
         bl = new BlockLocation(loc.getBlockX(), loc.getBlockY() > 128 ? 0 : 255, loc.getBlockZ());
-        tp.sendPacket(plr, new PacketPlayOutBlockChange(bl, 63, (byte) 0));
+        tp.sendPacket(plr, new PacketPlayOutBlockChange(bl, Material.SIGN.getId(), (byte) 0).getVanillaPacket());
         tp.sendPacket(plr, new PacketPlayOutUpdateSign(bl, new ChatTag[]{
                 fromColoredText(initialLines[0]), fromColoredText(initialLines[1]),
                 fromColoredText(initialLines[2]), fromColoredText(initialLines[3])}));
@@ -60,7 +61,7 @@ public class SignGUI extends DataReader<String[]> {
         for (int i = 0; i < 4; ++i)
             res[i] = p.lines[i].toColoredString();
         Block b = bl.getBlock(getPlayer().getWorld());
-        tp.sendPacket(getPlayer(), new PacketPlayOutBlockChange(bl, b.getType().getId(), b.getData()));
+        tp.sendPacket(getPlayer(), new PacketPlayOutBlockChange(bl, b.getType().getId(), b.getData()).getVanillaPacket());
         onResult(res);
         return true;
     }

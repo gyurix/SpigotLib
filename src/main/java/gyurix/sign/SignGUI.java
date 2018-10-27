@@ -11,6 +11,7 @@ import gyurix.protocol.wrappers.outpackets.PacketPlayOutOpenSignEditor;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutUpdateSign;
 import gyurix.spigotlib.SU;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -55,7 +56,7 @@ public class SignGUI implements PacketInListener {
         openSignGUIs.put(plr.getName(), this);
         Location loc = plr.getLocation();
         bl = new BlockLocation(loc.getBlockX(), loc.getBlockY() > 128 ? 0 : 255, loc.getBlockZ());
-        tp.sendPacket(plr, new PacketPlayOutBlockChange(bl, 63, (byte) 0));
+        tp.sendPacket(plr, new PacketPlayOutBlockChange(bl, Material.SIGN.getId(), (byte) 0));
         tp.sendPacket(plr, new PacketPlayOutUpdateSign(bl, new ChatTag[]{
                 fromColoredText(initialLines[0]), fromColoredText(initialLines[1]),
                 fromColoredText(initialLines[2]), fromColoredText(initialLines[3])}));
