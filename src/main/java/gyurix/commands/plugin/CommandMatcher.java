@@ -377,7 +377,7 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
         if (!senderMatch(sender))
             return false;
         if (parameters.length > 0 && args.length > parameters.length)
-            args[parameters.length - 1] = StringUtils.join(args, parameters.length - 1, args.length);
+            args[parameters.length - 1] = StringUtils.join(args, ' ', parameters.length - 1, args.length);
         Object res = convert(args[id], parameters[id].getParameterizedType());
         if (res == null)
             return false;

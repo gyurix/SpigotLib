@@ -430,7 +430,7 @@ public class Main extends JavaPlugin implements Listener {
             tp.unregisterIncomingListener(pl);
             tp.unregisterOutgoingListener(pl);
         }
-        pf.data.unWrapAll();
+        //pf.data.unWrapAll();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
