@@ -58,6 +58,12 @@ public class NametagBar extends ScoreboardBar {
         updateTeam(team, td);
     }
 
+    public void setColor(String team, int color) {
+        TeamData td = getTeam(team);
+        td.color = color;
+        updateTeam(team, td);
+    }
+
     public void setFriendlyFire(String team, boolean value) {
         TeamData td = getTeam(team);
         td.friendlyFire = value;

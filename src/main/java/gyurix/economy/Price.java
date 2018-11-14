@@ -19,6 +19,15 @@ public class Price {
     }
 
     /**
+     * Gives the amount of money represented by this Price object to the given Player.
+     *
+     * @param plr - Target Player
+     */
+    public void give(Player plr) {
+        EconomyAPI.addBalance(plr.getUniqueId(), type, value);
+    }
+
+    /**
      * Checks if the given Player has the amount of money represented by this Price object
      *
      * @param plr - Target Player

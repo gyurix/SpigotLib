@@ -117,6 +117,8 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
                 case "class":
                     sender.sendMessage("Classes in package " + args[0] + ": " + StringUtils.join(getClasses(args[0]), '\n'));
                     return true;
+                case "packet":
+
                 case "purge":
                     lang.msg(sender, "purge.pf");
                     purgePF = true;
@@ -293,8 +295,6 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
         } else if (args.length == 2) {
             if (args[0].equals("reload")) {
                 return filterStart(new String[]{"config", "pf", "lf"}, args[1]);
-            } else {
-                return null;
             }
         }
         return out;

@@ -10,6 +10,8 @@ import gyurix.configfile.ConfigFile;
 import gyurix.configfile.ConfigSerialization;
 import gyurix.datareader.DataReader;
 import gyurix.economy.EconomyAPI;
+import gyurix.economy.custom.ExpBalanceType;
+import gyurix.economy.custom.VaultBalanceType;
 import gyurix.inventory.CloseableGUI;
 import gyurix.inventory.CustomGUI;
 import gyurix.protocol.Reflection;
@@ -348,6 +350,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
         vault = pm.getPlugin("Vault") != null;
+        EconomyAPI.registerBalanceType("exp", new ExpBalanceType(EconomyAPI.getBalanceType("exp")));
         EconomyAPI.VaultHookType vaultHookType = EconomyAPI.getVaultHookType();
         if (!vault)
             cs.sendMessage("§2[§aSpigotLib§2]§e The plugin §aVault§e is not present, skipping hook...");
@@ -357,9 +360,11 @@ public class Main extends JavaPlugin implements Listener {
             }
             if (vaultHookType == USER) {
                 cs.sendMessage("§2[§aSpigotLib§2]§e The plugin §aVault§e is present, hooking to it as §aEconomy USER§e...");
-                RegisteredServiceProvider<Economy> rspEcon = srv.getServicesManager().getRegistration(Economy.class);
-                if (rspEcon != null)
-                    econ = rspEcon.getProvider();
+                RegisteredServiceProvider<Economy> econService = srv.getServicesManager().getRegistration(Economy.class);
+                if (econService != null) {
+                    econ = econService.getProvider();
+                    EconomyAPI.registerBalanceType("default", new VaultBalanceType(EconomyAPI.getBalanceType("default")));
+                }
                 if (EconomyAPI.isMigrate()) {
                     cs.sendMessage("§2[§aSpigotLib§2]§e Migrating economy data from old Economy " + econ.getName() + "... ");
                     EconomyAPI.setVaultHookType(NONE);

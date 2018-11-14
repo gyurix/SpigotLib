@@ -8,50 +8,46 @@ import java.text.DecimalFormat;
 @Data
 public class BalanceData {
     /**
-     * Name of the balance type
-     */
-    private final String name;
-
-    /**
      * Default amount of this balance, what new players and new banks get
      */
-    private BigDecimal defaultValue = new BigDecimal(0);
-
+    protected BigDecimal defaultValue = new BigDecimal(0);
     /**
      * DecimalFormat used for formatting
      */
-    private String format;
-
+    protected String format;
     /**
      * The whole name of this balance type
      */
-    private String fullName;
-
+    protected String fullName;
+    /**
+     * Name of the balance type
+     */
+    protected String name;
     /**
      * Text written before amount
      */
-    private String prefix = "";
+    protected String prefix = "";
 
     /**
      * Text written before amount, if amount is plural
      */
-    private String prefixPlural;
+    protected String prefixPlural;
 
     /**
      * Text written after amount, if amount
      */
-    private String suffix = "";
+    protected String suffix = "";
 
     /**
      * Text written after amount, if amount is plural
      */
-    private String suffixPlural;
+    protected String suffixPlural;
 
     /**
      * Use K (10^3), M (10^6), B (10^9), T (10^12) suffixes instead of
      * the whole balance amount
      */
-    private boolean useKMBT;
+    protected boolean useKMBT;
 
     private BalanceData() {
         this.name = null;
@@ -66,6 +62,24 @@ public class BalanceData {
     public BalanceData(String name) {
         this.name = name;
         this.fullName = name;
+    }
+
+    /**
+     * Constructs a new BalanceData, by copying all
+     * the properties of the given BalanceData
+     *
+     * @param bd - The BalanceData which having the copyable properties
+     */
+    public BalanceData(BalanceData bd) {
+        this.name = bd.name;
+        this.defaultValue = bd.defaultValue;
+        this.format = bd.format;
+        this.fullName = bd.fullName;
+        this.prefix = bd.prefix;
+        this.prefixPlural = bd.prefixPlural;
+        this.suffix = bd.suffix;
+        this.suffixPlural = bd.suffixPlural;
+        this.useKMBT = bd.useKMBT;
     }
 
     /**

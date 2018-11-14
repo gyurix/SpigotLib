@@ -46,6 +46,16 @@ public class Prices implements Iterable<Price> {
     }
 
     /**
+     * Give all the prices to the given player
+     *
+     * @param plr
+     */
+    public void give(Player plr) {
+        for (Price p : prices)
+            p.give(plr);
+    }
+
+    /**
      * Checks if the given player is able to pay all the prices,
      * this method should be used before using the take method
      *
