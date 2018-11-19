@@ -1,6 +1,6 @@
 package gyurix.nbt;
 
-import com.google.gson.internal.Primitives;
+import gyurix.protocol.Primitives;
 import gyurix.protocol.Reflection;
 import lombok.Getter;
 

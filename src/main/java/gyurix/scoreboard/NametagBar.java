@@ -3,6 +3,8 @@ package gyurix.scoreboard;
 import gyurix.scoreboard.team.CollisionRule;
 import gyurix.scoreboard.team.NameTagVisibility;
 import gyurix.scoreboard.team.TeamData;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 
 import java.util.Arrays;
@@ -14,9 +16,21 @@ import static gyurix.scoreboard.ScoreboardAPI.id;
 
 public class NametagBar extends ScoreboardBar {
     int nextId = 0;
+    @Getter
+    @Setter
+    private boolean useRealTeamNames;
 
     public NametagBar() {
         super("NB" + id, "NB" + id++, 2);
+    }
+
+    public void createTeam(String team, String prefix, String suffix, int color, String... players) {
+        TeamData td = getTeam(team);
+        td.prefix = prefix;
+        td.suffix = suffix;
+        td.color = color;
+        td.players.addAll(Arrays.asList(players));
+        updateTeam(team, td);
     }
 
     public void addPlayers(String team, String... players) {
@@ -34,7 +48,7 @@ public class NametagBar extends ScoreboardBar {
     public TeamData getTeam(String team) {
         TeamData curTeam = currentData.teams.get(team);
         if (curTeam == null) {
-            curTeam = new TeamData(currentData.barname + "-" + ++nextId, team, "", "", false, true, NameTagVisibility.always, CollisionRule.always, 0, new ConcurrentSkipListSet<String>());
+            curTeam = new TeamData(useRealTeamNames ? team : (currentData.barname + "-" + ++nextId), team, "", "", false, true, NameTagVisibility.always, CollisionRule.always, 0, new ConcurrentSkipListSet<>());
             currentData.teams.put(team, curTeam);
         }
         return curTeam;

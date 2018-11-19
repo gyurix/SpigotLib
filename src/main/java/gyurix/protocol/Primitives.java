@@ -1,4 +1,4 @@
-package com.google.gson.internal;
+package gyurix.protocol;
 
 import java.util.Collections;
 import java.util.HashMap;

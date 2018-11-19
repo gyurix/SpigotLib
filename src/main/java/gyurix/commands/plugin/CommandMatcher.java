@@ -1,6 +1,6 @@
 package gyurix.commands.plugin;
 
-import com.google.gson.internal.Primitives;
+import gyurix.protocol.Primitives;
 import gyurix.protocol.Reflection;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.ItemUtils;

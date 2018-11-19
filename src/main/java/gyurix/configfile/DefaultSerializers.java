@@ -1,12 +1,12 @@
 package gyurix.configfile;
 
-import com.google.gson.internal.Primitives;
 import gyurix.configfile.ConfigSerialization.ConfigOptions;
 import gyurix.configfile.ConfigSerialization.Serializer;
 import gyurix.configfile.ConfigSerialization.StringSerializable;
 import gyurix.nbt.NBTCompound;
 import gyurix.nbt.NBTList;
 import gyurix.nbt.NBTTag;
+import gyurix.protocol.Primitives;
 import gyurix.protocol.Reflection;
 import gyurix.spigotlib.Main;
 import gyurix.spigotlib.SU;
