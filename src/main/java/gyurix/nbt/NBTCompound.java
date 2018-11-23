@@ -18,12 +18,12 @@ public class NBTCompound extends HashMap<String, NBTTag> implements NBTTag {
 
     public boolean getBoolean(String key) {
         NBTTag tag = get(key);
-        return tag != null && tag instanceof NBTPrimitive && (Byte) ((NBTPrimitive) tag).getData() == 1;
+        return tag instanceof NBTPrimitive && (Byte) ((NBTPrimitive) tag).getData() == 1;
     }
 
     public NBTCompound getCompound(String key) {
         NBTTag tag = get(key);
-        if (tag == null || !(tag instanceof NBTCompound)) {
+        if (!(tag instanceof NBTCompound)) {
             tag = new NBTCompound();
             put(key, tag);
         }
@@ -32,7 +32,7 @@ public class NBTCompound extends HashMap<String, NBTTag> implements NBTTag {
 
     public NBTList getList(String key) {
         NBTTag tag = get(key);
-        if (tag == null || !(tag instanceof NBTList)) {
+        if (!(tag instanceof NBTList)) {
             tag = new NBTList();
             put(key, tag);
         }

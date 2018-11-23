@@ -1,12 +1,17 @@
 package gyurix.protocol.wrappers.outpackets;
 
+import gyurix.nbt.NBTCompound;
+import gyurix.nbt.NBTTagType;
 import gyurix.protocol.Reflection;
 import gyurix.protocol.event.PacketOutType;
 import gyurix.protocol.utils.WrappedData;
 import gyurix.protocol.wrappers.WrappedPacket;
 import gyurix.spigotlib.SU;
+import gyurix.spigotutils.ServerVersion;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by GyuriX, on 2017. 03. 29..
@@ -15,10 +20,15 @@ public class PacketPlayOutMapChunk extends WrappedPacket {
     public ChunkMap chunkMap;
     public int chunkX;
     public int chunkZ;
+    public byte[] chunkData;
+    public int primaryBitMask;
     public boolean groundUpContinuous;
+    public List<NBTCompound> tileEntities = new ArrayList<>();
 
     @Override
     public Object getVanillaPacket() {
+        if (Reflection.ver.isAbove(ServerVersion.v1_13))
+            return PacketOutType.MapChunk.newPacket(chunkX, chunkZ, primaryBitMask, chunkData, toNMSTileEntityList(), groundUpContinuous);
         return PacketOutType.MapChunk.newPacket(chunkX, chunkZ, chunkMap.toNMS(), groundUpContinuous);
     }
 
@@ -27,8 +37,23 @@ public class PacketPlayOutMapChunk extends WrappedPacket {
         Object[] d = PacketOutType.MapChunk.getPacketData(packet);
         chunkX = (int) d[0];
         chunkZ = (int) d[1];
-        chunkMap = new ChunkMap(d[2]);
-        groundUpContinuous = (boolean) d[3];
+        if (Reflection.ver.isAbove(ServerVersion.v1_13)) {
+            primaryBitMask = (int) d[2];
+            chunkData = (byte[]) d[3];
+            for (Object o : (List) d[4])
+                tileEntities.add((NBTCompound) NBTTagType.tag(o));
+            groundUpContinuous = (boolean) d[5];
+        } else {
+            chunkMap = new ChunkMap(d[2]);
+            groundUpContinuous = (boolean) d[3];
+        }
+    }
+
+    public List<Object> toNMSTileEntityList() {
+        List<Object> out = new ArrayList<>();
+        for (NBTCompound tag : tileEntities)
+            out.add(tag.toNMS());
+        return out;
     }
 
     public static class ChunkMap implements WrappedData {
