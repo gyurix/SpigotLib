@@ -84,6 +84,7 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
         setParameterWeight(7, Integer.class);
         setParameterWeight(6, Byte.class);
         setParameterWeight(5, Boolean.class);
+
         addCustomMatcher((arg, type) -> {
             try {
                 return Bukkit.getPlayer(UUID.fromString(arg));
@@ -93,6 +94,7 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
         }, Player.class);
         addCustomMatcher((arg, type) -> Bukkit.getWorld(arg), World.class);
         addCustomMatcher((arg, type) -> ItemUtils.stringToItemStack(arg), ItemStack.class);
+        addCustomMatcher((arg, type) -> arg.charAt(0), Character.class);
         addCustomMatcher((arg, type) -> arg.equalsIgnoreCase("on") ||
                 arg.equalsIgnoreCase("true") ||
                 arg.equalsIgnoreCase("enable") ||
