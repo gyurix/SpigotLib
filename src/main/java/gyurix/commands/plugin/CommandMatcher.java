@@ -111,7 +111,7 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
             return cm.convert(arg, type);
         if (Collection.class.isAssignableFrom(cl)) {
             String[] d = arg.split(",");
-            Type target = (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
+            Type target = ((ParameterizedType) type).getActualTypeArguments()[0];
             if (cl == List.class)
                 cl = ArrayList.class;
             if (cl == Set.class)
@@ -130,8 +130,8 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
             return out;
         } else if (Map.class.isAssignableFrom(cl)) {
             String[] d = arg.split(",");
-            Type targetKey = (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
-            Type targetValue = (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
+            Type targetKey = ((ParameterizedType) type).getActualTypeArguments()[0];
+            Type targetValue = ((ParameterizedType) type).getActualTypeArguments()[0];
             if (cl == Map.class)
                 cl = LinkedHashMap.class;
             Map out = (Map) Reflection.newInstance(cl);
@@ -142,18 +142,18 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
             return out;
         }
         try {
-            return cl.getConstructor(String.class).newInstance(arg);
+            Method m = cl.getMethod("valueOf", String.class);
+            try {
+                return m.invoke(null, arg);
+            } catch (Throwable e) {
+                return m.invoke(null, arg.toUpperCase());
+            }
         } catch (NoSuchMethodException ignored) {
         } catch (Throwable e) {
             return null;
         }
         try {
-            Method m = cl.getMethod("valueOf", String.class);
-            try {
-                return m.invoke(null, arg.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                return m.invoke(null, arg);
-            }
+            return cl.getConstructor(String.class).newInstance(arg);
         } catch (NoSuchMethodException ignored) {
         } catch (Throwable e) {
             return null;

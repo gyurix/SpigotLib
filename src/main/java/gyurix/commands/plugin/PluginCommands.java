@@ -60,6 +60,10 @@ public class PluginCommands {
                 mapping.put(a, ee);
         });
         PluginCommand pc = pl.getCommand(subOf);
+        if (pc == null) {
+            error(SU.cs, new Exception("Command " + subOf + " should be added to plugin.yml."), pln, pl.getDescription().getMain());
+            return;
+        }
         pc.setExecutor((sender, command, s, args) -> {
             String sub = args.length == 0 ? "help" : args[0].toLowerCase();
             ExtendedCommandExecutor exec = mapping.get(sub);
