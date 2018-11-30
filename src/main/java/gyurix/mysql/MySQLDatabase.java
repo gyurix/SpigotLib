@@ -3,6 +3,7 @@ package gyurix.mysql;
 import com.mysql.jdbc.Connection;
 import gyurix.configfile.ConfigSerialization.ConfigOptions;
 import gyurix.spigotlib.SU;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static gyurix.spigotlib.Main.pl;
 
 /**
  * Class representing a MySQL storage connection and containing the required methods and utils
@@ -32,11 +35,10 @@ public class MySQLDatabase {
     }
 
     /**
-     *
-     * @param host      - The host of the MySQL server
-     * @param database  - The name of the database
-     * @param username  - The username to the MySQL server
-     * @param password  - The password to the MySQL server
+     * @param host     - The host of the MySQL server
+     * @param database - The name of the database
+     * @param username - The username to the MySQL server
+     * @param password - The password to the MySQL server
      */
     public MySQLDatabase(String host, String database, String username, String password) {
         this.host = host;
@@ -108,9 +110,18 @@ public class MySQLDatabase {
         return false;
     }
 
+    public boolean command(String cmd, Object... args) {
+        try {
+            return prepare(cmd, args).execute();
+        } catch (Throwable e) {
+            SU.log(pl, "MySQL - Command", cmd, StringUtils.join(args, ", "));
+            SU.error(SU.cs, e, "SpigotLib", "gyurix");
+        }
+        return false;
+    }
+
     /**
-     *
-     * @return  - The Connection
+     * @return - The Connection
      */
     private Connection getConnection() {
         try {
@@ -124,7 +135,6 @@ public class MySQLDatabase {
     }
 
     /**
-     *
      * @return True on successful connection otherwise false
      */
     public boolean openConnection() {
@@ -137,6 +147,14 @@ public class MySQLDatabase {
             return false;
         }
         return true;
+    }
+
+    private PreparedStatement prepare(String cmd, Object... args) throws Throwable {
+        PreparedStatement st = getConnection().prepareStatement(cmd);
+        for (int i = 0; i < args.length; ++i)
+            st.setObject(i + 1, args[i] instanceof Enum ? ((Enum) args[i]).name() :
+                    String.valueOf(args[i]));
+        return st;
     }
 
     public ResultSet querry(String cmd) {
@@ -152,13 +170,32 @@ public class MySQLDatabase {
         }
     }
 
+    public ResultSet querry(String cmd, Object... args) {
+        try {
+            return prepare(cmd, args).executeQuery();
+        } catch (Throwable e) {
+            SU.log(pl, "MySQL - Querry", cmd, StringUtils.join(args, ", "));
+            SU.error(SU.cs, e, "SpigotLib", "gyurix");
+            return null;
+        }
+    }
+
     public int update(String cmd) {
         PreparedStatement st;
         try {
             st = getConnection().prepareStatement(cmd);
-            int out = st.executeUpdate();
-            return out;
+            return st.executeUpdate();
         } catch (Throwable e) {
+            SU.error(SU.cs, e, "SpigotLib", "gyurix");
+            return -1;
+        }
+    }
+
+    public int update(String cmd, Object... args) {
+        try {
+            return prepare(cmd, args).executeUpdate();
+        } catch (Throwable e) {
+            SU.log(pl, "MySQL - Update", cmd, StringUtils.join(args, ", "));
             SU.error(SU.cs, e, "SpigotLib", "gyurix");
             return -1;
         }
