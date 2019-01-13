@@ -112,7 +112,7 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
                         lang.msg(sender, p.hasPermission(args[0]) ? "perms.yes" : "perms.no", "player", p.getName(), "perm", args[0]);
                     return true;
                 case "debug":
-                    Config.debug.handleCommand(sender, "sl", args, 0);
+                    Config.debug.handleCommand(sender, "sl", args);
                     return true;
                 case "class":
                     sender.sendMessage("Classes in package " + args[0] + ": " + StringUtils.join(getClasses(args[0]), '\n'));

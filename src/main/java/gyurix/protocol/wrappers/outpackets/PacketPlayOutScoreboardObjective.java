@@ -1,8 +1,10 @@
 package gyurix.protocol.wrappers.outpackets;
 
+import gyurix.protocol.Reflection;
 import gyurix.protocol.event.PacketOutType;
 import gyurix.protocol.wrappers.WrappedPacket;
 import gyurix.scoreboard.ScoreboardDisplayMode;
+import gyurix.spigotutils.ServerVersion;
 
 public class PacketPlayOutScoreboardObjective extends WrappedPacket {
     /**
@@ -33,7 +35,9 @@ public class PacketPlayOutScoreboardObjective extends WrappedPacket {
 
     @Override
     public Object getVanillaPacket() {
-        return PacketOutType.ScoreboardObjective.newPacket(name, title, displayMode == null ? null : displayMode.toNMS(), action);
+        if (Reflection.ver.isAbove(ServerVersion.v1_8))
+            return PacketOutType.ScoreboardObjective.newPacket(name, title, displayMode == null ? null : displayMode.toNMS(), action);
+        return PacketOutType.ScoreboardObjective.newPacket(name, title, action);
     }
 
     @Override
@@ -41,8 +45,11 @@ public class PacketPlayOutScoreboardObjective extends WrappedPacket {
         Object[] o = PacketOutType.ScoreboardObjective.getPacketData(packet);
         name = (String) o[0];
         title = (String) o[1];
-        displayMode = o[2] == null ? null : ScoreboardDisplayMode.valueOf(o[2].toString());
-        action = (int) o[3];
+        if (Reflection.ver.isAbove(ServerVersion.v1_8)) {
+            displayMode = o[2] == null ? null : ScoreboardDisplayMode.valueOf(o[2].toString());
+            action = (int) o[3];
+        } else
+            action = (int) o[2];
     }
 }
 

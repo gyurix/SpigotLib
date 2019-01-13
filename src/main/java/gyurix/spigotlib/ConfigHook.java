@@ -11,6 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import javax.script.ScriptException;
@@ -93,6 +95,7 @@ public class ConfigHook {
             }
         });
         serializers.put(ItemStack.class, new ItemSerializer());
+        serializers.put(PotionEffect.class, new PotionSerializer());
     }
 
     /**
@@ -201,6 +204,29 @@ public class ConfigHook {
         @Override
         public ConfigData toData(Object is, Type... paramVarArgs) {
             return new ConfigData(ItemUtils.itemToString((ItemStack) is));
+        }
+    }
+
+    /**
+     * Custom config Serializer used for saving and loading ItemStacks
+     */
+    public static class PotionSerializer implements Serializer {
+        @Override
+        public Object fromData(ConfigData data, Class cl, Type... paramVarArgs) {
+            String[] d = data.stringData.split(" ");
+            switch (d.length) {
+                case 2:
+                    return new PotionEffect(PotionEffectType.getByName(d[0]), Integer.valueOf(d[1]), 0);
+                case 3:
+                    return new PotionEffect(PotionEffectType.getByName(d[0]), Integer.valueOf(d[1]), Integer.valueOf(d[2]));
+            }
+            return null;
+        }
+
+        @Override
+        public ConfigData toData(Object obj, Type... paramVarArgs) {
+            PotionEffect potion = (PotionEffect) obj;
+            return new ConfigData(potion.getType().getName() + " " + potion.getDuration() + " " + potion.getAmplifier());
         }
     }
 

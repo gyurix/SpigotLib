@@ -125,6 +125,18 @@ public class ItemUtils {
     }
 
     /**
+     * Gets the name of the given item
+     *
+     * @param is - The item which name we would like to get
+     * @return The name of the item
+     */
+    public static String getName(ItemStack is) {
+        if (is == null || is.getType() == Material.AIR)
+            return "Air";
+        return is.getItemMeta().hasDisplayName() ? is.getItemMeta().getDisplayName() : SU.toCamelCase(is.getType().name());
+    }
+
+    /**
      * Adds the given lore storage meta to the given item
      *
      * @param is     - Modifiable item

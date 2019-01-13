@@ -116,6 +116,14 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
         return blocks;
     }
 
+    public CuboidArea add(int x, int y, int z) {
+        return new CuboidArea(world, new BlockLocation(pos1.x + x, pos1.y + y, pos1.z + z), new BlockLocation(pos2.x + x, pos2.y + y, pos2.z + z));
+    }
+
+    public CuboidArea subtract(int x, int y, int z) {
+        return add(-x, -y, -z);
+    }
+
     @Override
     public String toString() {
         return world == null ? pos1 + " " + pos2 : world + ' ' + pos1 + ' ' + pos2;

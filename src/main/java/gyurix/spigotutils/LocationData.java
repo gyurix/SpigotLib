@@ -177,9 +177,8 @@ public class LocationData implements StringSerializable {
     }
 
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof LocationData)) {
+        if (!(obj instanceof LocationData))
             return false;
-        }
         LocationData ld = (LocationData) obj;
         return (world == null && ld.world == null || world != null && ld.world != null && world.equals(ld.world)) && x == ld.x && y == ld.y && z == ld.z && yaw == ld.yaw && pitch == ld.pitch;
     }
@@ -191,12 +190,11 @@ public class LocationData implements StringSerializable {
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
-        if (world != null) {
+        if (world != null)
             out.append(' ').append(world);
-        }
-        out.append(' ').append(x).append(' ').append(y).append(' ').append(z);
+        out.append(' ').append(to2Digit(x)).append(' ').append(to2Digit(y)).append(' ').append(to2Digit(z));
         if (yaw != 0.0f || pitch != 0.0f)
-            out.append(' ').append(yaw).append(' ').append(pitch);
+            out.append(' ').append(to2Digit(yaw)).append(' ').append(to2Digit(pitch));
         return out.substring(1);
     }
 
@@ -240,10 +238,18 @@ public class LocationData implements StringSerializable {
         return this;
     }
 
+    public double to2Digit(double in) {
+        return ((long) (in * 100)) / 100.0;
+    }
+
     public String toLongString() {
         StringBuilder out = new StringBuilder();
         out.append(world).append(' ').append(x).append(' ').append(y).append(' ').append(z).append(' ').append(yaw).append(' ').append(pitch);
         return out.substring(1);
+    }
+
+    public BlockLocation toBlockLocation() {
+        return new BlockLocation((int) x, (int) y, (int) z);
     }
 
     public Vector toVector() {

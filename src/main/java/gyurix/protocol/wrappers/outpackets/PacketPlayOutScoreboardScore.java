@@ -26,7 +26,7 @@ public class PacketPlayOutScoreboardScore extends WrappedPacket {
 
     @Override
     public Object getVanillaPacket() {
-        return PacketOutType.ScoreboardScore.newPacket(player, board, score, action.toNMS());
+        return PacketOutType.ScoreboardScore.newPacket(player, board, score, Reflection.ver.isAbove(ServerVersion.v1_8) ? action.toNMS() : action.ordinal());
     }
 
     @Override
@@ -35,7 +35,10 @@ public class PacketPlayOutScoreboardScore extends WrappedPacket {
         player = (String) data[0];
         board = (String) data[1];
         score = (Integer) data[2];
-        action = ScoreAction.valueOf(data[3].toString());
+        if (Reflection.ver.isAbove(ServerVersion.v1_8))
+            action = ScoreAction.valueOf(data[3].toString());
+        else
+            action = ScoreAction.values()[(Integer) data[3]];
     }
 
     public enum ScoreAction implements WrappedData {

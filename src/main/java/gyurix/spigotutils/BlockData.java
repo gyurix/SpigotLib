@@ -111,9 +111,14 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
         anydata = false;
     }
 
+    public BlockData(Material type) {
+        id = type.getId();
+    }
+
     public BlockData(Material type, short durability) {
         id = type.getId();
         data = durability;
+        anydata = false;
     }
 
     @Override

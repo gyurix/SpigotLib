@@ -17,7 +17,7 @@ Public License is intended to guarantee your freedom to share and change all
 versions of a program--to make sure it remains free software for all its users.
 We, the Free Software Foundation, use the GNU General Public License for most
 of our software; it applies also to any other work released this way by its
-authors. You can apply it to your programs, too.
+authors. You can applyForPlayer it to your programs, too.
 
 When we speak of free software, we are referring to freedom, not price. Our
 General Public Licenses are designed to make sure that you have the freedom to
@@ -73,7 +73,7 @@ follow.
 
 *This License* refers to version 3 of the GNU General Public License.
 
-*Copyright* also means copyright-like laws that apply to other kinds of works,
+*Copyright* also means copyright-like laws that applyForPlayer to other kinds of works,
 such as semiconductor masks.
 
 *The Program* refers to any copyrightable work licensed under this License.
@@ -189,7 +189,7 @@ legal rights to forbid circumvention of technological measures.
 You may convey verbatim copies of the Program's source code as you receive it,
 in any medium, provided that you conspicuously and appropriately publish on
 each copy an appropriate copyright notice; keep intact all notices stating that
-this License and any non-permissive terms added in accord with section 7 apply
+this License and any non-permissive terms added in accord with section 7 applyForPlayer
 to the code; keep intact all notices of the absence of any warranty; and give
 all recipients a copy of this License along with the Program.
 
@@ -209,7 +209,7 @@ provided that you also meet all of these conditions:
     modifies the requirement in section 4 to *keep intact all notices*.
   - c) You must license the entire work, as a whole, under this License to
     anyone who comes into possession of a copy. This License will therefore
-    apply, along with any applicable section 7 additional terms, to the whole
+    applyForPlayer, along with any applicable section 7 additional terms, to the whole
     of the work, and all its parts, regardless of how they are packaged. This
     License gives no permission to license the work in any other way, but it
     does not invalidate such permission if you have separately received it.
@@ -224,7 +224,7 @@ combined with it such as to form a larger program, in or on a volume of a
 storage or distribution medium, is called an *aggregate* if the compilation and
 its resulting copyright are not used to limit the access or legal rights of the
 compilation's users beyond what the individual works permit. Inclusion of a
-covered work in an aggregate does not cause this License to apply to the other
+covered work in an aggregate does not cause this License to applyForPlayer to the other
 parts of the aggregate.
 
 ### 6. Conveying Non-Source Forms.
@@ -300,7 +300,7 @@ transaction in which the right of possession and use of the User Product is
 transferred to the recipient in perpetuity or for a fixed term (regardless of
 how the transaction is characterized), the Corresponding Source conveyed under
 this section must be accompanied by the Installation Information. But this
-requirement does not apply if neither you nor any third party retains the
+requirement does not applyForPlayer if neither you nor any third party retains the
 ability to install modified object code on the User Product (for example, the
 work has been installed in ROM).
 
@@ -323,7 +323,7 @@ no special password or key for unpacking, reading or copying.
 making exceptions from one or more of its conditions. Additional permissions
 that are applicable to the entire Program shall be treated as though they were
 included in this License, to the extent that they are valid under applicable
-law. If additional permissions apply only to part of the Program, that part may
+law. If additional permissions applyForPlayer only to part of the Program, that part may
 be used separately under those permissions, but the entire Program remains
 governed by this License without regard to the additional permissions.
 
@@ -366,12 +366,12 @@ by the terms of that license document, provided that the further restriction
 does not survive such relicensing or conveying.
 
 If you add terms to a covered work in accord with this section, you must place,
-in the relevant source files, a statement of the additional terms that apply to
+in the relevant source files, a statement of the additional terms that applyForPlayer to
 those files, or a notice indicating where to find the applicable terms.
 
 Additional terms, permissive or non-permissive, may be stated in the form of a
 separately written license, or stated as exceptions; the above requirements
-apply either way.
+applyForPlayer either way.
 
 ### 8. Termination.
 
@@ -521,10 +521,10 @@ from conveying the Program.
 Notwithstanding any other provision of this License, you have permission to
 link or combine any covered work with a work licensed under version 3 of the
 GNU Affero General Public License into a single combined work, and to convey
-the resulting work. The terms of this License will continue to apply to the
+the resulting work. The terms of this License will continue to applyForPlayer to the
 part which is the covered work, but the special requirements of the GNU Affero
 General Public License, section 13, concerning interaction through a network
-will apply to the combination as such.
+will applyForPlayer to the combination as such.
 
 ### 14. Revised Versions of this License.
 
@@ -576,7 +576,7 @@ HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
 If the disclaimer of warranty and limitation of liability provided above cannot
 be given local legal effect according to their terms, reviewing courts shall
-apply local law that most closely approximates an absolute waiver of all civil
+applyForPlayer local law that most closely approximates an absolute waiver of all civil
 liability in connection with the Program, unless a warranty or assumption of
 liability accompanies a copy of the Program in return for a fee.
 
@@ -625,7 +625,7 @@ be different; for a GUI interface, you would use an *about box*.
 
 You should also get your employer (if you work as a programmer) or school, if
 any, to sign a *copyright disclaimer* for the program, if necessary. For more
-information on this, and how to apply and follow the GNU GPL, see
+information on this, and how to applyForPlayer and follow the GNU GPL, see
 [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
 
 The GNU General Public License does not permit incorporating your program into

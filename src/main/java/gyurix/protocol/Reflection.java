@@ -21,12 +21,13 @@ import static org.apache.commons.lang.ArrayUtils.EMPTY_OBJECT_ARRAY;
 
 public class Reflection {
     public static final ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
-    private static final Map<Class, Field[]> allFieldCache = (Map) Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Class, Field[]> allFieldCache = Collections.synchronizedMap(new WeakHashMap<>());
     private static final ConcurrentHashMap<String, String> nmsRenames = new ConcurrentHashMap();
     /**
      * The version of the current server
      */
-    public static ServerVersion ver = ServerVersion.UNKNOWN;
+    public static ServerVersion ver = UNKNOWN;
+    private static Field modifiersField;
     public static String version;
 
     /**
@@ -202,12 +203,15 @@ public class Reflection {
     }
 
     public static Field getField(Class clazz, String name) {
-        try {
-            return setFieldAccessible(clazz.getDeclaredField(name));
-        } catch (Throwable e) {
-            debug.msg("Reflection", e);
-            return null;
+        Field f = null;
+        while (clazz != null) {
+            try {
+                return setFieldAccessible(clazz.getDeclaredField(name));
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            }
         }
+        return null;
     }
 
     public static Object getFieldData(Class clazz, String name) {
@@ -336,7 +340,9 @@ public class Reflection {
         String name = Bukkit.getServer().getClass().getPackage().getName();
         version = name.substring(name.lastIndexOf('.') + 1);
         try {
-            ver = ServerVersion.valueOf(version.substring(0, version.length() - 3));
+            modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            ver = valueOf(version.substring(0, version.length() - 3));
         } catch (Throwable ignored) {
         }
         SU.cs.sendMessage("§2[§aStartup§2]§e Detected server version:§a " + ver + "§e (§f" + version + "§e) - §f" + Bukkit.getServer().getVersion());
@@ -439,10 +445,10 @@ public class Reflection {
     }
 
     public static Field setFieldAccessible(Field f) {
+        if (f == null)
+            return null;
         try {
             f.setAccessible(true);
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
             int modifiers = modifiersField.getInt(f);
             modifiersField.setInt(f, modifiers & -17);
             return f;

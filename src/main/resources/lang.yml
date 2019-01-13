@@ -77,11 +77,9 @@ de:
 en:
   spigotlib:
     debug:
-      list: &6&l&nDebug system - <plugin>
-        <list>
-      off: &c<type>\-T&aClick to enable &e&l<type>&a debug messages\-R/<cmd> <type>
-      on: &a<type>\-T&cClick to disable &e&l<type>&c debug messages\-R/<cmd> <type>
-      sep: \|&7, &f\|
+      list: &6&lEnabled debug channels:&e <channels>
+      enabled: &aEnabled channel &e&l<channel>&a.
+      disabled: &cDisabled channel &e&l<channel>&c.
     executed: The entered command has been executed successfully.
     help: &6&lＳｐｉｇｏｔＬｉｂ&e&l - &6&l<version>&e&l - &6&lｂｙ ＧｙｕｒｉＸ
     &b&l➯ &e&lCONTACT:&f on Skype - gyurixdev

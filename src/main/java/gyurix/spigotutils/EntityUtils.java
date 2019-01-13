@@ -16,6 +16,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import static gyurix.protocol.Reflection.*;
 
@@ -27,7 +28,9 @@ public class EntityUtils {
             nmsEntityCL = getNMSClass("Entity"),
             craftWorldCL = getOBCClass("CraftWorld"),
             nmsWorldCL = getNMSClass("World"),
-            nmsWorldDataCL = getNMSClass("WorldData");
+            nmsWorldDataCL = getNMSClass("WorldData"),
+            nmsEntityInsentientCL = getNMSClass("EntityInsentient"),
+            nmsPathfinderGoalSelCL = getNMSClass("PathfinderGoalSelector");
     public static final Method setLocationM = getMethod(nmsEntityCL, "setLocation", double.class, double.class, double.class, float.class, float.class),
             bukkitEntityM = getMethod(nmsEntityCL, "getBukkitEntity");
     public static Field killerField = getField(getNMSClass("EntityLiving"), "killer"),
@@ -37,6 +40,10 @@ public class EntityUtils {
             nmsWorldDataF = getField(nmsWorldCL, "worldData"),
             dataWatcherF = getField(nmsEntityCL, "datawatcher"),
             craftWorldF = getField(nmsWorldCL, "world");
+
+    public static Field goalSelectorField = getField(nmsEntityInsentientCL, "goalSelector"),
+            targetSelectorField = getField(nmsEntityInsentientCL, "targetSelector"),
+            pathfinderList1Field = getFirstFieldOfType(nmsPathfinderGoalSelCL, List.class), pathfinderList2Field = getLastFieldOfType(nmsPathfinderGoalSelCL, List.class);
 
     /**
      * Converts the given NMS entity to a Bukkit entity
@@ -216,9 +223,23 @@ public class EntityUtils {
     public static void setNoAI(LivingEntity ent, boolean noAi) {
         if (ent == null)
             return;
-        NBTCompound nbt = NBTApi.getNbtData(ent);
-        nbt.set("NoAI", noAi ? 1 : 0);
-        NBTApi.setNbtData(ent, nbt);
+        if (ver.isAbove(ServerVersion.v1_8)) {
+            NBTCompound nbt = NBTApi.getNbtData(ent);
+            nbt.set("NoAI", noAi ? 1 : 0);
+            NBTApi.setNbtData(ent, nbt);
+        } else if (noAi) {
+            Object nmsEntity = getNMSEntity(ent);
+            try {
+                Object goalSelector = goalSelectorField.get(nmsEntity);
+                Object targetSelector = targetSelectorField.get(nmsEntity);
+                ((List) pathfinderList1Field.get(goalSelector)).clear();
+                ((List) pathfinderList2Field.get(goalSelector)).clear();
+                ((List) pathfinderList1Field.get(targetSelector)).clear();
+                ((List) pathfinderList2Field.get(targetSelector)).clear();
+            } catch (Throwable e) {
+                SU.error(SU.cs, e, "SpigotLib", "gyurix");
+            }
+        }
     }
 
     /**

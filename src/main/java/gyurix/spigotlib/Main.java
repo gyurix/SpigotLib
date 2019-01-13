@@ -157,8 +157,6 @@ public class Main extends JavaPlugin implements Listener {
             loadPlayerConfig(null);
             Bukkit.getOnlinePlayers().forEach((p) -> loadPlayerConfig(p.getUniqueId()));
         }
-        cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aReflectionAPI§e...");
-        Reflection.init();
         if (ver.isAbove(v1_8))
             tp = new ProtocolImpl();
         else if (ver != UNKNOWN)
@@ -177,9 +175,8 @@ public class Main extends JavaPlugin implements Listener {
             PacketInType.init();
             PacketOutType.init();
             ChatAPI.init();
-            if (ver.isAbove(v1_8))
-                for (Player p : Bukkit.getOnlinePlayers())
-                    ScoreboardAPI.playerJoin(p);
+            for (Player p : Bukkit.getOnlinePlayers())
+                ScoreboardAPI.playerJoin(p);
         } else {
             cs.sendMessage("§2[§aSpigotLib§2]§e Starting SpigotLib in §csemi compatible mode§e, skipping the load of " +
                     "PacketAPI, Offline player management, ChatAPI, TitleAPI, NBTApi, ScoreboardAPI.");
@@ -230,6 +227,8 @@ public class Main extends JavaPlugin implements Listener {
             sch = srv.getScheduler();
             js = new ScriptEngineManager().getEngineByName("JavaScript");
             dir = getDataFolder();
+            cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aReflectionAPI§e...");
+            Reflection.init();
             pluginsF = Reflection.getField(pm.getClass(), "plugins");
             lookupNamesF = Reflection.getField(pm.getClass(), "lookupNames");
         } catch (Throwable e) {
@@ -421,7 +420,7 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerLogin(PlayerLoginEvent e) {
         Player plr = e.getPlayer();
-        if (!forceReducedMode && ver.isAbove(v1_8))
+        if (!forceReducedMode)
             ScoreboardAPI.playerJoin(plr);
     }
 

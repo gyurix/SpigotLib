@@ -100,7 +100,7 @@ public class ConfigData implements Comparable<ConfigData> {
                 prefix.append('-').append(ConfigSerialization.getAlias((Class) t));
             }
             prefix.append('‼');
-            cd.stringData = prefix + cd.stringData;
+            cd.stringData = prefix + (cd.stringData == null ? "" : cd.stringData);
         }
         return cd;
     }

@@ -66,16 +66,31 @@ public class BlockLocation implements WrappedData, StringSerializable {
         }
     }
 
-    public void add(Vector v) {
-        x += v.getBlockX();
-        y += v.getBlockY();
-        z += v.getBlockZ();
+    public BlockLocation add(BlockLocation bl) {
+        return add(bl.x, bl.y, bl.z);
     }
 
-    public void add(int x, int y, int z) {
+    public BlockLocation add(Vector v) {
+        return add(v.getBlockX(), v.getBlockY(), v.getBlockZ());
+    }
+
+    public BlockLocation add(int x, int y, int z) {
         this.x += x;
         this.y += y;
         this.z += z;
+        return this;
+    }
+
+    public BlockLocation subtract(Vector v) {
+        return add(v.clone().multiply(-1));
+    }
+
+    public BlockLocation subtract(BlockLocation bl) {
+        return add(-bl.x, -bl.y, -bl.z);
+    }
+
+    public BlockLocation subtract(int x, int y, int z) {
+        return add(-x, -y, -z);
     }
 
     public Block getBlock(World w) {

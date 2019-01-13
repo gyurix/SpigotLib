@@ -7,6 +7,7 @@ import gyurix.protocol.Reflection;
 import gyurix.spigotlib.ChatAPI;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.ServerVersion;
+import net.minecraft.util.gnu.trove.map.TObjectIntMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -46,11 +47,22 @@ public class DataWatcher implements WrappedData, StringSerializable {
                 serializers.put(Reflection.getNMSClass("EnumDirection"), dwr.getField("l").get(null));
                 serializers.put(UUID.class, dwr.getField("m").get(null));
             } else {
-                nmsItem = Reflection.getInnerClass(nmsDW, "WatchableObject");
+                nmsItem = Reflection.getNMSClass(Reflection.ver.isAbove(ServerVersion.v1_8) ? "DataWatcher$WatchableObject" : "WatchableObject");
+                SU.cs.sendMessage("§eNMS ITEM = " + nmsItem);
                 itc = nmsItem.getConstructors()[0];
+                SU.cs.sendMessage("§eITC = " + itc);
                 itemField = Reflection.getFirstFieldOfType(nmsItem, Object.class);
                 idField = Reflection.getField(nmsItem, "b");
-                serializers = (Map<Class, Object>) Reflection.getFirstFieldOfType(nmsDW, Map.class).get(null);
+                if (Reflection.ver.isAbove(ServerVersion.v1_8))
+                    serializers = (Map<Class, Object>) Reflection.getFirstFieldOfType(nmsDW, Map.class).get(null);
+                else {
+                    serializers = new HashMap<>();
+                    TObjectIntMap map = (TObjectIntMap) Reflection.getField(nmsDW, "classToId").get(null);
+                    map.forEachEntry((o, i) -> {
+                        serializers.put((Class) o, i);
+                        return true;
+                    });
+                }
             }
         } catch (Throwable e) {
             SU.error(SU.cs, e, "SpigotLib", "gyurix");

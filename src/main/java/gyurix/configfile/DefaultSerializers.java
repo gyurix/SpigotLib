@@ -28,7 +28,7 @@ import static gyurix.protocol.Reflection.newInstance;
 import static gyurix.spigotlib.Config.debug;
 
 public class DefaultSerializers {
-    static final Type[] emptyTypeArray = new Type[0];
+    public static final Type[] emptyTypeArray = new Type[0];
     public static int leftPad;
 
     public static void init() {
@@ -195,7 +195,7 @@ public class DefaultSerializers {
 
         public Object fromData(ConfigData input, Class fixClass, Type... parameterTypes) {
             try {
-                Collection col = (Collection) fixClass.newInstance();
+                Collection col = (Collection) ConfigSerialization.getNotInterfaceClass(fixClass).newInstance();
                 Class cl;
                 Type[] types;
                 ParameterizedType pt;

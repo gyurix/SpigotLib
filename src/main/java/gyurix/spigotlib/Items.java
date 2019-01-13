@@ -93,6 +93,7 @@ public class Items implements PostLoadable {
             } catch (Throwable ig) {
                 SU.cs.sendMessage("§cInvalid item name or id: §e" + name);
             }
+            System.out.println("Name = \"" + name + "\"");
         }
         return null;
     }

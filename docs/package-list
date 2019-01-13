@@ -1,4 +1,3 @@
-com.google.gson.internal
 gyurix.animation
 gyurix.animation.effects
 gyurix.api
@@ -10,12 +9,14 @@ gyurix.configfile
 gyurix.datareader
 gyurix.debug
 gyurix.economy
+gyurix.economy.custom
 gyurix.inventory
 gyurix.inventory.trade
 gyurix.json
 gyurix.map
 gyurix.mojang
 gyurix.mysql
+gyurix.mysql.autoupdate
 gyurix.nbt
 gyurix.protocol
 gyurix.protocol.event

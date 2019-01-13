@@ -189,6 +189,7 @@ public final class SU {
         return s;
     }
 
+
     /**
      * Fills variables in a String
      *
@@ -203,6 +204,28 @@ public final class SU {
                 last = (String) v;
             else {
                 s = s.replace('<' + last + '>', String.valueOf(v));
+                last = null;
+            }
+        }
+        return s;
+    }
+
+    /**
+     * Fills variables in a String and highlight them by using the given prefix and suffix
+     *
+     * @param s      - The String
+     * @param prefix - The prefix used for highlighting
+     * @param suffix - The suffix used for highlighting
+     * @param vars   - The variables and their values, which should be filled
+     * @return The variable filled String
+     */
+    public static String fillVariablesHighlighted(String prefix, String suffix, String s, Object... vars) {
+        String last = null;
+        for (Object v : vars) {
+            if (last == null)
+                last = (String) v;
+            else {
+                s = s.replace('<' + last + '>', prefix + v + suffix);
                 last = null;
             }
         }

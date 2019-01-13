@@ -247,7 +247,7 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
     private long getParameterWeight() {
         long weight = 0;
         for (Parameter p : parameters)
-            weight = weight * 10 + parameterWeights.getOrDefault(p.getType(), 0);
+            weight = weight * 10 + parameterWeights.getOrDefault(Primitives.wrap(p.getType()), 0);
         return weight;
     }
 
