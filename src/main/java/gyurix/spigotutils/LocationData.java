@@ -249,7 +249,7 @@ public class LocationData implements StringSerializable {
     }
 
     public BlockLocation toBlockLocation() {
-        return new BlockLocation((int) x, (int) y, (int) z);
+        return new BlockLocation((int) (x < 0 ? (x - 1) : x), (int) y, (int) (z < 0 ? (z - 1) : z));
     }
 
     public Vector toVector() {
