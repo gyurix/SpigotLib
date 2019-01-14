@@ -33,6 +33,15 @@ public class NametagBar extends ScoreboardBar {
         updateTeam(team, td);
     }
 
+    public void createTeam(String team, String prefix, String suffix, int color, Collection<String> players) {
+        TeamData td = getTeam(team);
+        td.prefix = prefix;
+        td.suffix = suffix;
+        td.color = color;
+        td.players.addAll(players);
+        updateTeam(team, td);
+    }
+
     public void addPlayers(String team, String... players) {
         TeamData td = getTeam(team);
         td.players.addAll(Arrays.asList(players));
