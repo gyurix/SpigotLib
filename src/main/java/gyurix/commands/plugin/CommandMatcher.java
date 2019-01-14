@@ -79,11 +79,12 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
     }
 
     public static void registerCustomMatchers() {
-        setParameterWeight(9, String.class, StringBuilder.class);
-        setParameterWeight(8, Float.class, Double.class, Long.class);
-        setParameterWeight(7, Integer.class);
-        setParameterWeight(6, Byte.class);
-        setParameterWeight(5, Boolean.class);
+        setParameterWeight(9, List.class, Set.class, ArrayList.class, LinkedList.class, HashSet.class, TreeSet.class);
+        setParameterWeight(8, String.class, StringBuilder.class);
+        setParameterWeight(7, Float.class, Double.class, Long.class);
+        setParameterWeight(6, Integer.class);
+        setParameterWeight(5, Byte.class);
+        setParameterWeight(4, Boolean.class);
 
         addCustomMatcher((arg, type) -> {
             try {
