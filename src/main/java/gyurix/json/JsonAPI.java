@@ -234,7 +234,8 @@ public class JsonAPI {
                     f.setAccessible(true);
                     JsonSettings settings = f.getAnnotation(JsonSettings.class);
                     String fn = f.getName();
-                    boolean serialize = !(fn.equals("self") || fn.equals("parent") || fn.equals("instance"));
+                    String fnLower = fn.toLowerCase();
+                    boolean serialize = !(fnLower.equals("self") || fnLower.equals("parent") || fnLower.equals("instance"));
                     String defaultValue = null;
                     if (settings != null) {
                         serialize = settings.serialize();

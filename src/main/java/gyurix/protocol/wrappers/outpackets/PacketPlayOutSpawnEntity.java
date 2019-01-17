@@ -2,10 +2,10 @@ package gyurix.protocol.wrappers.outpackets;
 
 import gyurix.protocol.Reflection;
 import gyurix.protocol.event.PacketOutType;
+import gyurix.protocol.utils.Vector;
 import gyurix.protocol.wrappers.WrappedPacket;
 import gyurix.spigotutils.LocationData;
 import gyurix.spigotutils.ServerVersion;
-import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
@@ -84,9 +84,9 @@ public class PacketPlayOutSpawnEntity extends WrappedPacket {
     }
 
     public void setVelocity(Vector vec) {
-        speedX = (float) vec.getX();
-        speedY = (float) vec.getY();
-        speedZ = (float) vec.getZ();
+        speedX = (float) vec.x;
+        speedY = (float) vec.y;
+        speedZ = (float) vec.z;
     }
 }
 

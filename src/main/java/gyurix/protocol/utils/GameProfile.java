@@ -78,10 +78,18 @@ public class GameProfile implements WrappedData {
         try {
             Object o = con.newInstance(id, name);
             flegacy.set(o, legacy);
-            Multimap m = (Multimap) fproperties.get(o);
-            for (Property p : properties) {
-                if (p != null)
-                    m.put(p.name, p.toNMS());
+            if (Reflection.ver.isAbove(ServerVersion.v1_8)) {
+                Multimap m = (Multimap) fproperties.get(o);
+                for (Property p : properties) {
+                    if (p != null)
+                        m.put(p.name, p.toNMS());
+                }
+            } else {
+                net.minecraft.util.com.google.common.collect.Multimap m = (net.minecraft.util.com.google.common.collect.Multimap) fproperties.get(o);
+                for (Property p : properties) {
+                    if (p != null)
+                        m.put(p.name, p.toNMS());
+                }
             }
             return o;
         } catch (Throwable e) {
@@ -91,7 +99,7 @@ public class GameProfile implements WrappedData {
     }
 
     public static class Property implements WrappedData {
-        private static final Class cl = Reflection.getClass("com.mojang.authlib.properties.Property");
+        private static final Class cl = Reflection.getUtilClass("com.mojang.authlib.properties.Property");
         private static final Constructor con = Reflection.getConstructor(cl, String.class, String.class, String.class);
         private static final Field fname = Reflection.getField(cl, "name"),
                 fvalue = Reflection.getField(cl, "value"),
@@ -106,7 +114,7 @@ public class GameProfile implements WrappedData {
                 name = (String) fname.get(o);
                 value = (String) fvalue.get(o);
                 signature = (String) fsignature.get(o);
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
             }
         }
 

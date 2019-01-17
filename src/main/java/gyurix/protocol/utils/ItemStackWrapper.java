@@ -1,5 +1,6 @@
 package gyurix.protocol.utils;
 
+import gyurix.json.JsonSettings;
 import gyurix.nbt.NBTCompound;
 import gyurix.nbt.NBTPrimitive;
 import gyurix.protocol.Reflection;
@@ -23,9 +24,11 @@ import static gyurix.protocol.Reflection.getNMSClass;
 
 public class ItemStackWrapper implements WrappedData {
     @ConfigOptions(serialize = false)
+    @JsonSettings(serialize = false)
     public static final HashMap<Integer, String> itemNames = new HashMap<>();
     private static final Constructor bukkitStack, nmsStackFromNBTC;
     @ConfigOptions(serialize = false)
+    @JsonSettings(serialize = false)
     private static final Object cmnObj;
     private static final Method getType, nmsCopy, saveStack, getID, nmsStackFromNBTM;
     private static final Field itemName;
@@ -166,7 +169,7 @@ public class ItemStackWrapper implements WrappedData {
     public void loadFromVanillaStack(Object is) {
         try {
             if (is != null)
-                tag(saveStack.invoke(is, new NBTCompound().toNMS()));
+                nbtData = (NBTCompound) tag(saveStack.invoke(is, new NBTCompound().toNMS()));
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -3,11 +3,11 @@ package gyurix.protocol.wrappers.outpackets;
 import gyurix.protocol.Reflection;
 import gyurix.protocol.event.PacketOutType;
 import gyurix.protocol.utils.DataWatcher;
+import gyurix.protocol.utils.Vector;
 import gyurix.protocol.wrappers.WrappedPacket;
 import gyurix.spigotutils.LocationData;
 import gyurix.spigotutils.ServerVersion;
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
@@ -60,9 +60,9 @@ public class PacketPlayOutSpawnEntityLiving extends WrappedPacket {
     @Override
     public Object getVanillaPacket() {
         return Reflection.ver.isAbove(ServerVersion.v1_9) ? PacketOutType.SpawnEntityLiving.newPacket(entityId, entityUUID, type, x, y, z, velX, velY, velZ,
-                (byte) (yaw / 360.0f * 256), (byte) (pitch / 360.0f * 256), (byte) (headPitch / 360.0f * 256), meta.toNMS()) :
-                PacketOutType.SpawnEntityLiving.newPacket(entityId, type, (int) x << 5, (int) y << 5, (int) z << 5, velX, velY, velZ,
-                        (byte) (yaw / 360.0f * 256), (byte) (pitch / 360.0f * 256), (byte) (headPitch / 360.0f * 256), meta.toNMS());
+                (byte) (yaw * 256 / 360), (byte) (pitch * 256 / 360), (byte) (headPitch * 256 / 360), meta.toNMS()) :
+                PacketOutType.SpawnEntityLiving.newPacket(entityId, type, (int) x * 32, (int) y * 32, (int) z * 32, velX, velY, velZ,
+                        (byte) (yaw * 256 / 360), (byte) (pitch * 256 / 360), (byte) (headPitch * 256 / 360), meta.toNMS());
     }
 
     @Override
@@ -98,8 +98,8 @@ public class PacketPlayOutSpawnEntityLiving extends WrappedPacket {
     }
 
     public void setVelocity(Vector velocity) {
-        velX = (int) (velocity.getX() * 8000);
-        velY = (int) (velocity.getY() * 8000);
-        velZ = (int) (velocity.getZ() * 8000);
+        velX = (int) (velocity.x * 8000);
+        velY = (int) (velocity.y * 8000);
+        velZ = (int) (velocity.z * 8000);
     }
 }

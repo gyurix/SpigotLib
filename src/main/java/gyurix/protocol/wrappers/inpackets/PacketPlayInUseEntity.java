@@ -28,7 +28,8 @@ public class PacketPlayInUseEntity extends WrappedPacket {
         Object[] d = PacketInType.UseEntity.getPacketData(packet);
         entityId = (int) d[0];
         action = EntityUseAction.valueOf(d[1].toString());
-        targetLocation = d[2] == null ? null : new Vector(d[2]);
+        if (Reflection.ver.isAbove(ServerVersion.v1_8))
+            targetLocation = d[2] == null ? null : new Vector(d[2]);
         if (Reflection.ver.isAbove(ServerVersion.v1_9))
             hand = d[3] == null ? null : HandType.valueOf(d[3].toString());
     }

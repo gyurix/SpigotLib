@@ -15,6 +15,12 @@ public class PacketPlayOutEntityEquipment extends WrappedPacket {
      */
     public int slot;
 
+    public PacketPlayOutEntityEquipment(int entityId, int slot, ItemStackWrapper item) {
+        this.entityId = entityId;
+        this.slot = slot;
+        this.item = item;
+    }
+
     @Override
     public Object getVanillaPacket() {
         return PacketOutType.EntityEquipment.newPacket(entityId, slot, item.toNMS());
