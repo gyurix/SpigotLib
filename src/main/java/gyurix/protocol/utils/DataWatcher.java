@@ -1,12 +1,12 @@
 package gyurix.protocol.utils;
 
-
 import gyurix.configfile.ConfigSerialization.StringSerializable;
 import gyurix.json.JsonAPI;
 import gyurix.protocol.Reflection;
 import gyurix.spigotlib.ChatAPI;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.ServerVersion;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.util.gnu.trove.map.TObjectIntMap;
 
 import java.lang.reflect.Constructor;
@@ -57,11 +57,15 @@ public class DataWatcher implements WrappedData, StringSerializable {
                     serializers = (Map<Class, Object>) Reflection.getFirstFieldOfType(nmsDW, Map.class).get(null);
                 else {
                     serializers = new HashMap<>();
-                    TObjectIntMap map = (TObjectIntMap) Reflection.getField(nmsDW, "classToId").get(null);
-                    map.forEachEntry((o, i) -> {
-                        serializers.put((Class) o, i);
-                        return true;
-                    });
+                    Object mapObj = Reflection.getField(nmsDW, "classToId").get(null);
+                    if (mapObj instanceof TObjectIntMap) {
+                        ((TObjectIntMap) mapObj).forEachEntry((o, i) -> {
+                            serializers.put((Class) o, i);
+                            return true;
+                        });
+                    } else if (mapObj instanceof Object2IntOpenHashMap) {
+                        ((Object2IntOpenHashMap) mapObj).forEach((o, i) -> serializers.put((Class) o, i));
+                    }
                 }
             }
         } catch (Throwable e) {
