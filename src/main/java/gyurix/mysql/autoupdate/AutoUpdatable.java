@@ -31,6 +31,8 @@ public interface AutoUpdatable {
 
     void insertAll();
 
+    void setupForInsertion(String key, MySQLDatabase db);
+
     void setup(String key, MySQLDatabase db);
 
     default void update(String key, Object value) {
