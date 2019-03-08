@@ -24,6 +24,8 @@ allowAllPermsForAuthor: +
 disablePluginsOnCrash: +
 #Amount of ticks after startup, when the player joins are not allowed to prevent server damage caused by too early joins.
 earlyJoinProtection: 30
+#Require SSL for MySQL connections.
+mysqlSsl: +
 #Amount of threads dedicated for the AnimationAPI, for making it working smoothly on multi core server machines.
 animationApiThreads: 4
 #Kick message used for players who try to join to the server in the early join protection period.

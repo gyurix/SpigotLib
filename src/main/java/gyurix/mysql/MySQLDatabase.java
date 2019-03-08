@@ -2,6 +2,7 @@ package gyurix.mysql;
 
 import com.mysql.jdbc.Connection;
 import gyurix.configfile.ConfigSerialization.ConfigOptions;
+import gyurix.spigotlib.Config;
 import gyurix.spigotlib.SU;
 import org.apache.commons.lang3.StringUtils;
 
@@ -139,7 +140,8 @@ public class MySQLDatabase {
      */
     public boolean openConnection() {
         try {
-            con = (Connection) DriverManager.getConnection("jdbc:mysql://" + host + "/" + database + "?autoReconnect=true&useSSL=true", username, password);
+            con = Config.mysqlSsl ? (Connection) DriverManager.getConnection("jdbc:mysql://" + host + "/" + database + "?autoReconnect=true&useSSL=true", username, password) :
+                    (Connection) DriverManager.getConnection("jdbc:mysql://" + host + "/" + database + "?autoReconnect=true", username, password);
             con.setAutoReconnect(true);
             con.setConnectTimeout(timeout);
         } catch (Throwable e) {
