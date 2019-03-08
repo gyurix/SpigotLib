@@ -23,7 +23,7 @@ public class Config {
     /**
      * Require SSL for MySQL connections
      */
-    public static boolean mysqlSsl;
+    public static boolean mysqlSSL;
     /**
      * Amount of async threads used in AnimationAPI for running animations smoothly
      */
