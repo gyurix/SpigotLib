@@ -5,7 +5,7 @@ import gyurix.protocol.Reflection;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.ItemUtils;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
