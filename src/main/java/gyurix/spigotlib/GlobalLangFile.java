@@ -2,9 +2,7 @@ package gyurix.spigotlib;
 
 import gyurix.chat.ChatTag;
 import gyurix.configfile.ConfigData;
-import gyurix.protocol.Reflection;
 import gyurix.spigotlib.ChatAPI.ChatMessageType;
-import gyurix.spigotutils.ServerVersion;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -202,7 +200,7 @@ public class GlobalLangFile {
         public void msg(String prefix, CommandSender sender, String msg, Object... repl) {
             Player plr = sender instanceof Player ? (Player) sender : null;
             msg = prefix + get(plr, msg, repl);
-            if (plr == null || Reflection.ver.isBellow(ServerVersion.v1_7)) {
+          if (plr == null) {
                 sender.sendMessage(ChatTag.stripExtras(msg));
             } else {
                 ChatAPI.sendJsonMsg(ChatMessageType.CHAT, msg, plr);
