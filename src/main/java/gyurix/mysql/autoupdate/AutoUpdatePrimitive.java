@@ -61,7 +61,7 @@ public class AutoUpdatePrimitive<T> implements AutoLoadable, ConfigSerialization
   public void load(Class type, Type[] types) {
     SU.cs.sendMessage("§eLoad primitive:§f " + key + " - " + type.getName() + " - " + Arrays.toString(types));
     try {
-      ResultSet rs = db.querry("SELECT `value` FROM `" + db.table + "` WHERE `key` = ? LIMIT 1", key);
+      ResultSet rs = db.query("SELECT `value` FROM `" + db.table + "` WHERE `key` = ? LIMIT 1", key);
       if (rs.next()) {
         value = (T) new ConfigFile(rs.getString(1)).data.deserialize(type, types);
         SU.cs.sendMessage("§eValue = §f" + value);

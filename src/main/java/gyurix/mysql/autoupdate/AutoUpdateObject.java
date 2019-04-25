@@ -94,7 +94,7 @@ public class AutoUpdateObject implements AutoUpdatable {
             ((AutoLoadable) o).load(type, types);
           }
         } else {
-          ResultSet rs = db.querry("SELECT `value` FROM `" + db.table + "` WHERE `key` = ? LIMIT 1", key + "." + f.getName());
+          ResultSet rs = db.query("SELECT `value` FROM `" + db.table + "` WHERE `key` = ? LIMIT 1", key + "." + f.getName());
           if (rs.next())
             f.set(this, new ConfigFile(rs.getString(1)).data.deserialize(f.getType()));
         }

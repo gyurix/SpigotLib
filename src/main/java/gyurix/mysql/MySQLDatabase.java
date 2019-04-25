@@ -158,7 +158,7 @@ public class MySQLDatabase {
     return st;
   }
 
-  public ResultSet querry(String cmd) {
+  public ResultSet query(String cmd) {
     ResultSet rs;
     PreparedStatement st;
     try {
@@ -171,11 +171,11 @@ public class MySQLDatabase {
     }
   }
 
-  public ResultSet querry(String cmd, Object... args) {
+  public ResultSet query(String cmd, Object... args) {
     try {
       return prepare(cmd, args).executeQuery();
     } catch (Throwable e) {
-      SU.log(pl, "MySQL - Querry", cmd, StringUtils.join(args, ", "));
+      SU.log(pl, "MySQL - Query", cmd, StringUtils.join(args, ", "));
       SU.error(SU.cs, e, "SpigotLib", "gyurix");
       return null;
     }

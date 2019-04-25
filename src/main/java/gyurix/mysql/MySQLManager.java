@@ -52,7 +52,7 @@ public class MySQLManager {
 
     public void with(String key, Consumer<ResultSet> con) {
         async(() -> {
-            ResultSet rs = db.querry("SELECT * FROM `" + db.table + "` WHERE `key` LIKE \"" + MySQLDatabase.escape(key) + ".%\"");
+          ResultSet rs = db.query("SELECT * FROM `" + db.table + "` WHERE `key` LIKE \"" + MySQLDatabase.escape(key) + ".%\"");
             rs.close();
         });
     }

@@ -510,7 +510,7 @@ public class ConfigFile {
     public void mysqlLoad(String address, String args) {
         String q = "SELECT `" + dbKey + "`, `" + dbValue + "` FROM " + dbTable + " WHERE " + args;
         try {
-            ResultSet rs = db.querry(q);
+          ResultSet rs = db.query(q);
             while (rs.next()) {
                 String k = rs.getString(dbKey);
                 String v = rs.getString(dbValue);
@@ -518,7 +518,7 @@ public class ConfigFile {
             }
         } catch (Throwable e) {
             cs.sendMessage("§cFailed to load data from MySQL storage.\n" +
-                    "The used querry command:\n");
+                    "The used query command:\n");
             error(cs, e, "SpigotLib", "gyurix");
             e.printStackTrace();
         }
@@ -532,7 +532,7 @@ public class ConfigFile {
         try {
             if (db == null || !db.openConnection())
                 return;
-            ResultSet rs = db.querry(q);
+          ResultSet rs = db.query(q);
             while (rs.next()) {
                 String k = rs.getString(dbKey);
                 String v = rs.getString(dbValue);
@@ -540,7 +540,7 @@ public class ConfigFile {
             }
         } catch (Throwable e) {
             cs.sendMessage("§cFailed to load data from MySQL storage.\n" +
-                    "The used querry command:\n");
+                    "The used query command:\n");
             error(cs, e, "SpigotLib", "gyurix");
             e.printStackTrace();
         }

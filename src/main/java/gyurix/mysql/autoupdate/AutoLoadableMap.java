@@ -43,7 +43,7 @@ public interface AutoLoadableMap<K, V> extends AutoLoadable, Map<K, V> {
         Class valueCl = ConfigSerialization.getNotInterfaceClass((Class) (types[1] instanceof Class ? types[1] : ((ParameterizedType) types[1]).getRawType()));
         Type[] valueTypes = types[1] instanceof Class ? emptyTypeArray : ((ParameterizedType) types[1]).getActualTypeArguments();
         try {
-            ResultSet rs = db.querry("SELECT * FROM `" + db.table + "` WHERE `key` LIKE ?", key + ".%");
+          ResultSet rs = db.query("SELECT * FROM `" + db.table + "` WHERE `key` LIKE ?", key + ".%");
             while (rs.next()) {
                 String[] subKey = rs.getString(1).substring(key.length() + 1).split("\\.");
                 String value = rs.getString(2);
