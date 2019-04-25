@@ -445,6 +445,8 @@ public class DefaultSerializers {
                     }
                     return null;
                 }
+              if (fixClass == Object.class)
+                return input.stringData;
                 if (ArrayUtils.contains(fixClass.getInterfaces(), StringSerializable.class) || fixClass == BigDecimal.class || fixClass == BigInteger.class) {
                     if (input.stringData == null || input.stringData.equals(""))
                         return null;
