@@ -3,10 +3,12 @@ package gyurix.protocol.wrappers.outpackets;
 import gyurix.protocol.event.PacketOutType;
 import gyurix.protocol.utils.ItemStackWrapper;
 import gyurix.protocol.wrappers.WrappedPacket;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by GyuriX on 2016.02.28..
  */
+@NoArgsConstructor
 public class PacketPlayOutEntityEquipment extends WrappedPacket {
     public int entityId;
     public ItemStackWrapper item;
