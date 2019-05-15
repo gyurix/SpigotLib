@@ -106,8 +106,6 @@ public class ConfigSerialization {
     public @interface ConfigOptions {
         String comment() default "";
 
-        boolean compress() default false;
-
         String defaultValue() default "null";
 
         boolean serialize() default true;

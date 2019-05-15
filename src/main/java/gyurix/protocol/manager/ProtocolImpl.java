@@ -10,7 +10,7 @@ import gyurix.protocol.wrappers.WrappedPacket;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.EntityUtils;
 import io.netty.channel.*;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

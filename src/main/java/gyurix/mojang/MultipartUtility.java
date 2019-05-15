@@ -1,12 +1,11 @@
 package gyurix.mojang;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.core.util.IOUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
 
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP
@@ -113,6 +112,6 @@ public class MultipartUtility {
         con.setRequestProperty("Content-Length", String.valueOf(data.length));
         con.getOutputStream().write(data);
         con.getOutputStream().flush();
-        return IOUtils.toString(con.getInputStream(), Charset.forName("UTF-8"));
+      return IOUtils.toString(new InputStreamReader(con.getInputStream()));
     }
 }

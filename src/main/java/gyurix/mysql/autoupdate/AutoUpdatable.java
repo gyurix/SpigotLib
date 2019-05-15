@@ -40,7 +40,7 @@ public interface AutoUpdatable {
         if (value instanceof AutoUpdatable)
             ((AutoUpdatable) value).updateAll();
         else
-            async(() -> db.command("UPDATE `" + db.table + "` WHERE `key`=? SET `value`=?", key, value));
+          async(() -> db.command("UPDATE `" + db.table + "` SET `value`=? WHERE `key`=?", key, value));
     }
 
     void updateAll();

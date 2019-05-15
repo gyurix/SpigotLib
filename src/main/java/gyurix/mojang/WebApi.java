@@ -1,11 +1,11 @@
 package gyurix.mojang;
 
 import gyurix.spigotlib.SU;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.core.util.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -42,7 +42,7 @@ public class WebApi {
         try {
             URL url = new URL(urlString);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            return IOUtils.toString(con.getInputStream(), Charset.forName("UTF-8"));
+          return IOUtils.toString(new InputStreamReader(con.getInputStream()));
         } catch (Throwable e) {
             debug.msg("Web", e);
             return null;
@@ -56,7 +56,7 @@ public class WebApi {
             con.setDoOutput(true);
             con.setRequestMethod("POST");
             con.getOutputStream().write(req.getBytes(Charset.forName("UTF-8")));
-            return IOUtils.toString(con.getInputStream(), Charset.forName("UTF-8"));
+          return IOUtils.toString(new InputStreamReader(con.getInputStream()));
         } catch (Throwable e) {
             debug.msg("Web", e);
             return null;
@@ -72,7 +72,7 @@ public class WebApi {
             con.setRequestProperty("Content-Length", String.valueOf(req.length()));
             con.setRequestProperty(headerKey, headerValue);
             con.getOutputStream().write(req.getBytes(Charset.forName("UTF-8")));
-            return IOUtils.toString(con.getInputStream(), Charset.forName("UTF-8"));
+          return IOUtils.toString(new InputStreamReader(con.getInputStream()));
         } catch (Throwable e) {
             debug.msg("Web", e);
             return null;

@@ -2,7 +2,7 @@ package gyurix.debug;
 
 import gyurix.spigotlib.SU;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
