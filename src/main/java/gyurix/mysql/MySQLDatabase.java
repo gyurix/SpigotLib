@@ -4,7 +4,7 @@ import com.mysql.jdbc.Connection;
 import gyurix.configfile.ConfigSerialization.ConfigOptions;
 import gyurix.spigotlib.Config;
 import gyurix.spigotlib.SU;
-import net.minecraft.util.org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

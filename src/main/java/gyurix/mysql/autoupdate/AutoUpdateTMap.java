@@ -11,6 +11,16 @@ public class AutoUpdateTMap<K, V> extends TreeMap<K, V> implements AutoLoadableM
   private String key;
 
   @Override
+  public V put(K key, V value) {
+    return processPut(key, value);
+  }
+
+  @Override
+  public V remove(Object key) {
+    return processRemove(key);
+  }
+
+  @Override
   public void clear() {
     super.clear();
     deleteAll();
@@ -27,15 +37,17 @@ public class AutoUpdateTMap<K, V> extends TreeMap<K, V> implements AutoLoadableM
   }
 
   @Override
-  public void setupForInsertion(String key, MySQLDatabase db) {
+  public void setup(String key, MySQLDatabase db) {
+    System.out.println("AutoUpdatetMap - setup - " + key);
     this.key = key;
     this.db = db;
-    insertAll();
   }
 
   @Override
-  public void setup(String key, MySQLDatabase db) {
+  public void setupForInsertion(String key, MySQLDatabase db) {
+    System.out.println("AutoUpdateTMap - setupForInsertion - " + key);
     this.key = key;
     this.db = db;
+    insertAll();
   }
 }

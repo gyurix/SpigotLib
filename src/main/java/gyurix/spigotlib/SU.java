@@ -134,24 +134,30 @@ public final class SU {
     if (Config.silentErrors)
       return;
     StringBuilder report = new StringBuilder();
-    report.append("§4§l").append(plugin).append(" - ERROR REPORT - ")
+    report.append("§4§l").append(plugin).append(" - ERROR REPORT - §e§l")
             .append(err.getClass().getSimpleName());
-    if (err.getMessage() != null)
-      report.append('\n').append(err.getMessage());
-    int i = 0;
-    boolean startrep = true;
-    for (StackTraceElement el : err.getStackTrace()) {
-      boolean force = el.getClassName() != null && el.getClassName().contains(author);
-      if (force)
-        startrep = false;
-      if (startrep || force)
-        report.append("\n§c #").append(++i)
-                .append(": §eLINE §a").append(el.getLineNumber())
-                .append("§e in FILE §6").append(el.getFileName())
-                .append("§e (§7").append(el.getClassName())
-                .append("§e.§b").append(el.getMethodName())
-                .append("§e)");
-    }
+    do {
+      if (err.getMessage() != null)
+        report.append('\n').append(err.getMessage());
+      int i = 0;
+      boolean startrep = true;
+      for (StackTraceElement el : err.getStackTrace()) {
+        boolean force = el.getClassName() != null && el.getClassName().contains(author);
+        if (force)
+          startrep = false;
+        if (startrep || force)
+          report.append("\n§c #").append(++i)
+                  .append(": §eLINE §a").append(el.getLineNumber())
+                  .append("§e in FILE §6").append(el.getFileName())
+                  .append("§e (§7").append(el.getClassName())
+                  .append("§e.§b").append(el.getMethodName())
+                  .append("§e)");
+      }
+      err = err.getCause();
+      if (err != null) {
+        report.append("\n§4§lCaused by - §e§l").append(err.getClass().getSimpleName());
+      }
+    } while (err != null);
     String rep = report.toString();
     if (cs == null) {
       System.err.println(ChatColor.stripColor(rep));

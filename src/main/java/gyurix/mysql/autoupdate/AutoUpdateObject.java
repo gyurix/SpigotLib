@@ -2,6 +2,7 @@ package gyurix.mysql.autoupdate;
 
 import gyurix.configfile.ConfigFile;
 import gyurix.configfile.ConfigSerialization;
+import gyurix.configfile.PostLoadable;
 import gyurix.mysql.MySQLDatabase;
 import gyurix.protocol.Reflection;
 import gyurix.spigotlib.SU;
@@ -44,30 +45,6 @@ public class AutoUpdateObject implements AutoUpdatable {
   }
 
   @Override
-  public void setupForInsertion(String key, MySQLDatabase db) {
-    this.key = key;
-    this.db = db;
-    try {
-      for (Field f : Reflection.getAllFields(getClass())) {
-        ConfigSerialization.ConfigOptions options = f.getAnnotation(ConfigSerialization.ConfigOptions.class);
-        if (options != null && !options.serialize())
-          continue;
-        if (AutoUpdatable.class.isAssignableFrom(f.getType())) {
-          AutoUpdatable value = (AutoUpdatable) f.get(this);
-          if (value == null) {
-            value = (AutoUpdatable) f.getType().newInstance();
-            f.set(this, value);
-          }
-          value.setupForInsertion(key == null ? f.getName() : (key + "." + f.getName()), db);
-        }
-      }
-    } catch (Throwable e) {
-      SU.error(SU.cs, e, "SpigotLib", "gyurix");
-    }
-    insertAll();
-  }
-
-  @Override
   public void setup(String key, MySQLDatabase db) {
     this.key = key;
     this.db = db;
@@ -99,9 +76,36 @@ public class AutoUpdateObject implements AutoUpdatable {
             f.set(this, new ConfigFile(rs.getString(1)).data.deserialize(f.getType()));
         }
       }
+      if (this instanceof PostLoadable)
+        ((PostLoadable) this).postLoad();
     } catch (Throwable e) {
       SU.error(SU.cs, e, "SpigotLib", "gyurix");
     }
+  }
+
+  @Override
+  public void setupForInsertion(String key, MySQLDatabase db) {
+    System.out.println("AutoUpdateObject - setupForInsertion - " + key);
+    this.key = key;
+    this.db = db;
+    try {
+      for (Field f : Reflection.getAllFields(getClass())) {
+        ConfigSerialization.ConfigOptions options = f.getAnnotation(ConfigSerialization.ConfigOptions.class);
+        if (options != null && !options.serialize())
+          continue;
+        if (AutoUpdatable.class.isAssignableFrom(f.getType())) {
+          AutoUpdatable value = (AutoUpdatable) f.get(this);
+          if (value == null) {
+            value = (AutoUpdatable) f.getType().newInstance();
+            f.set(this, value);
+          }
+          value.setupForInsertion(key == null ? f.getName() : (key + "." + f.getName()), db);
+        }
+      }
+    } catch (Throwable e) {
+      SU.error(SU.cs, e, "SpigotLib", "gyurix");
+    }
+    insertAll();
   }
 
   @Override

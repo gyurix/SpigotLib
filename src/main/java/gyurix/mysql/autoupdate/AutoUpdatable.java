@@ -6,42 +6,42 @@ import gyurix.mysql.MySQLDatabase;
 import static gyurix.spigotutils.SafeTools.async;
 
 public interface AutoUpdatable {
-    default void delete(String key, Object value) {
-        MySQLDatabase db = getDb();
-        if (value instanceof AutoUpdatable)
-            ((AutoUpdatable) value).deleteAll();
-        async(() -> {
-            db.command("DELETE FROM `" + db.table + "` WHERE `key` = ?", key);
-        });
-    }
+  default void delete(String key, Object value) {
+    System.out.println("AutoUpdatable - delete - " + key);
+    MySQLDatabase db = getDb();
+    if (value instanceof AutoUpdatable)
+      ((AutoUpdatable) value).deleteAll();
+    async(() -> {
+      db.command("DELETE FROM `" + db.table + "` WHERE `key` = ?", key);
+    });
+  }
 
-    void deleteAll();
+  void deleteAll();
 
-    MySQLDatabase getDb();
+  MySQLDatabase getDb();
 
-    String getKey();
+  String getKey();
 
-    default void insert(String key, Object value) {
-        MySQLDatabase db = getDb();
-        if (value instanceof AutoUpdatable)
-            insertAll();
-        else
-            async(() -> db.command("INSERT INTO `" + db.table + "` VALUES (?,?)", key, new ConfigData(value).toString()));
-    }
+  default void insert(String key, Object value) {
+    MySQLDatabase db = getDb();
+    if (!(value instanceof AutoUpdatable))
+      async(() -> db.command("INSERT INTO `" + db.table + "` VALUES (?,?)", key, new ConfigData(value).toString()));
+  }
 
-    void insertAll();
+  void insertAll();
 
-    void setupForInsertion(String key, MySQLDatabase db);
+  void setup(String key, MySQLDatabase db);
 
-    void setup(String key, MySQLDatabase db);
+  void setupForInsertion(String key, MySQLDatabase db);
 
-    default void update(String key, Object value) {
-        MySQLDatabase db = getDb();
-        if (value instanceof AutoUpdatable)
-            ((AutoUpdatable) value).updateAll();
-        else
-          async(() -> db.command("UPDATE `" + db.table + "` SET `value`=? WHERE `key`=?", key, value));
-    }
+  default void update(String key, Object value) {
+    System.out.println("AutoUpdatable - update - " + key + " - " + value);
+    MySQLDatabase db = getDb();
+    if (value instanceof AutoUpdatable)
+      ((AutoUpdatable) value).updateAll();
+    else
+      async(() -> db.command("UPDATE `" + db.table + "` SET `value`=? WHERE `key`=?", value, key));
+  }
 
-    void updateAll();
+  void updateAll();
 }

@@ -31,20 +31,23 @@ public class AutoUpdatePrimitive<T> implements AutoLoadable, ConfigSerialization
 
   @Override
   public void insertAll() {
+    System.out.println("AutoUpdatePrimitive - insert - " + key + " - " + value);
     insert(key, value);
   }
 
   @Override
-  public void setupForInsertion(String key, MySQLDatabase db) {
+  public void setup(String key, MySQLDatabase db) {
+    System.out.println("AutoUpdatePrimitive - setup - " + key);
     this.key = key;
     this.db = db;
-    insertAll();
   }
 
   @Override
-  public void setup(String key, MySQLDatabase db) {
+  public void setupForInsertion(String key, MySQLDatabase db) {
+    System.out.println("AutoUpdatePrimitive - setupForInsertion - " + key);
     this.key = key;
     this.db = db;
+    insertAll();
   }
 
   @Override
