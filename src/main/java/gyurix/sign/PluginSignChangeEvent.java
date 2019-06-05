@@ -11,40 +11,40 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
 
 public class PluginSignChangeEvent extends BlockEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private final String[] lines;
-    private boolean cancel;
+  private static final HandlerList handlers = new HandlerList();
+  private final String[] lines;
+  private boolean cancel;
 
-    public PluginSignChangeEvent(Block block, String[] lines) {
-        super(block);
-        this.lines = lines;
-    }
+  public PluginSignChangeEvent(Block block, String[] lines) {
+    super(block);
+    this.lines = lines;
+  }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
 
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+  public HandlerList getHandlers() {
+    return handlers;
+  }
 
-    public String getLine(int index) throws IndexOutOfBoundsException {
-        return lines[index];
-    }
+  public String getLine(int index) throws IndexOutOfBoundsException {
+    return lines[index];
+  }
 
-    public String[] getLines() {
-        return lines;
-    }
+  public String[] getLines() {
+    return lines;
+  }
 
-    public boolean isCancelled() {
-        return cancel;
-    }
+  public boolean isCancelled() {
+    return cancel;
+  }
 
-    public void setCancelled(boolean cancel) {
-        this.cancel = cancel;
-    }
+  public void setCancelled(boolean cancel) {
+    this.cancel = cancel;
+  }
 
-    public void setLine(int index, String line) throws IndexOutOfBoundsException {
-        lines[index] = line;
-    }
+  public void setLine(int index, String line) throws IndexOutOfBoundsException {
+    lines[index] = line;
+  }
 }

@@ -9,6 +9,7 @@ import gyurix.protocol.utils.GameProfile;
 import gyurix.spigotlib.Config.PlayerFile;
 import gyurix.spigotutils.BackendType;
 import gyurix.spigotutils.DualMap;
+import gyurix.spigotutils.ServerVersion;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -499,7 +500,7 @@ public final class SU {
       entityF = Reflection.getField(Reflection.getOBCClass("entity.CraftEntity"), "entity");
       pingF = Reflection.getNMSClass("EntityPlayer").getField("ping");
       mcServer = mcServerClass.getMethod("getServer").invoke(null);
-      playerInterractManagerC = pIMClass.getConstructor(Reflection.getNMSClass("World"));
+      playerInterractManagerC = pIMClass.getConstructor(Reflection.getNMSClass(Reflection.ver.isAbove(ServerVersion.v1_14) ? "WorldServer" : "World"));
       worldServer = Reflection.getFieldData(Reflection.getOBCClass("CraftWorld"), "world", Bukkit.getWorlds().iterator().next());
       entityPlayerC = entityPlayerClass.getConstructor(mcServerClass, worldServerClass, Reflection.getUtilClass("com.mojang.authlib.GameProfile"), pIMClass);
       getBukkitEntityM = entityPlayerClass.getMethod("getBukkitEntity");

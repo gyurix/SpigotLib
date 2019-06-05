@@ -29,6 +29,11 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
    */
   public int id;
 
+  /**
+   * The requested type of the block
+   */
+  public Material material;
+
 
   /**
    * Constructs a new BlockData representing the type of the given block
@@ -36,9 +41,10 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
    * @param b - Target Block
    */
   public BlockData(Block b) {
-    id = b.getType().getId();
+    material = b.getType();
     data = b.getData();
     anydata = false;
+    resolveId();
   }
 
   /**
@@ -47,9 +53,10 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
    * @param b - Target Block
    */
   public BlockData(BlockState b) {
-    id = b.getType().getId();
+    material = b.getType();
     data = b.getRawData();
     anydata = false;
+    resolveId();
   }
 
   /**
@@ -82,10 +89,11 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
     String[] s = in.split(":", 2);
     try {
       try {
-        id = Material.getMaterial(s[0].toUpperCase()).getId();
+        material = Material.valueOf(s[0].toUpperCase());
       } catch (Throwable e) {
-        id = Integer.valueOf(s[0]);
+        material = Items.getMaterial(Integer.valueOf(s[0]));
       }
+      resolveId();
     } catch (Throwable e) {
       SU.cs.sendMessage("§cInvalid item: §e" + in);
     }
@@ -106,28 +114,31 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
   public BlockData(ItemStack is) {
     if (is == null || is.getType() == Material.AIR)
       return;
-    id = is.getType().getId();
+    material = is.getType();
     data = is.getDurability();
     anydata = false;
+    resolveId();
   }
 
   public BlockData(Material type) {
-    id = type.getId();
+    material = type;
+    resolveId();
   }
 
   public BlockData(Material type, short durability) {
-    id = type.getId();
+    material = type;
     data = durability;
     anydata = false;
+    resolveId();
   }
 
   @Override
   public int compareTo(BlockData o) {
-    return ((Integer) hashCode()).compareTo(o.hashCode());
+    return Integer.compare(hashCode(), o.hashCode());
   }
 
   public Material getType() {
-    return Items.getMaterial(id);
+    return material;
   }
 
   public int hashCode() {
@@ -165,9 +176,15 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
    * @return True if the block's type is the same as this block data
    */
   public boolean isBlock(Block b) {
-    int bid = b.getType().getId();
     byte bdata = b.getData();
-    return id == bid && (anydata || bdata == data);
+    return material == b.getType() && (anydata || bdata == data);
+  }
+
+  private void resolveId() {
+    try {
+      id = material.getId();
+    } catch (Throwable ignored) {
+    }
   }
 
   public void sendChange(Player plr, Location loc) {
@@ -204,7 +221,7 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
    * @return The conversion result
    */
   public ItemStack toItem() {
-    return new ItemStack(getType(), 1, (short) data);
+    return new ItemStack(getType(), 1, data);
   }
 }
 

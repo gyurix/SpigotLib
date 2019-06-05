@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.FIELD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface JsonSettings {
-    String defaultValue() default "null";
+  String defaultValue() default "null";
 
-    boolean serialize() default true;
+  boolean serialize() default true;
 }
 

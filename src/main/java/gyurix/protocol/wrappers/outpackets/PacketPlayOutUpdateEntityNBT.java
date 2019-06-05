@@ -9,21 +9,21 @@ import gyurix.protocol.wrappers.WrappedPacket;
  * Created by gyurix on 25/11/2015.
  */
 public class PacketPlayOutUpdateEntityNBT extends WrappedPacket {
-    public int entityId;
-    public NBTCompound nbt;
+  public int entityId;
+  public NBTCompound nbt;
 
-    public PacketPlayOutUpdateEntityNBT() {
-    }
+  public PacketPlayOutUpdateEntityNBT() {
+  }
 
-    @Override
-    public Object getVanillaPacket() {
-        return PacketOutType.UpdateEntityNBT.newPacket(entityId, nbt.toNMS());
-    }
+  @Override
+  public Object getVanillaPacket() {
+    return PacketOutType.UpdateEntityNBT.newPacket(entityId, nbt.toNMS());
+  }
 
-    @Override
-    public void loadVanillaPacket(Object obj) {
-        Object[] data = PacketOutType.UpdateEntityNBT.getPacketData(obj);
-        entityId = (int) data[0];
-        nbt = (NBTCompound) NBTTagType.tag(data[1]);
-    }
+  @Override
+  public void loadVanillaPacket(Object obj) {
+    Object[] data = PacketOutType.UpdateEntityNBT.getPacketData(obj);
+    entityId = (int) data[0];
+    nbt = (NBTCompound) NBTTagType.tag(data[1]);
+  }
 }

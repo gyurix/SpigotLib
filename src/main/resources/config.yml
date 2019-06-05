@@ -33,9 +33,9 @@ earlyJoinKickMsg: §eStarting server...
 #Allow the usage of eval variable for players using /sl vars command
 #By default this is disabled to improve the servers security
 playerEval: -
-economy: 
-  balanceTypes: 
-    default: 
+economy:
+  balanceTypes:
+    default:
       defaultValue: 100
       name: default
       suffix: $
@@ -52,7 +52,7 @@ phaHook: +
 playerFile:
   backend: FILE
   file: players.yml
-  mysql: 
+  mysql:
     database: SpigotLib
     host: 127.0.0.1
     password: root

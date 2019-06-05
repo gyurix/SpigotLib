@@ -7,58 +7,58 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public abstract class PacketEvent extends Event implements Cancellable {
-    private static final HandlerList hl = new HandlerList();
-    private final Object channel;
-    private final Player player;
-    protected Object packet;
-    private boolean cancelled;
+  private static final HandlerList hl = new HandlerList();
+  private final Object channel;
+  private final Player player;
+  protected Object packet;
+  private boolean cancelled;
 
-    public PacketEvent(Object channel, Player plr, Object packet) {
-        this.channel = channel;
-        this.packet = packet;
-        player = plr;
-    }
+  public PacketEvent(Object channel, Player plr, Object packet) {
+    this.channel = channel;
+    this.packet = packet;
+    player = plr;
+  }
 
-    public static HandlerList getHandlerList() {
-        return hl;
-    }
+  public static HandlerList getHandlerList() {
+    return hl;
+  }
 
-    public Object getChannel() {
-        return channel;
-    }
+  public Object getChannel() {
+    return channel;
+  }
 
-    public HandlerList getHandlers() {
-        return hl;
-    }
+  public HandlerList getHandlers() {
+    return hl;
+  }
 
-    public Object getPacket() {
-        return packet;
-    }
+  public Object getPacket() {
+    return packet;
+  }
 
-    public void setPacket(WrappedPacket packet) {
-        this.packet = packet.getVanillaPacket();
-    }
+  public void setPacket(WrappedPacket packet) {
+    this.packet = packet.getVanillaPacket();
+  }
 
-    public abstract Object[] getPacketData();
+  public void setPacket(Object packet) {
+    this.packet = packet;
+  }
 
-    public abstract void setPacketData(Object... var1);
+  public abstract Object[] getPacketData();
 
-    public Player getPlayer() {
-        return player;
-    }
+  public abstract void setPacketData(Object... var1);
 
-    public boolean isCancelled() {
-        return cancelled;
-    }
+  public Player getPlayer() {
+    return player;
+  }
 
-    public void setCancelled(boolean cancel) {
-        cancelled = cancel;
-    }
+  public boolean isCancelled() {
+    return cancelled;
+  }
 
-    public void setPacket(Object packet) {
-        this.packet = packet;
-    }
+  public void setCancelled(boolean cancel) {
+    cancelled = cancel;
+  }
 
-    public abstract boolean setPacketData(int var1, Object var2);
+  public abstract boolean setPacketData(int var1, Object var2);
 }
 

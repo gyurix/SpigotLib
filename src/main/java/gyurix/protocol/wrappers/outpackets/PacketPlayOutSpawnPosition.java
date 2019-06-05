@@ -8,17 +8,17 @@ import gyurix.protocol.wrappers.WrappedPacket;
  * Created by GyuriX on 2016.02.28..
  */
 public class PacketPlayOutSpawnPosition extends WrappedPacket {
-    public BlockLocation location;
+  public BlockLocation location;
 
-    @Override
-    public Object getVanillaPacket() {
-        return PacketOutType.SpawnPosition.newPacket(location.toNMS());
-    }
+  @Override
+  public Object getVanillaPacket() {
+    return PacketOutType.SpawnPosition.newPacket(location.toNMS());
+  }
 
-    @Override
-    public void loadVanillaPacket(Object packet) {
-        location = new BlockLocation(PacketOutType.SpawnPosition.getPacketData(packet)[0]);
+  @Override
+  public void loadVanillaPacket(Object packet) {
+    location = new BlockLocation(PacketOutType.SpawnPosition.getPacketData(packet)[0]);
 
-    }
+  }
 
 }

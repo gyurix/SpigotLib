@@ -262,7 +262,7 @@ nl:
       list: &6&lBeschikbare talen: &e<langs>
       other: &6&l<player>&e heeft &6&l<lang>&e als taal geselecteerd.
       own: Je hebt &6&l<lang>&e als taal geselecteerd.
-      set: &6&l<player>&e spelers taal is gezet naar de taal: &6&l<lang>&e.
+      set: &6&l<player>&e spelers taal is gezet naar de taal:&6&l <lang>&e.
         own: &eJe hebt je eigen taal veranderd naar &6&l<lang>&e.
     migrate:
       end: &bData migratie voltooid.

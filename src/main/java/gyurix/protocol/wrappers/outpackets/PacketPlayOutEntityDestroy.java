@@ -7,23 +7,23 @@ import gyurix.protocol.wrappers.WrappedPacket;
  * Created by GyuriX on 2016.03.08..
  */
 public class PacketPlayOutEntityDestroy extends WrappedPacket {
-    public int[] entityIds;
+  public int[] entityIds;
 
-    public PacketPlayOutEntityDestroy() {
+  public PacketPlayOutEntityDestroy() {
 
-    }
+  }
 
-    public PacketPlayOutEntityDestroy(int... eids) {
-        entityIds = eids;
-    }
+  public PacketPlayOutEntityDestroy(int... eids) {
+    entityIds = eids;
+  }
 
-    @Override
-    public Object getVanillaPacket() {
-        return PacketOutType.EntityDestroy.newPacket(entityIds);
-    }
+  @Override
+  public Object getVanillaPacket() {
+    return PacketOutType.EntityDestroy.newPacket(entityIds);
+  }
 
-    @Override
-    public void loadVanillaPacket(Object packet) {
-        entityIds = (int[]) PacketOutType.EntityDestroy.getPacketData(packet)[0];
-    }
+  @Override
+  public void loadVanillaPacket(Object packet) {
+    entityIds = (int[]) PacketOutType.EntityDestroy.getPacketData(packet)[0];
+  }
 }

@@ -12,28 +12,28 @@ import java.util.List;
  * Created by GyuriX on 2016.03.08..
  */
 public class PacketPlayOutEntityMetadata extends WrappedPacket {
-    public int entityId;
-    public ArrayList<WrappedItem> meta = new ArrayList<>();
+  public int entityId;
+  public ArrayList<WrappedItem> meta = new ArrayList<>();
 
-    public PacketPlayOutEntityMetadata() {
+  public PacketPlayOutEntityMetadata() {
 
-    }
+  }
 
-    public PacketPlayOutEntityMetadata(int entityId, ArrayList<WrappedItem> meta) {
-        this.entityId = entityId;
-        this.meta = meta;
-    }
+  public PacketPlayOutEntityMetadata(int entityId, ArrayList<WrappedItem> meta) {
+    this.entityId = entityId;
+    this.meta = meta;
+  }
 
-    @Override
-    public Object getVanillaPacket() {
-        return PacketOutType.EntityMetadata.newPacket(entityId, DataWatcher.convertToNmsItems(meta));
+  @Override
+  public Object getVanillaPacket() {
+    return PacketOutType.EntityMetadata.newPacket(entityId, DataWatcher.convertToNmsItems(meta));
 
-    }
+  }
 
-    @Override
-    public void loadVanillaPacket(Object packet) {
-        Object[] d = PacketOutType.EntityMetadata.getPacketData(packet);
-        entityId = (int) d[0];
-        meta = DataWatcher.wrapNMSItems((List) d[1]);
-    }
+  @Override
+  public void loadVanillaPacket(Object packet) {
+    Object[] d = PacketOutType.EntityMetadata.getPacketData(packet);
+    entityId = (int) d[0];
+    meta = DataWatcher.wrapNMSItems((List) d[1]);
+  }
 }

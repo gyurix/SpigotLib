@@ -10,12 +10,12 @@ import org.bukkit.entity.Player;
  * PlaceholderAPI compatible with SpigotLib PlaceholderAPI placeholders.
  */
 public class PHAHook extends PlaceholderHook {
-    public PHAHook() {
-        PlaceholderAPI.registerPlaceholderHook("sl", this);
-    }
+  public PHAHook() {
+    PlaceholderAPI.registerPlaceholderHook("sl", this);
+  }
 
-    @Override
-    public String onPlaceholderRequest(Player plr, String msg) {
-        return VariableAPI.fillVariables(msg, plr);
-    }
+  @Override
+  public String onPlaceholderRequest(Player plr, String msg) {
+    return VariableAPI.fillVariables(msg, plr);
+  }
 }

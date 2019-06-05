@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
  * usage of this interface is in EnumMaps.
  */
 public interface ValueClassSelector {
-    Class getValueClass();
+  Class getValueClass();
 
-    Type[] getValueTypes();
+  Type[] getValueTypes();
 }

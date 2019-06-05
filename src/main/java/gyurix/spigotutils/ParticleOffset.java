@@ -5,17 +5,17 @@ import lombok.Data;
 
 @Data
 public class ParticleOffset implements ConfigSerialization.StringSerializable {
-    private float x, y, z;
+  private float x, y, z;
 
-    public ParticleOffset(String in) {
-        String[] d = in.split(" ", 3);
-        x = Float.valueOf(d[0]);
-        y = Float.valueOf(d[1]);
-        z = Float.valueOf(d[2]);
-    }
+  public ParticleOffset(String in) {
+    String[] d = in.split(" ", 3);
+    x = Float.valueOf(d[0]);
+    y = Float.valueOf(d[1]);
+    z = Float.valueOf(d[2]);
+  }
 
-    @Override
-    public String toString() {
-        return x + " " + y + " " + z;
-    }
+  @Override
+  public String toString() {
+    return x + " " + y + " " + z;
+  }
 }

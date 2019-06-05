@@ -1,12 +1,12 @@
 package gyurix.animation;
 
 public interface CustomEffect {
-    CustomEffect clone();
+  CustomEffect clone();
 
-    String getText();
+  String getText();
 
-    void setText(String var1);
+  void setText(String var1);
 
-    String next(String var1);
+  String next(String var1);
 }
 

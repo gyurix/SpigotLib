@@ -9,45 +9,45 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PacketPlayOutRecipeUpdate extends WrappedPacket {
-    public List<Recipe> recipes = new ArrayList<>();
+  public List<Recipe> recipes = new ArrayList<>();
 
-    public PacketPlayOutRecipeUpdate() {
-    }
+  public PacketPlayOutRecipeUpdate() {
+  }
 
-    public PacketPlayOutRecipeUpdate(Recipe... recipes) {
-        this.recipes.addAll(Arrays.asList(recipes));
-    }
+  public PacketPlayOutRecipeUpdate(Recipe... recipes) {
+    this.recipes.addAll(Arrays.asList(recipes));
+  }
 
-    public static Recipe fromNMSRecipe(Object r) {
-        //TODO
-        return null;
-    }
+  public static Recipe fromNMSRecipe(Object r) {
+    //TODO
+    return null;
+  }
 
-    public static List<Recipe> fromNMSRecipeList(Iterable<Object> recipes) {
-        List<Recipe> out = new ArrayList<>();
-        recipes.forEach(r -> out.add(fromNMSRecipe(r)));
-        return out;
-    }
+  public static List<Recipe> fromNMSRecipeList(Iterable<Object> recipes) {
+    List<Recipe> out = new ArrayList<>();
+    recipes.forEach(r -> out.add(fromNMSRecipe(r)));
+    return out;
+  }
 
-    public static Object toNMSRecipe(Recipe r) {
-        //TODO
-        return null;
-    }
+  public static Object toNMSRecipe(Recipe r) {
+    //TODO
+    return null;
+  }
 
-    public static List<Object> toNMSRecipeList(Iterable<Recipe> recipes) {
-        List<Object> out = new ArrayList<>();
-        recipes.forEach(r -> out.add(toNMSRecipe(r)));
-        return out;
-    }
+  public static List<Object> toNMSRecipeList(Iterable<Recipe> recipes) {
+    List<Object> out = new ArrayList<>();
+    recipes.forEach(r -> out.add(toNMSRecipe(r)));
+    return out;
+  }
 
-    @Override
-    public Object getVanillaPacket() {
-        return PacketOutType.RecipeUpdate.newPacket(toNMSRecipeList(recipes));
-    }
+  @Override
+  public Object getVanillaPacket() {
+    return PacketOutType.RecipeUpdate.newPacket(toNMSRecipeList(recipes));
+  }
 
-    @Override
-    public void loadVanillaPacket(Object obj) {
-        Object[] data = PacketOutType.RecipeUpdate.getPacketData(obj);
-        recipes = fromNMSRecipeList((Iterable<Object>) data[0]);
-    }
+  @Override
+  public void loadVanillaPacket(Object obj) {
+    Object[] data = PacketOutType.RecipeUpdate.getPacketData(obj);
+    recipes = fromNMSRecipeList((Iterable<Object>) data[0]);
+  }
 }

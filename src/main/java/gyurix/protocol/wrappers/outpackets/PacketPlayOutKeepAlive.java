@@ -7,23 +7,23 @@ import gyurix.protocol.wrappers.WrappedPacket;
  * Created by GyuriX on 2016.02.28..
  */
 public class PacketPlayOutKeepAlive extends WrappedPacket {
-    public int id;
+  public int id;
 
-    public PacketPlayOutKeepAlive() {
+  public PacketPlayOutKeepAlive() {
 
-    }
+  }
 
-    public PacketPlayOutKeepAlive(int id) {
-        this.id = id;
-    }
+  public PacketPlayOutKeepAlive(int id) {
+    this.id = id;
+  }
 
-    @Override
-    public Object getVanillaPacket() {
-        return PacketOutType.KeepAlive.newPacket(id);
-    }
+  @Override
+  public Object getVanillaPacket() {
+    return PacketOutType.KeepAlive.newPacket(id);
+  }
 
-    @Override
-    public void loadVanillaPacket(Object packet) {
-        id = (int) PacketOutType.KeepAlive.getPacketData(packet)[0];
-    }
+  @Override
+  public void loadVanillaPacket(Object packet) {
+    id = (int) PacketOutType.KeepAlive.getPacketData(packet)[0];
+  }
 }

@@ -9,29 +9,29 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
 public class PacketPlayInCustomPayload extends WrappedPacket implements StringSerializable {
-    public String channel;
-    public byte[] data;
+  public String channel;
+  public byte[] data;
 
-    @Override
-    public Object getVanillaPacket() {
-        if (Reflection.ver.isAbove(ServerVersion.v1_8)) {
-            ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(data.length);
-            buf.writeBytes(data);
-            return PacketInType.CustomPayload.newPacket(channel, buf);
-        }
-        return PacketInType.CustomPayload.newPacket(channel, data.length, data);
+  @Override
+  public Object getVanillaPacket() {
+    if (Reflection.ver.isAbove(ServerVersion.v1_8)) {
+      ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(data.length);
+      buf.writeBytes(data);
+      return PacketInType.CustomPayload.newPacket(channel, buf);
     }
+    return PacketInType.CustomPayload.newPacket(channel, data.length, data);
+  }
 
-    @Override
-    public void loadVanillaPacket(Object packet) {
-        Object[] d = PacketInType.CustomPayload.getPacketData(packet);
-        channel = (String) d[0];
-        data = Reflection.ver.isAbove(ServerVersion.v1_8) ? ((ByteBuf) d[d.length - 1]).array() : (byte[]) d[d.length - 1];
-    }
+  @Override
+  public void loadVanillaPacket(Object packet) {
+    Object[] d = PacketInType.CustomPayload.getPacketData(packet);
+    channel = (String) d[0];
+    data = Reflection.ver.isAbove(ServerVersion.v1_8) ? ((ByteBuf) d[d.length - 1]).array() : (byte[]) d[d.length - 1];
+  }
 
-    @Override
-    public String toString() {
-        return channel;
-    }
+  @Override
+  public String toString() {
+    return channel;
+  }
 }
 

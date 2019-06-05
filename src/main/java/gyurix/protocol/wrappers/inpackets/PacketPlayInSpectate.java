@@ -7,16 +7,16 @@ import java.util.UUID;
 
 public class PacketPlayInSpectate
         extends WrappedPacket {
-    private UUID entityUUID;
+  private UUID entityUUID;
 
-    @Override
-    public Object getVanillaPacket() {
-        return PacketInType.Spectate.newPacket(entityUUID);
-    }
+  @Override
+  public Object getVanillaPacket() {
+    return PacketInType.Spectate.newPacket(entityUUID);
+  }
 
-    @Override
-    public void loadVanillaPacket(Object packet) {
-        entityUUID = (UUID) PacketInType.Spectate.getPacketData(packet)[0];
-    }
+  @Override
+  public void loadVanillaPacket(Object packet) {
+    entityUUID = (UUID) PacketInType.Spectate.getPacketData(packet)[0];
+  }
 }
 

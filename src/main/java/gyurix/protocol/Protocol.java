@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public abstract class Protocol implements Listener {
@@ -23,6 +24,8 @@ public abstract class Protocol implements Listener {
   private static final String pa = "§5[§dPacketAPI§5] §e";
   private static final HashMap<Plugin, ArrayList<PacketInListener>> pluginInListeners = new HashMap<>();
   private static final HashMap<Plugin, ArrayList<PacketOutListener>> pluginOutListeners = new HashMap<>();
+  private static final HashSet<String> missingInPackets = new HashSet<>();
+  private static final HashSet<String> missingOutPackets = new HashSet<>();
 
   /**
    * Dispatches an incoming packet event
@@ -31,7 +34,9 @@ public abstract class Protocol implements Listener {
    */
   public static void dispatchPacketInEvent(PacketInEvent event) {
     if (event.getType() == null) {
-      SU.cs.sendMessage(pa + "Missing in packet type:§c " + event.getPacket().getClass().getName() + "§e.");
+      String name = event.getPacket().getClass().getName();
+      if (missingInPackets.add(name))
+        SU.cs.sendMessage(pa + "Missing in packet type:§c " + name + "§e.");
       return;
     }
     ArrayList<PacketInListener> ll = inListeners.get(event.getType());
@@ -53,7 +58,9 @@ public abstract class Protocol implements Listener {
    */
   public static void dispatchPacketOutEvent(PacketOutEvent event) {
     if (event.getType() == null) {
-      SU.cs.sendMessage(pa + "Missing out packet type:§c " + event.getPacket().getClass().getName() + "§e.");
+      String name = event.getPacket().getClass().getName();
+      if (missingOutPackets.add(name))
+        SU.cs.sendMessage(pa + "Missing out packet type:§c " + name + "§e.");
       return;
     }
     ArrayList<PacketOutListener> ll = outListeners.get(event.getType());

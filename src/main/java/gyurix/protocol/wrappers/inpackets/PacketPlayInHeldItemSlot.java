@@ -5,16 +5,16 @@ import gyurix.protocol.wrappers.WrappedPacket;
 
 public class PacketPlayInHeldItemSlot
         extends WrappedPacket {
-    public int itemInHandIndex;
+  public int itemInHandIndex;
 
-    @Override
-    public Object getVanillaPacket() {
-        return PacketInType.HeldItemSlot.newPacket(itemInHandIndex);
-    }
+  @Override
+  public Object getVanillaPacket() {
+    return PacketInType.HeldItemSlot.newPacket(itemInHandIndex);
+  }
 
-    @Override
-    public void loadVanillaPacket(Object packet) {
-        itemInHandIndex = (Integer) PacketInType.HeldItemSlot.getPacketData(packet)[0];
-    }
+  @Override
+  public void loadVanillaPacket(Object packet) {
+    itemInHandIndex = (Integer) PacketInType.HeldItemSlot.getPacketData(packet)[0];
+  }
 }
 

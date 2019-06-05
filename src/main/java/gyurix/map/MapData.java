@@ -23,72 +23,72 @@ import static gyurix.protocol.Reflection.*;
 @Getter
 @Setter
 public class MapData {
-    private static final Object itemWorldMap, worldMap;
-    private static final Method mapGenMethod;
-    private static final MapView view;
-    private static final byte[] viewColors;
+  private static final Object itemWorldMap, worldMap;
+  private static final Method mapGenMethod;
+  private static final MapView view;
+  private static final byte[] viewColors;
 
-    static {
-        Class cl = getNMSClass("ItemWorldMap");
-        Class cl2 = getNMSClass("WorldMap");
-        itemWorldMap = newInstance(cl);
-        worldMap = newInstance(cl2, new Class[]{String.class}, "map_0");
-        view = (MapView) getFieldData(cl2, "mapView", worldMap);
-        view.getRenderers().clear();
-        viewColors = (byte[]) getFieldData(cl2, "colors", worldMap);
-        mapGenMethod = getMethod(cl, "a", getNMSClass("World"), getNMSClass("Entity"), cl2);
+  static {
+    Class cl = getNMSClass("ItemWorldMap");
+    Class cl2 = getNMSClass("WorldMap");
+    itemWorldMap = newInstance(cl);
+    worldMap = newInstance(cl2, new Class[]{String.class}, "map_0");
+    view = (MapView) getFieldData(cl2, "mapView", worldMap);
+    view.getRenderers().clear();
+    viewColors = (byte[]) getFieldData(cl2, "colors", worldMap);
+    mapGenMethod = getMethod(cl, "a", getNMSClass("World"), getNMSClass("Entity"), cl2);
+  }
+
+  private final byte[] colors = new byte[16384];
+  private final ArrayList<MapIcon> icons = new ArrayList<>();
+  private int centerX, centerZ;
+  @Builder.Default
+  private int mapId = 1;
+  @Builder.Default
+  private Scale scale = Scale.CLOSEST;
+  @Builder.Default
+  private boolean showIcons = true;
+  private World world;
+
+  public void clear(byte color) {
+    if (color < 0 && color > -113)
+      color = 0;
+    for (int i = 0; i < 16384; i++)
+      colors[i] = color;
+  }
+
+  public byte[] cloneColors() {
+    return colors.clone();
+  }
+
+  public void setColor(int x, int y, byte color) {
+    if (x > -1 && x < 128 && y > -1 && y < 128)
+      colors[x + y * 128] = color;
+  }
+
+  public void setColor(int x, int y, int xLen, int yLen, byte color) {
+    for (int cx = 0; cx < xLen; cx++) {
+      for (int cy = 0; cy < yLen; cy++) {
+        if (x + cx > -1 && x + cx < 128 && y + cy > -1 && y + cy < 128)
+          colors[x + cx + (y + cy) * 128] = color;
+      }
     }
+  }
 
-    private final byte[] colors = new byte[16384];
-    private final ArrayList<MapIcon> icons = new ArrayList<>();
-    private int centerX, centerZ;
-    @Builder.Default
-    private int mapId = 1;
-    @Builder.Default
-    private Scale scale = Scale.CLOSEST;
-    @Builder.Default
-    private boolean showIcons = true;
-    private World world;
-
-    public void clear(byte color) {
-        if (color < 0 && color > -113)
-            color = 0;
-        for (int i = 0; i < 16384; i++)
-            colors[i] = color;
+  public void setVanillaMapGenData(Player plr) {
+    view.setWorld(world);
+    view.setCenterX(centerX);
+    view.setCenterZ(centerZ);
+    view.setScale(scale);
+    try {
+      mapGenMethod.invoke(itemWorldMap, EntityUtils.getNMSWorld(world), EntityUtils.getNMSEntity(plr), worldMap);
+      System.arraycopy(viewColors, 0, colors, 0, 16384);
+    } catch (Throwable e) {
+      SU.error(SU.cs, e, "SpigotLib", "gyurix");
     }
+  }
 
-    public byte[] cloneColors() {
-        return colors.clone();
-    }
-
-    public void setColor(int x, int y, byte color) {
-        if (x > -1 && x < 128 && y > -1 && y < 128)
-            colors[x + y * 128] = color;
-    }
-
-    public void setColor(int x, int y, int xLen, int yLen, byte color) {
-        for (int cx = 0; cx < xLen; cx++) {
-            for (int cy = 0; cy < yLen; cy++) {
-                if (x + cx > -1 && x + cx < 128 && y + cy > -1 && y + cy < 128)
-                    colors[x + cx + (y + cy) * 128] = color;
-            }
-        }
-    }
-
-    public void setVanillaMapGenData(Player plr) {
-        view.setWorld(world);
-        view.setCenterX(centerX);
-        view.setCenterZ(centerZ);
-        view.setScale(scale);
-        try {
-            mapGenMethod.invoke(itemWorldMap, EntityUtils.getNMSWorld(world), EntityUtils.getNMSEntity(plr), worldMap);
-            System.arraycopy(viewColors, 0, colors, 0, 16384);
-        } catch (Throwable e) {
-            SU.error(SU.cs, e, "SpigotLib", "gyurix");
-        }
-    }
-
-    public void update(Player plr) {
-        SU.tp.sendPacket(plr, new PacketPlayOutMap(this));
-    }
+  public void update(Player plr) {
+    SU.tp.sendPacket(plr, new PacketPlayOutMap(this));
+  }
 }
