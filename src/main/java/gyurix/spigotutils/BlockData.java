@@ -164,9 +164,7 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
 
   @Override
   public String toString() {
-    Material m = Items.getMaterial(id);
-    String sid = m == null ? "" + id : m.name();
-    return anydata ? sid : sid + ':' + data;
+    return anydata ? material.name() : material.name() + ':' + data;
   }
 
   /**
