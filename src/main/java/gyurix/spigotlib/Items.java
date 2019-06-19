@@ -81,7 +81,11 @@ public class Items implements PostLoadable {
       try {
         return new ItemStack(getMaterial(Integer.valueOf(name)));
       } catch (Throwable ig) {
-        SU.cs.sendMessage("§cInvalid item name or id: §e" + name);
+        try {
+          return new ItemStack(Material.valueOf("LEGACY_"+name.toUpperCase()));
+        } catch(Throwable t) {
+          SU.cs.sendMessage("§cInvalid item name or id: §e" + name);
+        }
       }
       System.out.println("Name = \"" + name + "\"");
     }

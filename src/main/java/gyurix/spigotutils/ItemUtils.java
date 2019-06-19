@@ -255,7 +255,11 @@ public class ItemUtils {
               try {
                 is.setType(Material.valueOf(vs.toUpperCase()));
               } catch (Throwable e2) {
-                error(cs, e2, "SpigotLib", "gyurix");
+                try {
+                  is.setType(Material.valueOf("LEGACY_"+vs.toUpperCase()));
+                } catch(Throwable e3) {
+                  error(cs, e2, "SpigotLib", "gyurix");
+                }
               }
             }
             break;
