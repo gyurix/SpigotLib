@@ -2,6 +2,8 @@ package gyurix.mysql;
 
 import com.mysql.jdbc.Connection;
 import gyurix.configfile.ConfigSerialization.ConfigOptions;
+import gyurix.json.JsonAPI;
+import gyurix.json.JsonSettings;
 import gyurix.spigotlib.Config;
 import gyurix.spigotlib.SU;
 import org.apache.commons.lang.StringUtils;
@@ -20,9 +22,11 @@ import static gyurix.spigotlib.Main.pl;
  * for executing MySQL queries
  */
 public class MySQLDatabase {
+  @JsonSettings(serialize = false)
   @ConfigOptions(serialize = false)
   private static ExecutorService batchThread = Executors.newSingleThreadExecutor();
   public String table;
+  @JsonSettings(serialize = false)
   @ConfigOptions(serialize = false)
   private Connection con;
   private String database;
@@ -144,7 +148,9 @@ public class MySQLDatabase {
       con.setAutoReconnect(true);
       con.setConnectTimeout(timeout);
     } catch (Throwable e) {
-      SU.cs.sendMessage("§cFailed to connect to storage, please check the plugins configuration.");
+      SU.cs.sendMessage("§cFailed to connect to MySQL, please check the plugins configuration, settings are " +
+              JsonAPI.serialize(this));
+      SU.error(SU.cs, e, "SpigotLib", "gyurix");
       return false;
     }
     return true;
