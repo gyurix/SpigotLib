@@ -314,6 +314,8 @@ public class ItemUtils {
           Collections.addAll(newLore, l.split("\n"));
         meta.setLore(newLore);
       }
+      if (meta instanceof SkullMeta)
+        ((SkullMeta) meta).setOwner(plr.getName());
       is.setItemMeta(meta);
     }
     return is;

@@ -62,7 +62,7 @@ public class TPSMeter implements Runnable {
     tps = ticks * 1000.0 / checkTime;
     ticks = 0;
     if (tps < limit)
-      SU.cs.sendMessage("§9[§b TPS Meter §9]§e The servers TPS is bellow §c" + tps + "§e, is it lagging or crashed?");
+      SU.cs.sendMessage("§9[§b TPS Meter §9]§e The server's TPS is bellow §c" + tps + "§e, is it lagging or crashed?");
     if (tps == 0) {
       ++zeroTpsCount;
       if (zeroTpsCount == reportCrashAfter) {
