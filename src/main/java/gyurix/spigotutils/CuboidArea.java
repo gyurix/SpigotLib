@@ -78,7 +78,6 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
     this.pos2 = pos2.getBlockLocation();
   }
 
-
   public CuboidArea(BlockLocation pos1, BlockLocation pos2) {
     this.pos1 = pos1;
     this.pos2 = pos2;
@@ -179,6 +178,10 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
           blocks.add(w.getBlockAt(x, y, z));
         }
     return blocks;
+  }
+
+  public LocationData getCenter() {
+    return new LocationData(0.5 + (pos1.x + pos2.x) / 2D, (pos1.y + pos2.y) / 2D, (pos1.z + pos2.z) / 2D);
   }
 
   public boolean isBorder(int x, int z) {
