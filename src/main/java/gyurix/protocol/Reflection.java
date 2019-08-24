@@ -30,6 +30,14 @@ public class Reflection {
   public static String version;
   private static Field modifiersField;
 
+  static {
+    try {
+      modifiersField = Field.class.getDeclaredField("modifiers");
+      modifiersField.setAccessible(true);
+    } catch (Throwable ignored) {
+    }
+  }
+
   /**
    * Compares two arrays of classes
    *
@@ -347,12 +355,7 @@ public class Reflection {
   public static void init() {
     String name = Bukkit.getServer().getClass().getPackage().getName();
     version = name.substring(name.lastIndexOf('.') + 1);
-    try {
-      modifiersField = Field.class.getDeclaredField("modifiers");
-      modifiersField.setAccessible(true);
-      ver = valueOf(version.substring(0, version.length() - 3));
-    } catch (Throwable ignored) {
-    }
+    ver = valueOf(version.substring(0, version.length() - 3));
     SU.cs.sendMessage("§2[§aStartup§2]§e Detected server version:§a " + ver + "§e (§f" + version + "§e) - §f" + Bukkit.getServer().getVersion());
     if (Reflection.ver == v1_7) {
       nmsRenames.put("PacketLoginOutSetCompression", "org.spigotmc.ProtocolInjector$PacketLoginCompression");

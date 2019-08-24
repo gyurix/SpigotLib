@@ -36,10 +36,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static gyurix.commands.CustomCommandMap.knownCommands;
 
@@ -47,7 +50,8 @@ import static gyurix.commands.CustomCommandMap.knownCommands;
  * SpigotLib utilities class
  */
 public final class SU {
-  public static final Charset utf8 = Charset.forName("UTF-8");
+  public static final Charset utf8 = StandardCharsets.UTF_8;
+  private static final Field NAMED_GROUPS_FIELD = Reflection.getField(Pattern.class, "namedGroups");
   /**
    * The instance of current Chat provider in Vault
    */
@@ -60,6 +64,7 @@ public final class SU {
    * The main instance of the ConsoleCommandSender object.
    */
   public static ConsoleCommandSender cs;
+  private static final Pattern REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
   /**
    * The instance of current Economy provider in Vault
    */
@@ -113,8 +118,6 @@ public final class SU {
    * True if Vault is found on the server
    */
   public static boolean vault;
-
-
   static Field pluginsF, lookupNamesF;
   private static Field entityF;
   private static Constructor entityPlayerC, playerInterractManagerC;
@@ -170,6 +173,16 @@ public final class SU {
   }
 
   /**
+   * Escapes the given regex, without quoting it, like Pattern.quote does
+   *
+   * @param regex - The escapable regex
+   * @return The escaped regex
+   */
+  public static String escapeRegex(String regex) {
+    return REGEX_CHARS.matcher(regex).replaceAll("\\\\$0");
+  }
+
+  /**
    * Escape multi line text to a single line one
    *
    * @param text multi line escapeable text input
@@ -195,7 +208,6 @@ public final class SU {
       s = s.replace('<' + v.getKey() + '>', String.valueOf(v.getValue()));
     return s;
   }
-
 
   /**
    * Fills variables in a String
@@ -347,6 +359,32 @@ public final class SU {
       e.printStackTrace();
     }
     return -1;
+  }
+
+  /**
+   * Gets the placeholders with their values from the given text
+   *
+   * @param format - The texts placeholder arrangement format
+   * @param text   - The text
+   * @return TreeMap with the placeholders as keys and placeholder values as values, or null
+   * if the text can not be matched with the format
+   */
+  public static TreeMap<String, String> getPlaceholders(String format, String text) {
+    try {
+      Pattern pattern = Pattern.compile(escapeRegex(format).replaceAll("<([^>]+)>", "(?<$1>.*)"));
+      Map<String, Integer> namedGroups = (Map<String, Integer>) NAMED_GROUPS_FIELD.get(pattern);
+      Matcher matcher = pattern.matcher(text);
+      if (!matcher.matches())
+        return null;
+      if (namedGroups == null)
+        return new TreeMap<>();
+      TreeMap<String, String> out = new TreeMap<>();
+      namedGroups.forEach((g, id) -> out.put(g, matcher.group(id)));
+      return out;
+    } catch (Throwable err) {
+      SU.error(SU.cs, err, "SpigotLib", "gyurix");
+    }
+    return null;
   }
 
   /**
