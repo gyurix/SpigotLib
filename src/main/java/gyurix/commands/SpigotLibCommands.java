@@ -12,6 +12,7 @@ import gyurix.spigotlib.SU;
 import gyurix.spigotutils.BackendType;
 import gyurix.spigotutils.ItemUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -128,7 +129,7 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
           int page = 1;
           boolean pageChange = false;
           try {
-            page = Integer.valueOf(args[args.length - 1]);
+            page = Integer.parseInt(args[args.length - 1]);
             pageChange = true;
           } catch (Throwable ignored) {
           }
@@ -191,21 +192,30 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
             lang.msg(sender, "save");
             return true;
           }
-          if (args[0].equals("pf")) {
-            if (backend == BackendType.FILE)
-              pf.save();
-            else {
-              for (ConfigData cd : new ArrayList<>(pf.data.mapData.keySet())) {
-                savePlayerConfig(cd.stringData.length() == 40 ? UUID.fromString(cd.stringData) : null);
+          switch (args[0]) {
+            case "pf": {
+              if (backend == BackendType.FILE)
+                pf.save();
+              else {
+                for (ConfigData cd : new ArrayList<>(pf.data.mapData.keySet())) {
+                  savePlayerConfig(cd.stringData.length() == 40 ? UUID.fromString(cd.stringData) : null);
+                }
               }
+              break;
             }
-            lang.msg(sender, "save.pf");
-            return true;
+            case "config": {
+              kf.save();
+              break;
+            }
+            default: {
+              lang.msg(sender, "invalidcmd");
+              return true;
+            }
           }
-          lang.msg(sender, "invalidcmd");
+          lang.msg(sender, "save." + args[0]);
           return true;
         case "velocity":
-          org.bukkit.util.Vector v = new Vector(Double.valueOf(args[0]), Double.valueOf(args[1]), Double.valueOf(args[2]));
+          org.bukkit.util.Vector v = new Vector(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]));
           for (Player p : pls) {
             p.setVelocity(v);
             lang.msg(sender, "velocity.set");
@@ -219,13 +229,13 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
           lang.msg(sender, "migrate.start");
           ArrayList<String> l = new ArrayList<>();
           l.add("DROP TABLE IF EXISTS " + mysql.table);
-          l.add("CREATE TABLE " + mysql.table + " (uuid VARCHAR(40), `key` TEXT(1), `value` TEXT(1))");
-          for (Map.Entry<ConfigData, ConfigData> e : pf.data.mapData.entrySet()) {
-            ConfigFile kf = pf.subConfig("" + e.getKey(), "uuid='" + e.getKey() + "'");
-            kf.mysqlUpdate(l, null);
+          l.add("CREATE TABLE `" + mysql.table + "` (`uuid` VARCHAR(40) NOT NULL PRIMARY KEY, `data` MEDIUMTEXT)");
+          if (pf.data.mapData != null && !pf.data.mapData.isEmpty()) {
+            StringBuilder sb = new StringBuilder("INSERT INTO `" + mysql.table + "` (`uuid`,`data`) VALUES ");
+            pf.data.mapData.forEach((key, value) ->
+                    sb.append("('").append(key).append("','").append(StringEscapeUtils.escapeSql(value.toString())).append("'),\n"));
+            l.add(sb.substring(0, sb.length() - 2));
           }
-          ConfigFile kff = pf.subConfig("CONSOLE", "uuid='CONSOLE'");
-          kff.mysqlUpdate(l, null);
           mysql.batch(l, () -> lang.msg(sender, "migrate.end"));
           backend = BackendType.MYSQL;
           kf.save();

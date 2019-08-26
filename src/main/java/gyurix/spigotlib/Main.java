@@ -86,7 +86,7 @@ public class Main extends JavaPlugin implements Listener {
   /**
    * Current version of the plugin, stored here to not be able to be abused so easily by server owners, by changing the plugin.yml file
    */
-  public static final String version = "9.1";
+  public static final String version = "9.2";
   /**
    * Data directory of the plugin (plugins/SpigotLib folder)
    */
@@ -152,7 +152,7 @@ public class Main extends JavaPlugin implements Listener {
         else
           cs.sendMessage("§2[§aSpigotLib§2]§c Failed to drop " + mysql.table + " table.");
       }
-      mysql.command("CREATE TABLE IF NOT EXISTS " + mysql.table + " (uuid TEXT, `key` LONGTEXT, `value` LONGTEXT)");
+      mysql.command("CREATE TABLE IF NOT EXISTS " + mysql.table + " (`uuid` VARCHAR(40) NOT NULL PRIMARY KEY, `data` MEDIUMTEXT)");
       pf = new ConfigFile(mysql, mysql.table, "key", "value");
       loadPlayerConfig(null);
       Bukkit.getOnlinePlayers().forEach((p) -> loadPlayerConfig(p.getUniqueId()));
@@ -268,15 +268,9 @@ public class Main extends JavaPlugin implements Listener {
     if (backend == BackendType.FILE)
       pf.saveNoAsync();
     else if (backend == BackendType.MYSQL) {
-      ArrayList<String> list = new ArrayList<>();
-      for (String s : pf.getStringKeyList()) {
-        pf.subConfig(s, "uuid='" + s + "'").mysqlUpdate(list, null);
-      }
-      pf.db.batchNoAsync(list);
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException ignored) {
-      }
+      for (Player p : Bukkit.getOnlinePlayers())
+        savePlayerConfigNoAsync(p.getUniqueId());
+      mysql.close();
     }
     log(this, "§4[§cShutdown§4]§e Unloading plugins depending on SpigotLib...");
     for (Plugin p : depend) {

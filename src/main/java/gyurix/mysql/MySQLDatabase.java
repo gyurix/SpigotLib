@@ -8,10 +8,7 @@ import gyurix.spigotlib.Config;
 import gyurix.spigotlib.SU;
 import org.apache.commons.lang.StringUtils;
 
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -104,6 +101,16 @@ public class MySQLDatabase {
     }
   }
 
+  public void close() {
+    try {
+      Connection con = getConnection();
+      con.commit();
+      con.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
   public boolean command(String cmd) {
     PreparedStatement st;
     try {
@@ -128,7 +135,7 @@ public class MySQLDatabase {
   /**
    * @return - The Connection
    */
-  private Connection getConnection() {
+  public Connection getConnection() {
     try {
       if (con == null || !con.isValid(timeout)) {
         openConnection();

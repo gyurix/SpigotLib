@@ -134,8 +134,9 @@ en:
       config: &a&lSpigotLibs configuration has been reloaded successfully.
       lf: &a&lSpigotLibs language file has been reloaded successfully.
       pf: &a&lPlayer data file has been reloaded successfully.
-    save: &cUsage:&6&l /sl save pf&e for saving the player file
+    save: &cUsage:&6&l /sl save &e&l<pf|config>
       pf: &a&lPlayer file has been saved successfully.
+      config: &a&lConfiguration file has been saved successfully.
     time:
       d: <d> day
       dp: <d> days

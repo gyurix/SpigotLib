@@ -38,6 +38,8 @@ import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
@@ -580,7 +582,12 @@ public final class SU {
   public static void loadPlayerConfig(UUID uid) {
     if (PlayerFile.backend == BackendType.MYSQL) {
       String key = uid == null ? "CONSOLE" : uid.toString();
-      pf.mysqlLoad(key, "uuid='" + key + '\'');
+      try (ResultSet rs = PlayerFile.mysql.query("SELECT `data` FROM `" + PlayerFile.mysql.table + "` WHERE `uuid` = ? LIMIT 1", key)) {
+        if (rs.next())
+          pf.setData(key, new ConfigFile(rs.getString("data")).data);
+      } catch (SQLException e) {
+        SU.error(SU.cs, e, "SpigotLib", "gyurix");
+      }
       loadedPlayers.add(uid);
     }
   }
@@ -752,11 +759,25 @@ public final class SU {
         pf.save();
         return;
       case MYSQL:
-        ArrayList<String> list = new ArrayList<>();
-        ConfigFile kf = pf.subConfig(key, "uuid='" + key + '\'');
-        kf.data.unWrapAll();
-        kf.mysqlUpdate(list, null);
-        pf.db.batch(list, null);
+        String data = getPlayerConfig(uid).toString();
+        SU.sch.runTaskAsynchronously(Main.pl, () -> {
+          if (PlayerFile.mysql.update("UPDATE `" + PlayerFile.mysql.table + "` SET `data` = ? WHERE `uuid` = ? LIMIT 1", data, key) == 0)
+            PlayerFile.mysql.command("INSERT INTO `" + PlayerFile.mysql.table + "` (`uuid`,`data`) VALUES ( ? , ? )", key, data);
+        });
+    }
+  }
+
+  public static void savePlayerConfigNoAsync(UUID uid) {
+    String key = uid == null ? "CONSOLE" : uid.toString();
+    switch (PlayerFile.backend) {
+      case FILE:
+        pf.data.unWrapAll();
+        pf.save();
+        return;
+      case MYSQL:
+        String data = getPlayerConfig(uid).toString();
+        if (PlayerFile.mysql.update("UPDATE `" + PlayerFile.mysql.table + "` SET `data` = ? WHERE `uuid` = ? LIMIT 1", data, key) == 0)
+          PlayerFile.mysql.command("INSERT INTO `" + PlayerFile.mysql.table + "` (`uuid`,`data`) VALUES ( ? , ? )", key, data);
     }
   }
 
