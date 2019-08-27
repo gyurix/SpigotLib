@@ -3,6 +3,7 @@ package gyurix.spigotlib;
 import gyurix.commands.CustomCommandMap;
 import gyurix.configfile.ConfigFile;
 import gyurix.mojang.MojangAPI;
+import gyurix.mysql.MySQLDatabase;
 import gyurix.protocol.Protocol;
 import gyurix.protocol.Reflection;
 import gyurix.protocol.utils.GameProfile;
@@ -760,7 +761,7 @@ public final class SU {
         return;
       case MYSQL:
         String data = getPlayerConfig(uid).toString();
-        SU.sch.runTaskAsynchronously(Main.pl, () -> {
+        MySQLDatabase.batchThread.submit(() -> {
           if (PlayerFile.mysql.update("UPDATE `" + PlayerFile.mysql.table + "` SET `data` = ? WHERE `uuid` = ? LIMIT 1", data, key) == 0)
             PlayerFile.mysql.command("INSERT INTO `" + PlayerFile.mysql.table + "` (`uuid`,`data`) VALUES ( ? , ? )", key, data);
         });

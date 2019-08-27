@@ -21,7 +21,7 @@ import static gyurix.spigotlib.Main.pl;
 public class MySQLDatabase {
   @JsonSettings(serialize = false)
   @ConfigOptions(serialize = false)
-  private static ExecutorService batchThread = Executors.newSingleThreadExecutor();
+  public static ExecutorService batchThread = Executors.newSingleThreadExecutor();
   public String table;
   @JsonSettings(serialize = false)
   @ConfigOptions(serialize = false)
