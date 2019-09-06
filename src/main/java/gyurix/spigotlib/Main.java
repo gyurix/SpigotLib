@@ -14,6 +14,7 @@ import gyurix.economy.custom.ExpBalanceType;
 import gyurix.economy.custom.VaultBalanceType;
 import gyurix.inventory.CloseableGUI;
 import gyurix.inventory.CustomGUI;
+import gyurix.mysql.MySQLDatabase;
 import gyurix.protocol.Reflection;
 import gyurix.protocol.event.PacketInType;
 import gyurix.protocol.event.PacketOutType;
@@ -336,12 +337,6 @@ public class Main extends JavaPlugin implements Listener {
     } else {
       cs.sendMessage("§2[§aSpigotLib§2]§e Your server is §cnot connected§e to a BungeeCord server, §cskipping BungeeAPI§e load...");
     }
-    if (backend == BackendType.MYSQL) {
-      cs.sendMessage("§2[§aSpigotLib§2]§e Loading player data of online players from the MySQL...");
-      for (Player p : Bukkit.getOnlinePlayers()) {
-        loadPlayerConfig(p.getUniqueId());
-      }
-    }
     vault = pm.getPlugin("Vault") != null;
     EconomyAPI.registerBalanceType("exp", new ExpBalanceType(EconomyAPI.getBalanceType("exp")));
     EconomyAPI.VaultHookType vaultHookType = EconomyAPI.getVaultHookType();
@@ -403,8 +398,10 @@ public class Main extends JavaPlugin implements Listener {
   public void onPlayerLeave(PlayerQuitEvent e) {
     Player plr = e.getPlayer();
     UUID uid = plr.getUniqueId();
-    savePlayerConfig(uid);
-    unloadPlayerConfig(uid);
+    if (backend == BackendType.MYSQL) {
+      savePlayerConfig(uid);
+      unloadPlayerConfig(uid);
+    }
     AnimationAPI.stopRunningAnimations(plr);
     if (!forceReducedMode && ver.isAbove(v1_8))
       ScoreboardAPI.playerLeave(plr);
@@ -414,6 +411,12 @@ public class Main extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.LOW)
   public void onPlayerLogin(PlayerLoginEvent e) {
     Player plr = e.getPlayer();
+    if (backend == BackendType.MYSQL && !loadedPlayers.contains(plr.getUniqueId())) {
+      MySQLDatabase.batchThread.submit(() -> {
+        cs.sendMessage("Player " + e.getPlayer().getUniqueId() + " was not loaded yet, loading it now...");
+        loadPlayerConfig(plr.getUniqueId());
+      });
+    }
     if (!forceReducedMode)
       ScoreboardAPI.playerJoin(plr);
   }
@@ -435,6 +438,7 @@ public class Main extends JavaPlugin implements Listener {
   public void onPreLogin(AsyncPlayerPreLoginEvent e) {
     if (ver != UNKNOWN) {
       UUID id = e.getUniqueId();
+      cs.sendMessage("§ePreLogin - §b" + e.getUniqueId());
       if (backend == BackendType.MYSQL) {
         loadPlayerConfig(id);
       }

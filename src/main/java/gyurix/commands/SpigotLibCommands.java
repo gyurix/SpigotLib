@@ -144,6 +144,7 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
               return true;
             }
             Player p = getPlayer(args[0]);
+            loadPlayerConfig(p.getUniqueId());
             String[] txt = splitPage(getPlayerConfig(p.getUniqueId()).toString(), 10);
             if (page > txt.length)
               page = txt.length;
@@ -178,8 +179,10 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
               } else {
                 pf.data.mapData = new LinkedHashMap<>();
                 for (Player pl : Bukkit.getOnlinePlayers()) {
+                  unloadPlayerConfig(pl.getUniqueId());
                   loadPlayerConfig(pl.getUniqueId());
                 }
+                unloadPlayerConfig(null);
                 loadPlayerConfig(null);
               }
               lang.msg(sender, "reload.pf");

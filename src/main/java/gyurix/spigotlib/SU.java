@@ -76,7 +76,7 @@ public final class SU {
    * An instance of the Javascript script engine, used for the eval variable
    */
   public static ScriptEngine js;
-  public static HashSet<UUID> loadedPlayers = new HashSet<>();
+  public static Set<UUID> loadedPlayers = Collections.synchronizedSet(new HashSet<>());
   /**
    * The main instance of the Messenger object.
    */
@@ -448,11 +448,8 @@ public final class SU {
     if (pf.data.mapData == null)
       pf.data.mapData = new LinkedHashMap();
     if (PlayerFile.backend == BackendType.MYSQL && !loadedPlayers.contains(plr)) {
-      loadPlayerConfig(plr);
-      sch.scheduleSyncDelayedTask(Main.pl, () -> {
-        savePlayerConfig(plr);
-        unloadPlayerConfig(plr);
-      }, 3);
+      SU.error(SU.cs, new Throwable("Trying to get the config of player " + plr + ", who is not loaded"), "SpigotLib", "gyurix");
+      return null;
     }
     return pf.subConfig(pln);
   }
@@ -582,6 +579,8 @@ public final class SU {
 
   public static void loadPlayerConfig(UUID uid) {
     if (PlayerFile.backend == BackendType.MYSQL) {
+      if (loadedPlayers.contains(uid))
+        return;
       String key = uid == null ? "CONSOLE" : uid.toString();
       try (ResultSet rs = PlayerFile.mysql.query("SELECT `data` FROM `" + PlayerFile.mysql.table + "` WHERE `uuid` = ? LIMIT 1", key)) {
         if (rs.next())
@@ -590,6 +589,7 @@ public final class SU {
         SU.error(SU.cs, e, "SpigotLib", "gyurix");
       }
       loadedPlayers.add(uid);
+      SU.cs.sendMessage("§eLoaded player §b" + uid);
     }
   }
 
@@ -760,11 +760,16 @@ public final class SU {
         pf.save();
         return;
       case MYSQL:
+        if (!loadedPlayers.contains(uid)) {
+          SU.error(SU.cs, new Throwable("Trying to save the config of player " + uid + ", who is not loaded"), "SpigotLib", "gyurix");
+          return;
+        }
         String data = getPlayerConfig(uid).toString();
         MySQLDatabase.batchThread.submit(() -> {
           if (PlayerFile.mysql.update("UPDATE `" + PlayerFile.mysql.table + "` SET `data` = ? WHERE `uuid` = ? LIMIT 1", data, key) == 0)
             PlayerFile.mysql.command("INSERT INTO `" + PlayerFile.mysql.table + "` (`uuid`,`data`) VALUES ( ? , ? )", key, data);
         });
+        SU.cs.sendMessage("§eSaved player §b" + uid);
     }
   }
 
@@ -779,6 +784,7 @@ public final class SU {
         String data = getPlayerConfig(uid).toString();
         if (PlayerFile.mysql.update("UPDATE `" + PlayerFile.mysql.table + "` SET `data` = ? WHERE `uuid` = ? LIMIT 1", data, key) == 0)
           PlayerFile.mysql.command("INSERT INTO `" + PlayerFile.mysql.table + "` (`uuid`,`data`) VALUES ( ? , ? )", key, data);
+        SU.cs.sendMessage("§eSaved player NO ASYNC §b" + uid);
     }
   }
 
@@ -885,6 +891,7 @@ public final class SU {
     if (PlayerFile.backend == BackendType.MYSQL) {
       String key = uid == null ? "CONSOLE" : uid.toString();
       loadedPlayers.remove(uid);
+      SU.cs.sendMessage("§eUnloaded player §b" + uid);
       return pf.removeData(key);
     }
     return false;
