@@ -127,6 +127,7 @@ public class Config {
 
   public static class PlayerFile {
     public static BackendType backend;
+    public static boolean keepOfflineDataLoaded;
     public static String file = "players.yml";
     public static MySQLDatabase mysql;
   }

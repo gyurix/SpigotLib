@@ -16,7 +16,7 @@ public class PacketPlayOutEntityHeadRotation extends WrappedPacket {
 
   public PacketPlayOutEntityHeadRotation(int entityId, float rotation) {
     this.entityId = entityId;
-    this.rotation = (byte) (rotation * 360.0 / 256.0);
+    this.rotation = (byte) (rotation * 256.0 / 360.0);
   }
 
   @Override

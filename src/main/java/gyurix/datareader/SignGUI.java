@@ -48,7 +48,7 @@ public class SignGUI extends DataReader<String[]> {
     Location loc = plr.getLocation();
     bl = new BlockLocation(loc.getBlockX(), loc.getBlockY() > 128 ? 0 : 255, loc.getBlockZ());
     tp.sendPacket(plr, new PacketPlayOutBlockChange(bl,
-            (Reflection.ver.isAbove(ServerVersion.v1_14) ? Material.OAK_SIGN : Material.valueOf("SIGN")).getId(),
+            (Reflection.ver.isAbove(ServerVersion.v1_14) ? Material.valueOf("OAK_SIGN") : Material.valueOf("SIGN")).getId(),
             (byte) 0).getVanillaPacket());
     tp.sendPacket(plr, new PacketPlayOutUpdateSign(bl, new ChatTag[]{
             fromColoredText(initialLines[0]), fromColoredText(initialLines[1]),

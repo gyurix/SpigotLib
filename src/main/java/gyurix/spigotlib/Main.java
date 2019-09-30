@@ -87,7 +87,7 @@ public class Main extends JavaPlugin implements Listener {
   /**
    * Current version of the plugin, stored here to not be able to be abused so easily by server owners, by changing the plugin.yml file
    */
-  public static final String version = "9.2";
+  public static final String version = "9.2.2";
   /**
    * Data directory of the plugin (plugins/SpigotLib folder)
    */
@@ -329,7 +329,7 @@ public class Main extends JavaPlugin implements Listener {
       initOfflinePlayerManager();
     }
     pm.registerEvents(this, this);
-    BungeeAPI.enabled = Config.BungeeAPI.forceEnable || srv.spigot().getConfig().getBoolean("settings.bungeecord");
+    BungeeAPI.enabled = Config.BungeeAPI.forceEnable || srv.spigot().getConfig().getConfigurationSection("settings").getBoolean("bungeecord");
     if (BungeeAPI.enabled) {
       cs.sendMessage("§2[§aSpigotLib§2]§e Starting §aBungeeAPI§e...");
       msg.registerOutgoingPluginChannel(this, "BungeeCord");

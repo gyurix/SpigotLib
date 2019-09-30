@@ -119,6 +119,9 @@ public enum PacketOutType {
   private Constructor emptyConst;
   private boolean supported;
 
+  PacketOutType() {
+  }
+
   /**
    * Get the type of an outgoing packet
    *
@@ -155,6 +158,8 @@ public enum PacketOutType {
       String cln = "Packet" + (name.startsWith("LoginOut") || name.startsWith("Status") ? name : "PlayOut" + name);
       try {
         Class cl = Reflection.getNMSClass(cln);
+        if (cl == null)
+          cl = Reflection.getNMSClass("PacketPlayOutEntity$" + cln);
         if (cl == null)
           continue;
         packets.put(cl, t);

@@ -52,6 +52,7 @@ phaHook: +
 playerFile:
   backend: FILE
   file: players.yml
+  keepOfflineDataLoaded: +
   mysql:
     database: SpigotLib
     host: 127.0.0.1

@@ -529,6 +529,11 @@ public final class SU {
 
   static void initOfflinePlayerManager() {
     try {
+      if (PlayerFile.keepOfflineDataLoaded) {
+        for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+          loadPlayerConfig(p.getUniqueId());
+        }
+      }
       Class mcServerClass = Reflection.getNMSClass("MinecraftServer");
       Class entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
       Class craftPlayerClass = Reflection.getOBCClass("entity.CraftPlayer");
@@ -579,7 +584,7 @@ public final class SU {
 
   public static void loadPlayerConfig(UUID uid) {
     if (PlayerFile.backend == BackendType.MYSQL) {
-      if (loadedPlayers.contains(uid))
+      if (!PlayerFile.keepOfflineDataLoaded && loadedPlayers.contains(uid))
         return;
       String key = uid == null ? "CONSOLE" : uid.toString();
       try (ResultSet rs = PlayerFile.mysql.query("SELECT `data` FROM `" + PlayerFile.mysql.table + "` WHERE `uuid` = ? LIMIT 1", key)) {
@@ -888,6 +893,8 @@ public final class SU {
    * @return True if the unload was successful, false otherwise
    */
   public static boolean unloadPlayerConfig(UUID uid) {
+    if (PlayerFile.keepOfflineDataLoaded)
+      return false;
     if (PlayerFile.backend == BackendType.MYSQL) {
       String key = uid == null ? "CONSOLE" : uid.toString();
       loadedPlayers.remove(uid);
