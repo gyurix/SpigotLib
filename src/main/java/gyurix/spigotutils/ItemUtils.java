@@ -256,8 +256,8 @@ public class ItemUtils {
                 is.setType(Material.valueOf(vs.toUpperCase()));
               } catch (Throwable e2) {
                 try {
-                  is.setType(Material.valueOf("LEGACY_"+vs.toUpperCase()));
-                } catch(Throwable e3) {
+                  is.setType(Material.valueOf("LEGACY_" + vs.toUpperCase()));
+                } catch (Throwable e3) {
                   error(cs, e2, "SpigotLib", "gyurix");
                 }
               }
@@ -365,7 +365,7 @@ public class ItemUtils {
   public static String getName(ItemStack is) {
     if (is == null || is.getType() == Material.AIR)
       return "Air";
-    return is.getItemMeta().hasDisplayName() ? is.getItemMeta().getDisplayName() : SU.toCamelCase(is.getType().name());
+    return is.getItemMeta().hasDisplayName() ? is.getItemMeta().getDisplayName() : toCamelCase(is.getType().name());
   }
 
   /**
