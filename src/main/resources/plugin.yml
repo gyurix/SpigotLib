@@ -1,6 +1,6 @@
 name: SpigotLib
 author: gyuriX
-version: '9.3'
+version: '9.3.1'
 api-version: '1.13'
 main: gyurix.spigotlib.Main
 loadbefore: [ProtocolLib,ProtocolSupport]

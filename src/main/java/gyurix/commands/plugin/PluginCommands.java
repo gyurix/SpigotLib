@@ -23,6 +23,7 @@ public class PluginCommands {
     HashMap<String, CommandMatcher> executors = new HashMap<>();
     SubOf subOfAnnotation = executor.getClass().getAnnotation(SubOf.class);
     String subOf = subOfAnnotation == null ? null : subOfAnnotation.value();
+    String permPrefix = subOf == null || !subOfAnnotation.permPrefix() ? "" : subOf + ".";
     for (Method m : executor.getClass().getMethods()) {
       String mn = m.getName();
       if (!mn.startsWith("cmd"))
@@ -46,7 +47,7 @@ public class PluginCommands {
           error(SU.cs, new Exception("Command " + cmd + " should be added to plugin.yml."), pln, pl.getDescription().getMain());
           return;
         }
-        ExtendedCommandExecutor ece = register(pl, cmd, exec);
+        ExtendedCommandExecutor ece = register(pl, cmd, exec, permPrefix);
         pcmd.setExecutor(ece);
         pcmd.setTabCompleter(ece);
       });
@@ -54,7 +55,7 @@ public class PluginCommands {
     }
     HashMap<String, ExtendedCommandExecutor> mapping = new HashMap<>();
     executors.forEach((cmd, exec) -> {
-      ExtendedCommandExecutor ee = register(pl, cmd, exec);
+      ExtendedCommandExecutor ee = register(pl, cmd, exec, permPrefix);
       mapping.put(cmd, ee);
       for (String a : ee.getAliases())
         mapping.put(a, ee);
@@ -99,9 +100,9 @@ public class PluginCommands {
     });
   }
 
-  private ExtendedCommandExecutor register(JavaPlugin pl, String cmd, CommandMatcher m) {
+  private ExtendedCommandExecutor register(JavaPlugin pl, String cmd, CommandMatcher m, String permPrefix) {
     TreeSet<String> al = m.getAliases();
-    String permission = pl.getName().toLowerCase() + ".command." + cmd;
+    String permission = pl.getName().toLowerCase() + ".command." + permPrefix + cmd;
     return new ExtendedCommandExecutor() {
       public void executeNow(CommandSender sender, String[] args) {
         try {
