@@ -1,6 +1,7 @@
 package gyurix.commands.plugin;
 
 import gyurix.spigotlib.SU;
+import lombok.SneakyThrows;
 import org.bukkit.command.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -142,5 +143,12 @@ public class PluginCommands {
 
   private interface ExtendedCommandExecutor extends CommandExecutor, TabCompleter {
     TreeSet<String> getAliases();
+  }
+
+  @SneakyThrows
+  public static void registerCommands(JavaPlugin pl, Class... classes) {
+    for (Class c : classes) {
+      new PluginCommands(pl, c.newInstance());
+    }
   }
 }
