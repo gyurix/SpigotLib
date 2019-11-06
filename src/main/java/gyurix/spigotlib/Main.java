@@ -87,7 +87,7 @@ public class Main extends JavaPlugin implements Listener {
   /**
    * Current version of the plugin, stored here to not be able to be abused so easily by server owners, by changing the plugin.yml file
    */
-  public static final String version = "9.3.1";
+  public static final String version = "9.3.2";
   /**
    * Data directory of the plugin (plugins/SpigotLib folder)
    */

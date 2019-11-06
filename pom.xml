@@ -6,7 +6,7 @@
     <groupId>gyurix</groupId>
     <artifactId>spigotlib</artifactId>
     <name>SpigotLib</name>
-    <version>9.3.1</version>
+    <version>9.3.2</version>
     <build>
         <plugins>
             <plugin>

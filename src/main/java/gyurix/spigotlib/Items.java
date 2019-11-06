@@ -79,12 +79,16 @@ public class Items implements PostLoadable {
       return new ItemStack(Material.valueOf(name.toUpperCase()));
     } catch (Throwable ignored) {
       try {
-        return new ItemStack(getMaterial(Integer.valueOf(name)));
+        return new ItemStack(getMaterial(Integer.parseInt(name)));
       } catch (Throwable ig) {
         try {
           return new ItemStack(Material.valueOf("LEGACY_"+name.toUpperCase()));
-        } catch(Throwable t) {
-          SU.cs.sendMessage("§cInvalid item name or id: §e" + name);
+        } catch(Throwable i) {
+          try {
+            return new ItemStack(Material.valueOf(name.toUpperCase().replace("LEGACY_", "")));
+          } catch(Throwable t) {
+            SU.cs.sendMessage("§cInvalid item name or id: §e" + name);
+          }
         }
       }
       System.out.println("Name = \"" + name + "\"");
