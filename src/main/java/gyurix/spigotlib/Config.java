@@ -41,6 +41,10 @@ public class Config {
    */
   public static boolean disableWeatherChange;
   /**
+   * Log player data management system player loading and unloading events
+   */
+  public static boolean logPlayerConfigLoadUnload;
+  /**
    * EconomyAPI related configurations
    */
   public static EconomyAPI economy;

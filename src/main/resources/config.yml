@@ -12,6 +12,7 @@ bungee:
   uuidOnJoin: -
 debug: -
 purgePF: -
+logPlayerConfigLoadUnload: -
 defaultLang: en
 #If you have found a plugin incompatibility issue, then use this option to force enable SpigotLib in compatibility mode.
 forceReducedMode: -

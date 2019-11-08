@@ -594,7 +594,8 @@ public final class SU {
         SU.error(SU.cs, e, "SpigotLib", "gyurix");
       }
       loadedPlayers.add(uid);
-      SU.cs.sendMessage("§eLoaded player §b" + uid);
+      if (Config.logPlayerConfigLoadUnload)
+        SU.cs.sendMessage("§eLoaded player §b" + uid);
     }
   }
 
@@ -898,7 +899,8 @@ public final class SU {
     if (PlayerFile.backend == BackendType.MYSQL) {
       String key = uid == null ? "CONSOLE" : uid.toString();
       loadedPlayers.remove(uid);
-      SU.cs.sendMessage("§eUnloaded player §b" + uid);
+      if (Config.logPlayerConfigLoadUnload)
+        SU.cs.sendMessage("§eUnloaded player §b" + uid);
       return pf.removeData(key);
     }
     return false;

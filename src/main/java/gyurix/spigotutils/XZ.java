@@ -1,11 +1,12 @@
 package gyurix.spigotutils;
 
-import gyurix.configfile.ConfigSerialization;
+import gyurix.configfile.ConfigSerialization.ConfigOptions;
 import gyurix.configfile.ConfigSerialization.StringSerializable;
 import gyurix.protocol.Reflection;
 import gyurix.protocol.utils.WrappedData;
 import gyurix.spigotlib.SU;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import java.lang.reflect.Constructor;
@@ -15,18 +16,18 @@ import java.lang.reflect.Field;
  * An utility class for storing an X and Z coordinate pair
  */
 public class XZ implements StringSerializable, Comparable<XZ>, WrappedData {
-  @ConfigSerialization.ConfigOptions(serialize = false)
-  private static Class nmsClass = Reflection.getNMSClass("ChunkCoordIntPair");
-  @ConfigSerialization.ConfigOptions(serialize = false)
-  private static Constructor con = Reflection.getConstructor(nmsClass, int.class, int.class);
-  @ConfigSerialization.ConfigOptions(serialize = false)
-  private static Field xField = Reflection.getField(nmsClass, "x"), zField = Reflection.getField(nmsClass, "z");
+  @ConfigOptions(serialize = false)
+  private static final Class nmsClass = Reflection.getNMSClass("ChunkCoordIntPair");
+  @ConfigOptions(serialize = false)
+  private static final Constructor con = Reflection.getConstructor(nmsClass, int.class, int.class);
+  @ConfigOptions(serialize = false)
+  private static final Field xField = Reflection.getField(nmsClass, "x"), zField = Reflection.getField(nmsClass, "z");
   public int x, z;
 
   public XZ(String in) {
     String[] d = in.split(" ", 2);
-    x = Integer.valueOf(d[0]);
-    z = Integer.valueOf(d[1]);
+    x = Integer.parseInt(d[0]);
+    z = Integer.parseInt(d[1]);
   }
 
   public XZ(int x, int z) {
@@ -55,7 +56,7 @@ public class XZ implements StringSerializable, Comparable<XZ>, WrappedData {
 
   @Override
   public int compareTo(XZ o) {
-    return ((Integer) hashCode()).compareTo(o.hashCode());
+    return Integer.compare(hashCode(), o.hashCode());
   }
 
   @Override
@@ -65,6 +66,8 @@ public class XZ implements StringSerializable, Comparable<XZ>, WrappedData {
 
   @Override
   public boolean equals(Object obj) {
+    if (!(obj instanceof XZ))
+      return false;
     XZ xz = (XZ) obj;
     return x == xz.x && z == xz.z;
   }
@@ -72,6 +75,14 @@ public class XZ implements StringSerializable, Comparable<XZ>, WrappedData {
   @Override
   public String toString() {
     return x + " " + z;
+  }
+
+  public UnlimitedYArea toArea() {
+    return new UnlimitedYArea((x << 4), (z << 4), (x << 4) + 15, (z << 4) + 15);
+  }
+
+  public Chunk toChunk(World w) {
+    return w.getChunkAt(x, z);
   }
 
   @Override

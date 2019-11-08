@@ -104,7 +104,6 @@ public class MySQLDatabase {
   public void close() {
     try {
       Connection con = getConnection();
-      con.commit();
       con.close();
     } catch (SQLException e) {
       e.printStackTrace();

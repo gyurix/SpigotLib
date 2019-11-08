@@ -27,10 +27,6 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
    * The second position of this CuboidArea, containing the maxX, maxY and maxZ coordinates
    */
   public BlockLocation pos2;
-  /**
-   * The world of this CuboidArea, might be null, if it's not defined
-   */
-  public String world;
 
   /**
    * Constructs a new not properly set up CuboidArea
@@ -54,12 +50,12 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
         world = d[0];
         return;
       } else if (d.length == 6) {
-        pos1 = new BlockLocation(Integer.valueOf(d[0]), Integer.valueOf(d[1]), Integer.valueOf(d[2]));
-        pos2 = new BlockLocation(Integer.valueOf(d[3]), Integer.valueOf(d[4]), Integer.valueOf(d[5]));
+        pos1 = new BlockLocation(Integer.parseInt(d[0]), Integer.parseInt(d[1]), Integer.parseInt(d[2]));
+        pos2 = new BlockLocation(Integer.parseInt(d[3]), Integer.parseInt(d[4]), Integer.parseInt(d[5]));
       } else {
         world = d[0];
-        pos1 = new BlockLocation(Integer.valueOf(d[1]), Integer.valueOf(d[2]), Integer.valueOf(d[3]));
-        pos2 = new BlockLocation(Integer.valueOf(d[4]), Integer.valueOf(d[5]), Integer.valueOf(d[6]));
+        pos1 = new BlockLocation(Integer.parseInt(d[1]), Integer.parseInt(d[2]), Integer.parseInt(d[3]));
+        pos2 = new BlockLocation(Integer.parseInt(d[4]), Integer.parseInt(d[5]), Integer.parseInt(d[6]));
       }
       fix();
     } catch (Throwable e) {
@@ -162,14 +158,6 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
   }
 
   @Override
-  public List<Block> getBlocks() {
-    World w = world == null ? null : Bukkit.getWorld(world);
-    if (w == null)
-      return super.getBlocks();
-    return getBlocks(w);
-  }
-
-  @Override
   public List<Block> getBlocks(World w) {
     List<Block> blocks = new ArrayList<>();
     for (int x = pos1.x; x <= pos2.x; ++x)
@@ -182,6 +170,30 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
 
   public LocationData getCenter() {
     return new LocationData(0.5 + (pos1.x + pos2.x) / 2D, (pos1.y + pos2.y) / 2D, (pos1.z + pos2.z) / 2D);
+  }
+
+  @Override
+  public List<Block> getOutlineBlocks(World w) {
+    List<Block> outlineBlocks = new ArrayList<>();
+    for (int x = pos1.x + 1; x < pos2.x; x++) {
+      outlineBlocks.add(w.getBlockAt(x, pos1.y, pos1.z));
+      outlineBlocks.add(w.getBlockAt(x, pos1.y, pos2.z));
+      outlineBlocks.add(w.getBlockAt(x, pos2.y, pos1.z));
+      outlineBlocks.add(w.getBlockAt(x, pos2.y, pos2.z));
+    }
+    for (int y = pos1.y + 1; y < pos2.y; y++) {
+      outlineBlocks.add(w.getBlockAt(pos1.x, y, pos1.z));
+      outlineBlocks.add(w.getBlockAt(pos1.x, y, pos2.z));
+      outlineBlocks.add(w.getBlockAt(pos2.x, y, pos1.z));
+      outlineBlocks.add(w.getBlockAt(pos2.x, y, pos2.z));
+    }
+    for (int z = pos1.z; z <= pos2.z; z++) {
+      outlineBlocks.add(w.getBlockAt(pos1.x, pos1.y, z));
+      outlineBlocks.add(w.getBlockAt(pos1.x, pos2.y, z));
+      outlineBlocks.add(w.getBlockAt(pos2.x, pos1.y, z));
+      outlineBlocks.add(w.getBlockAt(pos2.x, pos2.y, z));
+    }
+    return outlineBlocks;
   }
 
   public boolean isBorder(int x, int z) {
@@ -198,54 +210,6 @@ public class CuboidArea extends Area implements StringSerializable, Cloneable {
 
   public Location randomLoc() {
     return new Location(Bukkit.getWorld(world), rand(pos1.x, pos2.x), rand(pos1.y, pos2.y), rand(pos1.z, pos2.z));
-  }
-
-  public void resetOutlineWithBlock(Player plr) {
-    if (world != null && !plr.getWorld().getName().equals(world))
-      return;
-    World w = plr.getWorld();
-    for (int x = pos1.x + 1; x < pos2.x; x++) {
-      resetOutlineBlock(w.getBlockAt(x, pos1.y, pos1.z), plr);
-      resetOutlineBlock(w.getBlockAt(x, pos1.y, pos2.z), plr);
-      resetOutlineBlock(w.getBlockAt(x, pos2.y, pos1.z), plr);
-      resetOutlineBlock(w.getBlockAt(x, pos2.y, pos2.z), plr);
-    }
-    for (int y = pos1.y + 1; y < pos2.y; y++) {
-      resetOutlineBlock(w.getBlockAt(pos1.x, y, pos1.z), plr);
-      resetOutlineBlock(w.getBlockAt(pos1.x, y, pos2.z), plr);
-      resetOutlineBlock(w.getBlockAt(pos2.x, y, pos1.z), plr);
-      resetOutlineBlock(w.getBlockAt(pos2.x, y, pos2.z), plr);
-    }
-    for (int z = pos1.z; z <= pos2.z; z++) {
-      resetOutlineBlock(w.getBlockAt(pos1.x, pos1.y, z), plr);
-      resetOutlineBlock(w.getBlockAt(pos1.x, pos2.y, z), plr);
-      resetOutlineBlock(w.getBlockAt(pos2.x, pos1.y, z), plr);
-      resetOutlineBlock(w.getBlockAt(pos2.x, pos2.y, z), plr);
-    }
-  }
-
-  public void showOutlineWithBlock(Player plr, BlockData bd) {
-    if (world != null && !plr.getWorld().getName().equals(world))
-      return;
-    World w = plr.getWorld();
-    for (int x = pos1.x + 1; x < pos2.x; x++) {
-      bd.sendChange(plr, new Location(w, x, pos1.y, pos1.z));
-      bd.sendChange(plr, new Location(w, x, pos1.y, pos2.z));
-      bd.sendChange(plr, new Location(w, x, pos2.y, pos1.z));
-      bd.sendChange(plr, new Location(w, x, pos2.y, pos2.z));
-    }
-    for (int y = pos1.y + 1; y < pos2.y; y++) {
-      bd.sendChange(plr, new Location(w, pos1.x, y, pos1.z));
-      bd.sendChange(plr, new Location(w, pos1.x, y, pos2.z));
-      bd.sendChange(plr, new Location(w, pos2.x, y, pos1.z));
-      bd.sendChange(plr, new Location(w, pos2.x, y, pos2.z));
-    }
-    for (int z = pos1.z; z <= pos2.z; z++) {
-      bd.sendChange(plr, new Location(w, pos1.x, pos1.y, z));
-      bd.sendChange(plr, new Location(w, pos1.x, pos2.y, z));
-      bd.sendChange(plr, new Location(w, pos2.x, pos1.y, z));
-      bd.sendChange(plr, new Location(w, pos2.x, pos2.y, z));
-    }
   }
 
   public int size() {

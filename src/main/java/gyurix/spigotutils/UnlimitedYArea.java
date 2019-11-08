@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +21,10 @@ public class UnlimitedYArea extends Area implements StringSerializable {
 
   public UnlimitedYArea(String in) {
     String[] d = in.split(" ", 4);
-    minx = Integer.valueOf(d[0]);
-    minz = Integer.valueOf(d[1]);
-    maxx = Integer.valueOf(d[2]);
-    maxz = Integer.valueOf(d[3]);
-  }
-
-  public UnlimitedYArea() {
-
+    minx = Integer.parseInt(d[0]);
+    minz = Integer.parseInt(d[1]);
+    maxx = Integer.parseInt(d[2]);
+    maxz = Integer.parseInt(d[3]);
   }
 
   public UnlimitedYArea(Location loc, int radius) {
@@ -73,10 +68,6 @@ public class UnlimitedYArea extends Area implements StringSerializable {
     return b;
   }
 
-  public static void resetOutlineBlock(Block block, Player plr) {
-    plr.sendBlockChange(block.getLocation(), block.getType(), block.getData());
-  }
-
   public UnlimitedYArea cloneFixed() {
     UnlimitedYArea area = new UnlimitedYArea(this);
     area.fix();
@@ -118,6 +109,20 @@ public class UnlimitedYArea extends Area implements StringSerializable {
     return blocks;
   }
 
+  @Override
+  public List<Block> getOutlineBlocks(World w) {
+    List<Block> out = new ArrayList<>();
+    for (int x = minx; x <= maxx; ++x) {
+      out.add(getTopY(w, x, minz));
+      out.add(getTopY(w, x, maxz));
+    }
+    for (int z = minz + 1; z < maxz; ++z) {
+      out.add(getTopY(w, minx, z));
+      out.add(getTopY(w, maxx, z));
+    }
+    return out;
+  }
+
   public Location getYMaxPos1(World world) {
     return getYMax(world, minx, minz);
   }
@@ -152,29 +157,6 @@ public class UnlimitedYArea extends Area implements StringSerializable {
     maxz = z;
   }
 
-  public void resetOutlineWithBlock(Player plr) {
-    World w = plr.getWorld();
-    for (int x = minx; x <= maxx; ++x) {
-      resetOutlineBlock(getTopY(w, x, minz), plr);
-      resetOutlineBlock(getTopY(w, x, maxz), plr);
-    }
-    for (int z = minz + 1; z < maxz; ++z) {
-      resetOutlineBlock(getTopY(w, minx, z), plr);
-      resetOutlineBlock(getTopY(w, maxx, z), plr);
-    }
-  }
-
-  public void showOutlineWithBlock(Player plr, BlockData bd) {
-    World w = plr.getWorld();
-    for (int x = minx; x <= maxx; ++x) {
-      bd.sendChange(plr, getTopY(w, x, minz).getLocation());
-      bd.sendChange(plr, getTopY(w, x, maxz).getLocation());
-    }
-    for (int z = minz + 1; z < maxz; ++z) {
-      bd.sendChange(plr, getTopY(w, minx, z).getLocation());
-      bd.sendChange(plr, getTopY(w, maxx, z).getLocation());
-    }
-  }
 
   public int size() {
     return (maxx - minx + 1) * (maxz - minz + 1);
