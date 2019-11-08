@@ -438,7 +438,8 @@ public class Main extends JavaPlugin implements Listener {
   public void onPreLogin(AsyncPlayerPreLoginEvent e) {
     if (ver != UNKNOWN) {
       UUID id = e.getUniqueId();
-      cs.sendMessage("§ePreLogin - §b" + e.getUniqueId());
+      if (Config.logPlayerConfigLoadUnload)
+        cs.sendMessage("§ePreLogin - §b" + e.getUniqueId());
       if (backend == BackendType.MYSQL) {
         loadPlayerConfig(id);
       }
