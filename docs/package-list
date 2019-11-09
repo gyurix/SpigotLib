@@ -16,7 +16,6 @@ gyurix.json
 gyurix.map
 gyurix.mojang
 gyurix.mysql
-gyurix.mysql.autoupdate
 gyurix.nbt
 gyurix.protocol
 gyurix.protocol.event
