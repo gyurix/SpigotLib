@@ -41,6 +41,7 @@ public class DefaultSerializers {
     serializers.put(ConfigData.class, new ConfigDataSerializer());
 
     NumberSerializer numSerializer = new NumberSerializer();
+    MapSerializer mapSerializer = new MapSerializer();
     serializers.put(Array.class, new ArraySerializer());
     serializers.put(Boolean.class, new BooleanSerializer());
     serializers.put(Byte.class, numSerializer);
@@ -51,12 +52,13 @@ public class DefaultSerializers {
     serializers.put(Float.class, numSerializer);
     serializers.put(Integer.class, numSerializer);
     serializers.put(Long.class, numSerializer);
-    serializers.put(Map.class, new MapSerializer());
+    serializers.put(Map.class, mapSerializer);
     serializers.put(NBTCompound.class, new MapSerializer(String.class, NBTTag.class, nbtSerializer));
     serializers.put(Object.class, new ObjectSerializer());
     serializers.put(Pattern.class, new PatternSerializer());
     serializers.put(Short.class, numSerializer);
     serializers.put(SimpleDateFormat.class, new SimpleDateFormatSerializer());
+    serializers.put(Map.Entry.class, mapSerializer);
 
     DualMap<Class, String> aliases = ConfigSerialization.getAliases();
     aliases.put(Array.class, "[]");
@@ -79,6 +81,7 @@ public class DefaultSerializers {
     aliases.put(TreeMap.class, "<T>");
     aliases.put(TreeSet.class, "{TS}");
     aliases.put(UUID.class, "uuid");
+    aliases.put(Map.Entry.class, "<KV>");
 
     DualMap<Class, Class> ifbClasses = ConfigSerialization.getInterfaceBasedClasses();
     ifbClasses.put(List.class, ArrayList.class);
