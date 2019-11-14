@@ -41,7 +41,6 @@ public class DefaultSerializers {
     serializers.put(ConfigData.class, new ConfigDataSerializer());
 
     NumberSerializer numSerializer = new NumberSerializer();
-    MapSerializer mapSerializer = new MapSerializer();
     serializers.put(Array.class, new ArraySerializer());
     serializers.put(Boolean.class, new BooleanSerializer());
     serializers.put(Byte.class, numSerializer);
@@ -52,13 +51,13 @@ public class DefaultSerializers {
     serializers.put(Float.class, numSerializer);
     serializers.put(Integer.class, numSerializer);
     serializers.put(Long.class, numSerializer);
-    serializers.put(Map.class, mapSerializer);
+    serializers.put(Map.class, new MapSerializer());
     serializers.put(NBTCompound.class, new MapSerializer(String.class, NBTTag.class, nbtSerializer));
     serializers.put(Object.class, new ObjectSerializer());
     serializers.put(Pattern.class, new PatternSerializer());
     serializers.put(Short.class, numSerializer);
     serializers.put(SimpleDateFormat.class, new SimpleDateFormatSerializer());
-    serializers.put(Map.Entry.class, mapSerializer);
+    serializers.put(Map.Entry.class, new EntrySerializer());
 
     DualMap<Class, String> aliases = ConfigSerialization.getAliases();
     aliases.put(Array.class, "[]");
@@ -87,6 +86,7 @@ public class DefaultSerializers {
     ifbClasses.put(List.class, ArrayList.class);
     ifbClasses.put(Set.class, HashSet.class);
     ifbClasses.put(Map.class, HashMap.class);
+    ifbClasses.put(Entry.class, AbstractMap.SimpleEntry.class);
   }
 
   public static boolean shouldSkip(Class cl) {
@@ -130,7 +130,7 @@ public class DefaultSerializers {
       ConfigData d = new ConfigData();
       d.listData = new ArrayList<>();
       if (input instanceof Object[])
-        for (Object o : Arrays.asList((Object[]) input)) {
+        for (Object o : (Object[]) input) {
           d.listData.add(serializeObject(o, !(o instanceof ItemStack) && o.getClass() != cl));
         }
       else {
@@ -341,7 +341,6 @@ public class DefaultSerializers {
       return null;
     }
 
-
     public ConfigData toData(Object input, Type... parameters) {
       try {
         if (((Map) input).isEmpty())
@@ -380,6 +379,92 @@ public class DefaultSerializers {
                     serializeObject(value, !valueClassSelector && value.getClass() != valueClass, valueTypes));
         }
         return child == null ? d : child.postSerialize(input, d);
+      } catch (Throwable e) {
+        e.printStackTrace();
+        return null;
+      }
+    }
+  }
+
+  public static class EntrySerializer implements Serializer {
+    private Class defaultKeyClass, defaultValueClass;
+
+    public EntrySerializer() {
+      this.defaultKeyClass = Object.class;
+      this.defaultValueClass = Object.class;
+    }
+
+    public Object fromData(ConfigData input, Class fixClass, Type... parameterTypes) {
+      try {
+        Class keyClass;
+        Type[] keyTypes;
+        Class valueClass;
+        Type[] valueTypes;
+        ParameterizedType pt;
+        keyClass = defaultKeyClass;
+        keyTypes = emptyTypeArray;
+        if (parameterTypes.length >= 1) {
+          if (parameterTypes[0] instanceof ParameterizedType) {
+            pt = (ParameterizedType) parameterTypes[0];
+            keyClass = (Class) pt.getRawType();
+            keyTypes = pt.getActualTypeArguments();
+          } else {
+            keyClass = (Class) parameterTypes[0];
+          }
+        }
+        valueClass = defaultValueClass;
+        valueTypes = emptyTypeArray;
+        if (parameterTypes.length >= 2) {
+          if (parameterTypes[1] instanceof ParameterizedType) {
+            pt = (ParameterizedType) parameterTypes[1];
+            valueClass = (Class) pt.getRawType();
+            valueTypes = pt.getActualTypeArguments();
+          } else {
+            valueClass = (Class) parameterTypes[1];
+          }
+        }
+        String[] d = input.stringData.split(" ", 2);
+        return new AbstractMap.SimpleEntry<>(new ConfigData(SU.unescapeText(d[0])).deserialize(keyClass, keyTypes),
+                new ConfigData(SU.unescapeText(d[1])).deserialize(valueClass, valueTypes));
+      } catch (Throwable e) {
+        e.printStackTrace();
+        //SU.error(SU.cs, e, "SpigotLib", "gyurix");
+      }
+      return null;
+    }
+
+
+    public ConfigData toData(Object input, Type... parameters) {
+      try {
+        Class keyClass = defaultKeyClass;
+        Class valueClass = defaultValueClass;
+        Type[] keyTypes = emptyTypeArray;
+        Type[] valueTypes = emptyTypeArray;
+        if (parameters.length >= 1) {
+          if (parameters[0] instanceof ParameterizedType) {
+            ParameterizedType key = (ParameterizedType) parameters[0];
+            keyTypes = key.getActualTypeArguments();
+            keyClass = (Class) key.getRawType();
+          } else {
+            keyClass = (Class) parameters[0];
+          }
+        }
+        if (parameters.length >= 2) {
+          if (parameters[1] instanceof ParameterizedType) {
+            ParameterizedType value = (ParameterizedType) parameters[1];
+            valueTypes = value.getActualTypeArguments();
+            valueClass = (Class) value.getRawType();
+          } else {
+            valueClass = (Class) parameters[1];
+          }
+        }
+        Map.Entry<Object, Object> e = (Entry<Object, Object>) input;
+        Object key = e.getKey();
+        Object value = e.getValue();
+        return new ConfigData(
+                SU.escapeText(serializeObject(key, key.getClass() != keyClass, keyTypes).toString()) + " " +
+                        SU.escapeText(serializeObject(value, value.getClass() != valueClass, valueTypes)
+                                .toString()));
       } catch (Throwable e) {
         e.printStackTrace();
         return null;

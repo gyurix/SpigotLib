@@ -3,13 +3,12 @@ package gyurix.test;
 import com.google.common.collect.Lists;
 import gyurix.configfile.ConfigData;
 import gyurix.configfile.ConfigFile;
+import gyurix.configfile.DefaultSerializers;
 import gyurix.nbt.NBTCompound;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 import static gyurix.nbt.NBTTagType.tag;
 
@@ -17,7 +16,19 @@ import static gyurix.nbt.NBTTagType.tag;
  * Created by GyuriX on 2016. 07. 31..
  */
 public class Test {
+  static Map.Entry<String, Double> entry;
+
   public static void main(String[] args) throws Throwable {
+    DefaultSerializers.init();
+    entry = new AbstractMap.SimpleEntry<>("Test / | / it", 1.5);
+    String kf = new ConfigData(new Test()).toString();
+    System.out.println(kf);
+    entry = null;
+    Test t = new ConfigFile(kf).data.deserialize(Test.class);
+    System.out.println(entry.getKey() + ": " + entry.getValue());
+  }
+
+  public static void testNBT() {
     ConfigData cd = new ConfigData("String data");
     cd.listData = new ArrayList<>();
     cd.listData.add(new ConfigData("le1"));
