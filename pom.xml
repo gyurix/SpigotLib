@@ -34,6 +34,10 @@
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/titanscraft/TCore</url>
+        </repository>
     </repositories>
     <distributionManagement>
         <repository>
@@ -53,6 +57,7 @@
             <groupId>net.milkbowl</groupId>
             <artifactId>vault</artifactId>
             <version>1.7.2-b107</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>titanscraft</groupId>
