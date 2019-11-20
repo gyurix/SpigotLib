@@ -290,8 +290,10 @@ public class DefaultSerializers {
         Map map;
         if (fixClass == EnumMap.class)
           map = new EnumMap((Class) parameterTypes[0]);
-        else
+        else if (Reflection.getConstructor(fixClass) != null)
           map = (Map) fixClass.getConstructor().newInstance();
+        else
+          map = new LinkedHashMap();
         Class keyClass;
         Type[] keyTypes;
         Class valueClass;
@@ -632,7 +634,10 @@ public class DefaultSerializers {
             continue;
           Object o = f.get(obj);
           if (o != null && !o.toString().matches(dffValue) && !((o instanceof Iterable) && !((Iterable) o).iterator().hasNext())) {
-            String cn = ConfigSerialization.calculateClassName(Primitives.wrap(f.getType()), o.getClass());
+            String cn = "";
+            if (!(o instanceof Collection) && !(o instanceof Map))
+              cn = ConfigSerialization.calculateClassName(Primitives.wrap(f.getType()), o.getClass());
+
             Class check = f.getType().isArray() ? f.getType().getComponentType() : f.getType();
             if (shouldSkip(check))
               continue;
