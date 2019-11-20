@@ -1,6 +1,7 @@
 package gyurix.json;
 
 import com.google.common.primitives.Primitives;
+import gyurix.configfile.ConfigSerialization;
 import gyurix.configfile.ConfigSerialization.StringSerializable;
 import gyurix.configfile.DefaultSerializers;
 import gyurix.protocol.Reflection;
@@ -27,6 +28,8 @@ public class JsonAPI {
       c = in.next();
     else in.id++;
     if (Map.class.isAssignableFrom(cl)) {
+      if (cl.isInterface())
+        cl = ConfigSerialization.getInterfaceBasedClasses().get(cl);
       if (c != '{') {
         throw new Throwable("JSONAPI: Error on deserializing Json " + new String(in.str) + ", expected {, found " + c + " (character id: " + in.id + ")");
       }
@@ -47,6 +50,8 @@ public class JsonAPI {
       }
       return map;
     } else if (Collection.class.isAssignableFrom(cl)) {
+      if (cl.isInterface())
+        cl = ConfigSerialization.getInterfaceBasedClasses().get(cl);
       if (c != '[') {
         throw new Throwable("JSONAPI: Error on deserializing Json " + new String(in.str) + ", expected {, found " + c + " (character id: " + in.id + ")");
       }

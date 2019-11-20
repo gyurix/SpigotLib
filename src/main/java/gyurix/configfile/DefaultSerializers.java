@@ -291,8 +291,7 @@ public class DefaultSerializers {
         if (fixClass == EnumMap.class)
           map = new EnumMap((Class) parameterTypes[0]);
         else
-          map = (fixClass.getModifiers() & Modifier.ABSTRACT) == Modifier.ABSTRACT ?
-                  new HashMap() : (Map) fixClass.newInstance();
+          map = (Map) fixClass.getConstructor().newInstance();
         Class keyClass;
         Type[] keyTypes;
         Class valueClass;
