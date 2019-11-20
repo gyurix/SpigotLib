@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static gyurix.protocol.event.PacketOutType.ScoreboardTeam;
 
@@ -41,11 +42,15 @@ public class PacketPlayOutScoreboardTeam extends WrappedPacket {
   public int friendFlags;
   public String name = "";
   public NameTagVisibility nameTagVisibility;
-  public ArrayList<String> players;
+  public List<String> players;
   public String prefix = "";
   public String suffix = "";
 
-  public PacketPlayOutScoreboardTeam(String name, String displayName, String prefix, String suffix, NameTagVisibility nameTagVisibility, CollisionRule collisionRule, int color, ArrayList<String> players, int action, int friendFlags) {
+  public PacketPlayOutScoreboardTeam(String name, String displayName,
+                                     String prefix, String suffix,
+                                     NameTagVisibility nameTagVisibility, CollisionRule collisionRule,
+                                     int color, List<String> players,
+                                     int action, int friendFlags) {
     this.name = name;
     this.displayName = displayName;
     this.prefix = prefix;

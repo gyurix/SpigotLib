@@ -1,6 +1,7 @@
 package gyurix.protocol;
 
 import com.google.common.primitives.Primitives;
+import gyurix.configfile.ConfigSerialization.ConfigOptions;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.ServerVersion;
 import org.apache.commons.lang.ArrayUtils;
@@ -107,9 +108,13 @@ public class Reflection {
       return fs;
     ArrayList<Field> out = new ArrayList<>();
     while (c != null) {
-      for (Field f : c.getDeclaredFields()) {
-        out.add(setFieldAccessible(f));
-      }
+      ConfigOptions co = (ConfigOptions) c.getAnnotation(ConfigOptions.class);
+      if (co == null || co.serialize())
+        for (Field f : c.getDeclaredFields()) {
+          ConfigOptions co2 = f.getAnnotation(ConfigOptions.class);
+          if (!f.getName().contains("$") && (co2 == null || co2.serialize()))
+            out.add(setFieldAccessible(f));
+        }
       c = c.getSuperclass();
     }
     Field[] oa = new Field[out.size()];

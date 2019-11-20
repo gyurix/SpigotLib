@@ -31,6 +31,10 @@ public class DefaultSerializers {
   public static final Type[] emptyTypeArray = new Type[0];
   public static int leftPad;
 
+  public static boolean includeClassName(Class objCl, Class expectedCl) {
+    return !Map.class.isAssignableFrom(objCl) && !ItemStack.class.isAssignableFrom(objCl) && !Collection.class.isAssignableFrom(objCl);
+  }
+
   public static void init() {
     HashMap<Class, Serializer> serializers = ConfigSerialization.getSerializers();
     NBTTag.NBTSerializer nbtSerializer = new NBTTag.NBTSerializer();
@@ -131,13 +135,13 @@ public class DefaultSerializers {
       d.listData = new ArrayList<>();
       if (input instanceof Object[])
         for (Object o : (Object[]) input) {
-          d.listData.add(serializeObject(o, !(o instanceof ItemStack) && o.getClass() != cl));
+          d.listData.add(serializeObject(o, includeClassName(o.getClass(), cl)));
         }
       else {
         int len = Array.getLength(input);
         for (int i = 0; i < len; ++i) {
           Object o = Array.get(input, i);
-          d.listData.add(serializeObject(o, !(o instanceof ItemStack) && o.getClass() != cl));
+          d.listData.add(serializeObject(o, includeClassName(o.getClass(), cl)));
         }
       }
       return d;
@@ -198,8 +202,8 @@ public class DefaultSerializers {
 
     public Object fromData(ConfigData input, Class fixClass, Type... parameterTypes) {
       try {
-        Collection col = (Collection) ConfigSerialization.getNotInterfaceClass(fixClass).newInstance();
-        Class cl;
+        Class cl = ConfigSerialization.getNotInterfaceClass(fixClass);
+        Collection col = cl == null ? new ArrayList() : (Collection) cl.newInstance();
         Type[] types;
         ParameterizedType pt;
         cl = defaultKeyClass;
@@ -282,7 +286,8 @@ public class DefaultSerializers {
         if (fixClass == EnumMap.class)
           map = new EnumMap((Class) parameterTypes[0]);
         else
-          map = (Map) fixClass.newInstance();
+          map = (fixClass.getModifiers() & Modifier.ABSTRACT) == Modifier.ABSTRACT ?
+                  new HashMap() : (Map) fixClass.newInstance();
         Class keyClass;
         Type[] keyTypes;
         Class valueClass;
@@ -375,8 +380,9 @@ public class DefaultSerializers {
           Object key = e.getKey();
           Object value = e.getValue();
           if (key != null && value != null)
-            d.mapData.put(serializeObject(key, key.getClass() != keyClass, keyTypes),
-                    serializeObject(value, !valueClassSelector && value.getClass() != valueClass, valueTypes));
+            d.mapData.put(serializeObject(key, includeClassName(key.getClass(), keyClass), keyTypes),
+                    serializeObject(value, !valueClassSelector &&
+                            includeClassName(value.getClass(), valueClass), valueTypes));
         }
         return child == null ? d : child.postSerialize(input, d);
       } catch (Throwable e) {
@@ -462,8 +468,8 @@ public class DefaultSerializers {
         Object key = e.getKey();
         Object value = e.getValue();
         return new ConfigData(
-                SU.escapeText(serializeObject(key, key.getClass() != keyClass, keyTypes).toString()) + " " +
-                        SU.escapeText(serializeObject(value, value.getClass() != valueClass, valueTypes)
+                SU.escapeText(serializeObject(key, includeClassName(key.getClass(), keyClass), keyTypes).toString()) + " " +
+                        SU.escapeText(serializeObject(value, includeClassName(value.getClass(), valueClass), valueTypes)
                                 .toString()));
       } catch (Throwable e) {
         e.printStackTrace();
@@ -559,6 +565,20 @@ public class DefaultSerializers {
             Type[] types = f.getGenericType() instanceof ParameterizedType ?
                     ((ParameterizedType) f.getGenericType()).getActualTypeArguments() : cl.isArray() ? new Type[]{cl.getComponentType()} : emptyTypeArray;
             Object out = d.deserialize(ConfigSerialization.getNotInterfaceClass(cl), types);
+            if (out instanceof Map) {
+              Map oldMap = (Map) f.get(obj);
+              if (oldMap != null) {
+                oldMap.clear();
+                oldMap.putAll((Map) out);
+                continue;
+              }
+            } else if (out instanceof Collection) {
+              Collection oldCol = (Collection) f.get(obj);
+              if (oldCol != null) {
+                oldCol.clear();
+                oldCol.addAll((Collection) out);
+              }
+            }
             if (out != null)
               f.set(obj, out);
           }

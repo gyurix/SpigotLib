@@ -6,7 +6,7 @@
     <groupId>gyurix</groupId>
     <artifactId>spigotlib</artifactId>
     <name>SpigotLib</name>
-    <version>9.3.4</version>
+    <version>9.4-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

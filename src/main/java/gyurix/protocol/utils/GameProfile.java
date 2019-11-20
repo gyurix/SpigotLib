@@ -9,6 +9,7 @@ import gyurix.spigotutils.ServerVersion;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -25,7 +26,7 @@ public class GameProfile implements WrappedData {
   public UUID id;
   public boolean legacy;
   public String name;
-  public ArrayList<Property> properties = new ArrayList<>();
+  public List<Property> properties = new ArrayList<>();
 
   public GameProfile() {
 
@@ -41,7 +42,7 @@ public class GameProfile implements WrappedData {
     id = uid;
   }
 
-  public GameProfile(String n, UUID uid, ArrayList<Property> props) {
+  public GameProfile(String n, UUID uid, List<Property> props) {
     name = n;
     id = uid;
     properties = props;
