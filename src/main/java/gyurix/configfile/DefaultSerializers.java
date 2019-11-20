@@ -32,7 +32,10 @@ public class DefaultSerializers {
   public static int leftPad;
 
   public static boolean includeClassName(Class objCl, Class expectedCl) {
-    return !Map.class.isAssignableFrom(objCl) && !ItemStack.class.isAssignableFrom(objCl) && !Collection.class.isAssignableFrom(objCl);
+    return objCl != expectedCl
+            && !Map.class.isAssignableFrom(objCl)
+            && !ItemStack.class.isAssignableFrom(objCl)
+            && !Collection.class.isAssignableFrom(objCl);
   }
 
   public static void init() {
@@ -89,7 +92,9 @@ public class DefaultSerializers {
     DualMap<Class, Class> ifbClasses = ConfigSerialization.getInterfaceBasedClasses();
     ifbClasses.put(List.class, ArrayList.class);
     ifbClasses.put(Set.class, HashSet.class);
+    ifbClasses.put(NavigableSet.class, TreeSet.class);
     ifbClasses.put(Map.class, HashMap.class);
+    ifbClasses.put(NavigableMap.class, TreeMap.class);
     ifbClasses.put(Entry.class, AbstractMap.SimpleEntry.class);
   }
 
