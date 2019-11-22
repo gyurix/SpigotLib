@@ -43,7 +43,7 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
         lang.msg(sender, "noperm");
         return true;
       }
-      ArrayList<Player> pls = plr == null ? Lists.<Player>newArrayList() : newArrayList(plr);
+      ArrayList<Player> pls = plr == null ? Lists.newArrayList() : newArrayList(plr);
       int stripArg = 1;
       if (args.length > 1) {
         if (args[1].equals("*")) {
@@ -103,9 +103,9 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
               p.getEffectivePermissions().forEach((permInfo) -> {
                 sb.append('\n');
                 permInfo.getAttachment().getPermissions().forEach((perm, value) ->
-                        sb.append('\n').append(SU.fillVariables(value ? allowperm : denyperm, "perm", perm)));
+                        sb.append('\n').append(fillVariables(value ? allowperm : denyperm, "perm", perm)));
               });
-              sender.sendMessage(SU.fillVariables(f, "player", p.getName(), "<perms>", sb.toString()));
+              sender.sendMessage(fillVariables(f, "player", p.getName(), "<perms>", sb.toString()));
             }
             return true;
           }
@@ -296,7 +296,7 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
   public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
     ArrayList<String> out = new ArrayList<>();
     if (!sender.hasPermission("spigotlib.use")) {
-      lang.msg(sender, "noperm");
+      //lang.msg(sender, "noperm");
       return out;
     }
     if (args.length == 1) {
