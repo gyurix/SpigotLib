@@ -811,7 +811,7 @@ public final class SU {
         File f = new File(df + File.separator + fn);
         if (!f.exists()) {
           if (fn.contains(File.separator)) {
-            new File(fn.substring(0, fn.lastIndexOf(File.separatorChar))).mkdirs();
+            new File(df + File.separator + fn.substring(0, fn.lastIndexOf(File.separatorChar))).mkdirs();
           }
           InputStream is = cl.getResourceAsStream(fn);
           if (is == null) {
