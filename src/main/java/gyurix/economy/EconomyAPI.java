@@ -16,6 +16,7 @@ import static gyurix.spigotlib.Config.debug;
  * API used for managing multiple balance types on the server
  */
 public class EconomyAPI {
+  @Getter
   private static HashMap<String, BalanceType> balanceTypes = new HashMap<>();
 
   @ConfigOptions(comment = "Migrate all the Economy data through Vault from an other Economy plugin, i.e. Essentials.")
