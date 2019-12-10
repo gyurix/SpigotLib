@@ -11,7 +11,6 @@ import java.util.Map;
 
 import static gyurix.protocol.wrappers.outpackets.PacketPlayOutScoreboardScore.ScoreAction.CHANGE;
 import static gyurix.protocol.wrappers.outpackets.PacketPlayOutScoreboardScore.ScoreAction.REMOVE;
-import static gyurix.scoreboard.ScoreboardDisplayMode.INTEGER;
 
 /**
  * Created by GyuriX on 2016. 12. 03..
@@ -20,9 +19,9 @@ public class BarData {
   public final String barname;
   public final HashMap<String, Integer> scores = new HashMap<>();
   public final HashMap<String, TeamData> teams = new HashMap<>();
-  protected ScoreboardDisplayMode displayMode = INTEGER;
+  protected ScoreboardDisplayMode displayMode;
   protected String title;
-  protected boolean visible = true;
+  protected boolean visible;
 
   public BarData(String barname, String title, ScoreboardDisplayMode displayMode, boolean visible) {
     this.barname = barname;
