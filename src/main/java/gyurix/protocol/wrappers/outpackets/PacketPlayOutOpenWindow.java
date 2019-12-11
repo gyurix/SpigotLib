@@ -1,8 +1,10 @@
 package gyurix.protocol.wrappers.outpackets;
 
 import gyurix.chat.ChatTag;
+import gyurix.protocol.Reflection;
 import gyurix.protocol.event.PacketOutType;
 import gyurix.protocol.wrappers.WrappedPacket;
+import gyurix.spigotutils.ServerVersion;
 
 public class PacketPlayOutOpenWindow
         extends WrappedPacket {
@@ -10,6 +12,10 @@ public class PacketPlayOutOpenWindow
   public int slots;
   public ChatTag title;
   public String type;
+  /**
+   * In newer versions this type id is used instead of type
+   */
+  public int typeId;
   public int windowId;
 
   public PacketPlayOutOpenWindow() {
@@ -31,6 +37,12 @@ public class PacketPlayOutOpenWindow
     this.entityId = entityId;
   }
 
+  public PacketPlayOutOpenWindow(int windowId, int typeId, ChatTag title) {
+    this.windowId = windowId;
+    this.typeId = typeId;
+    this.title = title;
+  }
+
   @Override
   public Object getVanillaPacket() {
     return PacketOutType.OpenWindow.newPacket(windowId, type, title.toICBC(), slots, entityId);
@@ -40,10 +52,13 @@ public class PacketPlayOutOpenWindow
   public void loadVanillaPacket(Object packet) {
     Object[] o = PacketOutType.OpenWindow.getPacketData(packet);
     windowId = (Integer) o[0];
-    type = (String) o[1];
     title = ChatTag.fromICBC(o[2]);
-    slots = (Integer) o[3];
-    entityId = (Integer) o[4];
+    if (Reflection.ver.isBellow(ServerVersion.v1_13)) {
+      type = (String) o[1];
+      slots = (Integer) o[3];
+      entityId = (Integer) o[4];
+    } else
+      typeId = (int) o[1];
   }
 }
 
