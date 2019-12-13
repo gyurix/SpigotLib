@@ -21,12 +21,15 @@ public class PacketPlayOutMapChunk extends WrappedPacket {
   public ChunkMap chunkMap;
   public int chunkX;
   public int chunkZ;
+  public NBTCompound heightMaps = new NBTCompound();
   public boolean groundUpContinuous;
   public int primaryBitMask;
   public List<NBTCompound> tileEntities = new ArrayList<>();
 
   @Override
   public Object getVanillaPacket() {
+    if (Reflection.ver.isAbove(ServerVersion.v1_14))
+      return PacketOutType.MapChunk.newPacket(chunkX, chunkZ, primaryBitMask, heightMaps.toNMS(), chunkData, toNMSTileEntityList(), groundUpContinuous);
     if (Reflection.ver.isAbove(ServerVersion.v1_13))
       return PacketOutType.MapChunk.newPacket(chunkX, chunkZ, primaryBitMask, chunkData, toNMSTileEntityList(), groundUpContinuous);
     return PacketOutType.MapChunk.newPacket(chunkX, chunkZ, chunkMap.toNMS(), groundUpContinuous);
@@ -39,10 +42,13 @@ public class PacketPlayOutMapChunk extends WrappedPacket {
     chunkZ = (int) d[1];
     if (Reflection.ver.isAbove(ServerVersion.v1_13)) {
       primaryBitMask = (int) d[2];
-      chunkData = (byte[]) d[3];
-      for (Object o : (List) d[4])
+      int from = 3;
+      if (Reflection.ver.isAbove(ServerVersion.v1_14))
+        heightMaps = (NBTCompound) NBTTagType.Compound.makeTag(d[from++]);
+      chunkData = (byte[]) d[from++];
+      for (Object o : (List) d[from++])
         tileEntities.add((NBTCompound) NBTTagType.tag(o));
-      groundUpContinuous = (boolean) d[5];
+      groundUpContinuous = (boolean) d[from++];
     } else {
       chunkMap = new ChunkMap(d[2]);
       groundUpContinuous = (boolean) d[3];
