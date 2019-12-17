@@ -67,8 +67,10 @@ public class PluginCommands {
       return;
     }
     pc.setExecutor((sender, command, s, args) -> {
-      String sub = args.length == 0 ? "help" : args[0].toLowerCase();
+      String sub = args.length == 0 ? "" : args[0].toLowerCase();
       ExtendedCommandExecutor exec = mapping.get(sub);
+      if (args.length == 0 && exec == null)
+        exec = mapping.get("help");
       if (exec == null) {
         lang.msg("", sender, "command.wrongsub");
         return true;
