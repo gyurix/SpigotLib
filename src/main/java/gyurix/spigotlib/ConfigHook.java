@@ -66,7 +66,7 @@ public class ConfigHook {
       @Override
       public Object fromData(ConfigData data, Class paramClass, Type... paramVarArgs) {
         String[] s = data.stringData.split(" ", 3);
-        return new Vector(Double.valueOf(s[0]), Double.valueOf(s[1]), Double.valueOf(s[2]));
+        return new Vector(Double.parseDouble(s[0]), Double.parseDouble(s[1]), Double.parseDouble(s[2]));
       }
 
       @Override
@@ -80,9 +80,9 @@ public class ConfigHook {
       public Object fromData(ConfigData data, Class paramClass, Type... paramVarArgs) {
         String[] s = data.stringData.split(" ", 6);
         if (s.length == 4) {
-          return new Location(Bukkit.getWorld(s[0]), Double.valueOf(s[1]), Double.valueOf(s[2]), Double.valueOf(s[3]));
+          return new Location(Bukkit.getWorld(s[0]), Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]));
         }
-        return new Location(Bukkit.getWorld(s[0]), Double.valueOf(s[1]), Double.valueOf(s[2]), Double.valueOf(s[3]), Float.valueOf(s[4]), Float.valueOf(s[5]));
+        return new Location(Bukkit.getWorld(s[0]), Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Float.parseFloat(s[4]), Float.parseFloat(s[5]));
       }
 
       @Override
@@ -121,19 +121,19 @@ public class ConfigHook {
     handlers.put("toarray", (plr, inside, oArgs) -> inside.toArray());
     handlers.put("substr", (plr, inside, oArgs) -> {
       String[] s = StringUtils.join(inside, "").split(" ", 3);
-      int from = Integer.valueOf(s[0]);
-      int to = Integer.valueOf(s[1]);
+      int from = Integer.parseInt(s[0]);
+      int to = Integer.parseInt(s[1]);
       return s[2].substring(from < 0 ? s[2].length() + from : from, to < 0 ? s[2].length() + to : to);
     });
     handlers.put("splits", (plr, inside, oArgs) -> StringUtils.join(inside, "").split(" "));
     handlers.put("splitlen", (plr, inside, oArgs) -> {
       String[] s = StringUtils.join(inside, "").split(" ", 3);
-      Integer max = Integer.valueOf(s[0]);
+      int max = Integer.parseInt(s[0]);
       String pref = SU.unescapeText(s[1]);
       String text = s[2];
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < text.length(); i += max) {
-        sb.append('\n').append(pref).append(text.substring(i, Math.min(text.length(), i + max)));
+        sb.append('\n').append(pref).append(text, i, Math.min(text.length(), i + max));
       }
       return sb.length() == 0 ? "" : sb.substring(1);
     });
@@ -145,18 +145,18 @@ public class ConfigHook {
     });
     handlers.put("booltest", (plr, inside, oArgs) -> {
       String[] s = StringUtils.join(inside, "").split(";");
-      return Boolean.valueOf(s[0]) ? s[1] : s[2];
+      return Boolean.parseBoolean(s[0]) ? s[1] : s[2];
     });
     handlers.put("args", (plr, inside, oArgs) -> {
-      int id = Integer.valueOf(StringUtils.join(inside, ""));
+      int id = Integer.parseInt(StringUtils.join(inside, ""));
       return oArgs[id];
     });
     handlers.put("len", (plr, inside, oArgs) -> {
       Object o = inside.get(0);
-      return o.getClass().isArray() ? Array.getLength(o) : ((Collection) o).size();
+      return o.getClass().isArray() ? Array.getLength(o) : ((Collection<?>) o).size();
     });
     handlers.put("iarg", (plr, inside, oArgs) -> {
-      int id = Integer.valueOf(inside.get(0).toString());
+      int id = Integer.parseInt(inside.get(0).toString());
       return inside.get(id);
     });
     handlers.put("plr", (plr, inside, oArgs) -> Reflection.getData(plr, inside));
@@ -178,7 +178,7 @@ public class ConfigHook {
     handlers.put("formattime", (plr, inside, oArgs) -> {
       String str = StringUtils.join(inside, "");
       int id = str.indexOf(' ');
-      long time = Long.valueOf(str.substring(0, id));
+      long time = Long.parseLong(str.substring(0, id));
       String format = str.substring(id + 1);
       return new SimpleDateFormat(format).format(time);
     });
@@ -216,9 +216,9 @@ public class ConfigHook {
       String[] d = data.stringData.split(" ");
       switch (d.length) {
         case 2:
-          return new PotionEffect(PotionEffectType.getByName(d[0]), Integer.valueOf(d[1]), 0);
+          return new PotionEffect(PotionEffectType.getByName(d[0]), Integer.parseInt(d[1]), 0);
         case 3:
-          return new PotionEffect(PotionEffectType.getByName(d[0]), Integer.valueOf(d[1]), Integer.valueOf(d[2]));
+          return new PotionEffect(PotionEffectType.getByName(d[0]), Integer.parseInt(d[1]), Integer.parseInt(d[2]));
       }
       return null;
     }

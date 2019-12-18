@@ -20,6 +20,7 @@ import static gyurix.spigotutils.ServerVersion.*;
 import static org.apache.commons.lang.ArrayUtils.EMPTY_CLASS_ARRAY;
 import static org.apache.commons.lang.ArrayUtils.EMPTY_OBJECT_ARRAY;
 
+@SuppressWarnings("rawtypes")
 public class Reflection {
   public static final ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
   private static final Map<Class, Field[]> allFieldCache = Collections.synchronizedMap(new WeakHashMap<>());
@@ -78,6 +79,7 @@ public class Reflection {
   public static <T> T convert(Object in, Class<T> to) {
     if (in == null)
       return null;
+    System.out.println("Convert - " + in + "(" + in.getClass().getName() + ") to " + to.getName());
     to = Primitives.wrap(to);
     String inS = in.getClass().isEnum() ? ((Enum) in).name() : in.toString();
     try {
@@ -203,6 +205,7 @@ public class Reflection {
       debug.msg("Reflection", e);
       return null;
     }
+    System.out.println("obj = " + obj);
     return obj;
   }
 

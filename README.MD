@@ -46,7 +46,7 @@ If the plugin does not work for you then please do not panic, do **NOT** leave a
 
 0. **Before posting the new update I always fully test the plugin**, so it's verified that it works fine, which means that in the most of the cases it should also work at you without any issues. The only reason of malfunction can be the differences between my and your testing enviroment, so in the next points I will explain you what kind of testing enviroment differences exists
 
-1. **Incorrect server version:** Please use the Spigots BuildTools to build yourself one of the following server versions: 1.8.8; 1.9; 1.9.2; 1.9.4; 1.10; 1.10.2; 1.11; 1.11.2; 1.12; 1.12.2; 1.13; 1.13.1.
+1. **Incorrect server version:** Please use the Spigots BuildTools to build yourself one of the following server versions: 1.8.8; 1.9; 1.9.2; 1.9.4; 1.10; 1.10.2; 1.11; 1.11.2; 1.12; 1.12.2; 1.13; 1.13.1; 1.14; 1.14.4; 1.15; 1.15.1
 
     For any other version there is no guarantee that SpigotLib will work without any issues. On 1.7.10 and older servers the SpigotLib works might only work in a limited "safe" mode, which means that only some of it's funtionalities will work, which does not directly depend on the Spigot API.
 

@@ -1,6 +1,5 @@
 package gyurix.commands;
 
-import com.google.common.collect.Lists;
 import gyurix.api.VariableAPI;
 import gyurix.configfile.ConfigData;
 import gyurix.configfile.ConfigFile;
@@ -43,7 +42,7 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
         lang.msg(sender, "noperm");
         return true;
       }
-      ArrayList<Player> pls = plr == null ? Lists.newArrayList() : newArrayList(plr);
+      ArrayList<Player> pls = plr == null ? newArrayList() : newArrayList(plr);
       int stripArg = 1;
       if (args.length > 1) {
         if (args[1].equals("*")) {
@@ -118,8 +117,6 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
         case "class":
           sender.sendMessage("Classes in package " + args[0] + ": " + StringUtils.join(getClasses(args[0]), '\n'));
           return true;
-        case "packet":
-
         case "purge":
           lang.msg(sender, "purge.pf");
           purgePF = true;
@@ -217,6 +214,7 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
           }
           lang.msg(sender, "save." + args[0]);
           return true;
+        case "vel":
         case "velocity":
           org.bukkit.util.Vector v = new Vector(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]));
           for (Player p : pls) {
