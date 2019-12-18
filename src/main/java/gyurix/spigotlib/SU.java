@@ -28,10 +28,7 @@ import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import javax.script.ScriptEngine;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -46,6 +43,8 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static gyurix.commands.CustomCommandMap.knownCommands;
 
@@ -312,6 +311,25 @@ public final class SU {
     }
     Collections.sort(ld);
     return ld;
+  }
+
+  public static ArrayList<Class<?>> getClasses(String packageName) {
+    ArrayList<Class<?>> classes = new ArrayList<>();
+    try {
+      String packagePrefix = packageName.replace(".", "/");
+      File f = new File(Material.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6));
+      ZipInputStream zis = new ZipInputStream(new FileInputStream(f));
+      ZipEntry ze = zis.getNextEntry();
+      while (ze != null) {
+        String name = ze.getName();
+        if (name.startsWith(packagePrefix) && name.endsWith(".class") && !name.contains("$"))
+          classes.add(Class.forName(name.substring(0, name.length() - 6).replace("/", ".")));
+        ze = zis.getNextEntry();
+      }
+    } catch (Throwable e) {
+      e.printStackTrace();
+    }
+    return classes;
   }
 
   /**

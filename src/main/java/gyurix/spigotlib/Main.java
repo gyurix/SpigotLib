@@ -32,7 +32,6 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -57,12 +56,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.script.ScriptEngineManager;
 import java.io.File;
-import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import static gyurix.economy.EconomyAPI.VaultHookType.*;
 import static gyurix.protocol.Reflection.ver;
@@ -87,7 +83,7 @@ public class Main extends JavaPlugin implements Listener {
   /**
    * Current version of the plugin, stored here to not be able to be abused so easily by server owners, by changing the plugin.yml file
    */
-  public static final String version = "10.0";
+  public static final String version = "10.0.1";
   /**
    * Data directory of the plugin (plugins/SpigotLib folder)
    */
@@ -99,25 +95,6 @@ public class Main extends JavaPlugin implements Listener {
   public static PluginLang lang;
   public static Main pl;
   private static boolean schedulePacketAPI;
-
-  public static ArrayList<Class> getClasses(String packageName) {
-    ArrayList<Class> classes = new ArrayList();
-    try {
-      String packagePrefix = packageName.replace(".", "/");
-      File f = new File(Material.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6));
-      ZipInputStream zis = new ZipInputStream(new FileInputStream(f));
-      ZipEntry ze = zis.getNextEntry();
-      while (ze != null) {
-        String name = ze.getName();
-        if (name.startsWith(packagePrefix) && name.endsWith(".class") && !name.contains("$"))
-          classes.add(Class.forName(name.substring(0, name.length() - 6).replace("/", ".")));
-        ze = zis.getNextEntry();
-      }
-    } catch (Throwable e) {
-      e.printStackTrace();
-    }
-    return classes;
-  }
 
   public void load() {
     cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aconfiguration§e and §alanguage file§e...");
