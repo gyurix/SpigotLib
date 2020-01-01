@@ -27,13 +27,13 @@ public class NametagBar extends ScoreboardBar {
   public void addPlayers(String team, String... players) {
     TeamData td = getTeam(team);
     td.players.addAll(Arrays.asList(players));
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void addPlayers(String team, Collection<String> players) {
     TeamData td = getTeam(team);
     td.players.addAll(players);
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void createTeam(String team, String prefix, String suffix, int color, String... players) {
@@ -42,7 +42,7 @@ public class NametagBar extends ScoreboardBar {
     td.suffix = suffix;
     td.color = color;
     td.players.addAll(Arrays.asList(players));
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void createTeam(String team, String prefix, String suffix, int color, Collection<String> players) {
@@ -51,7 +51,7 @@ public class NametagBar extends ScoreboardBar {
     td.suffix = suffix;
     td.color = color;
     td.players.addAll(players);
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public TeamData getTeam(String team) {
@@ -66,65 +66,70 @@ public class NametagBar extends ScoreboardBar {
   public void removePlayers(String team, String... players) {
     TeamData td = getTeam(team);
     td.players.removeAll(Arrays.asList(players));
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void removePlayers(String team, Collection<String> players) {
     TeamData td = getTeam(team);
     td.players.removeAll(players);
-    updateTeam(team, td);
+    updateTeam(td);
+  }
+
+  public void removeTeam(String team) {
+    currentData.teams.remove(team);
+    update();
   }
 
   public void setCollisionRule(String team, CollisionRule value) {
     TeamData td = getTeam(team);
     td.collisionRule = value;
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void setColor(String team, int color) {
     TeamData td = getTeam(team);
     td.color = color;
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void setFriendlyFire(String team, boolean value) {
     TeamData td = getTeam(team);
     td.friendlyFire = value;
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void setNametagVisibility(String team, NameTagVisibility value) {
     TeamData td = getTeam(team);
     td.nameTagVisibility = value;
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void setPrefix(String team, String value) {
     TeamData td = getTeam(team);
     td.prefix = value;
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void setSeeInvisible(String team, boolean value) {
     TeamData td = getTeam(team);
     td.seeInvisible = value;
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
   public void setSuffix(String team, String value) {
     TeamData td = getTeam(team);
     td.suffix = value;
-    updateTeam(team, td);
+    updateTeam(td);
   }
 
-  private void updateTeam(String team, TeamData td) {
+  public void updateTeam(TeamData td) {
     active.keySet().removeIf((p) -> Bukkit.getPlayerExact(p) == null);
     loaded.keySet().removeIf((p) -> Bukkit.getPlayerExact(p) == null);
     for (Map.Entry<String, BarData> e : active.entrySet()) {
       BarData oldBar = e.getValue();
-      TeamData old = oldBar.teams.get(team);
+      TeamData old = oldBar.teams.get(td.name);
       td.update(Bukkit.getPlayerExact(e.getKey()), old);
-      oldBar.teams.put(team, td.clone());
+      oldBar.teams.put(td.name, td.clone());
     }
   }
 }
