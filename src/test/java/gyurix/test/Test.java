@@ -18,8 +18,15 @@ import static gyurix.nbt.NBTTagType.tag;
 public class Test {
   static Map.Entry<String, Double> entry;
 
-  public static void main(String[] args) throws Throwable {
+  static {
     DefaultSerializers.init();
+  }
+
+  public static void main(String[] args) {
+    testMapEntry();
+  }
+
+  public static void testMapEntry() {
     entry = new AbstractMap.SimpleEntry<>("Test / | / it", 1.5);
     String kf = new ConfigData(new Test()).toString();
     System.out.println(kf);

@@ -677,8 +677,8 @@ public final class SU {
    */
   public static String optimizeColorCodes(String in) {
     StringBuilder out = new StringBuilder();
-    StringBuilder oldFormat = new StringBuilder("§r");
-    StringBuilder newFormat = new StringBuilder("§r");
+    StringBuilder oldFormat = new StringBuilder();
+    StringBuilder newFormat = new StringBuilder();
     StringBuilder formatChange = new StringBuilder();
     String formatArchive = "";
     boolean color = false;
@@ -724,11 +724,6 @@ public final class SU {
           oldFormat.append(newFormat);
         }
         out.append(c);
-        if (c == '\n') {
-          formatChange.insert(0, oldFormat);
-          oldFormat.setLength(0);
-          newFormat.append(formatChange.toString());
-        }
       }
     }
     return out.toString();

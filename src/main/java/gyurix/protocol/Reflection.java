@@ -205,7 +205,6 @@ public class Reflection {
       debug.msg("Reflection", e);
       return null;
     }
-    System.out.println("obj = " + obj);
     return obj;
   }
 
