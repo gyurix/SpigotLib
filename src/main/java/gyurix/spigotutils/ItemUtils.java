@@ -419,7 +419,7 @@ public class ItemUtils {
   public static boolean itemSimilar(ItemStack item1, ItemStack item2) {
     if (item1 == item2)
       return true;
-    if (item1 == null || item2 == null)
+    if (item1 == null || item2 == null || item1.getType() == Material.AIR || item2.getType() == Material.AIR)
       return false;
     item1 = item1.clone();
     item1.setAmount(1);
