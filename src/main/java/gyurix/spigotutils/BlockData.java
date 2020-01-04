@@ -2,6 +2,7 @@ package gyurix.spigotutils;
 
 import gyurix.configfile.ConfigSerialization.StringSerializable;
 import gyurix.protocol.Reflection;
+import gyurix.protocol.utils.WrappedData;
 import gyurix.spigotlib.Items;
 import gyurix.spigotlib.SU;
 import lombok.SneakyThrows;
@@ -15,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Class used for storing the data of a block, or an item
  */
-public class BlockData implements StringSerializable, Comparable<BlockData> {
+public class BlockData implements StringSerializable, Comparable<BlockData>, WrappedData {
   /**
    * True if the BlockData can be applied to any subtype of the block
    */
@@ -187,6 +188,11 @@ public class BlockData implements StringSerializable, Comparable<BlockData> {
    */
   public ItemStack toItem() {
     return new ItemStack(getType(), 1, data);
+  }
+
+  @Override
+  public Object toNMS() {
+    return BlockUtils.combinedIdToNMSBlockData(BlockUtils.getCombinedId(this));
   }
 }
 

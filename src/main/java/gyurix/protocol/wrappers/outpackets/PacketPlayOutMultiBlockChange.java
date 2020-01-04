@@ -5,6 +5,7 @@ import gyurix.protocol.event.PacketOutType;
 import gyurix.protocol.utils.WrappedData;
 import gyurix.protocol.wrappers.WrappedPacket;
 import gyurix.spigotlib.SU;
+import gyurix.spigotutils.BlockData;
 import gyurix.spigotutils.BlockUtils;
 import gyurix.spigotutils.XZ;
 
@@ -56,8 +57,7 @@ public class PacketPlayOutMultiBlockChange extends WrappedPacket {
     private static Class nmsClass = Reflection.getNMSClass("PacketPlayOutMultiBlockChange$MultiBlockChangeInfo");
     private static Constructor nmsConst = Reflection.getConstructor(nmsClass, short.class, Reflection.getNMSClass("IBlockData"));
     private static Field posF = Reflection.getFirstFieldOfType(nmsClass, short.class), blockDataF = Reflection.getFirstFieldOfType(nmsClass, Reflection.getNMSClass("IBlockData"));
-    public byte blockData;
-    public int blockId;
+    public BlockData bd;
     public short pos;
 
     public MultiBlockChangeInfo() {
@@ -68,8 +68,7 @@ public class PacketPlayOutMultiBlockChange extends WrappedPacket {
       try {
         pos = posF.getShort(nms);
         Object nmsBl = blockDataF.get(nms);
-        blockId = BlockUtils.getNMSBlockId(nmsBl);
-        blockData = BlockUtils.getNMSBlockData(nmsBl);
+        bd = BlockUtils.combinedIdToBlockData(BlockUtils.getCombinedId(nmsBl));
       } catch (Throwable e) {
         SU.error(SU.cs, e, "SpigotLib", "gyurix");
       }
@@ -90,7 +89,7 @@ public class PacketPlayOutMultiBlockChange extends WrappedPacket {
     @Override
     public Object toNMS() {
       try {
-        return nmsConst.newInstance(pos, BlockUtils.getNMSBlock(blockId, blockData));
+        return nmsConst.newInstance(pos, BlockUtils.combinedIdToNMSBlockData(BlockUtils.getCombinedId(bd)));
       } catch (Throwable e) {
         SU.error(SU.cs, e, "SpigotLib", "gyurix");
       }

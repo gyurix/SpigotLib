@@ -10,7 +10,9 @@ import gyurix.protocol.wrappers.inpackets.PacketPlayInCustomPayload;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutBlockChange;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutTileEntityData;
 import gyurix.spigotlib.SU;
+import gyurix.spigotutils.BlockData;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -78,7 +80,7 @@ public class CommandBlockGUI extends DataReader<String> {
       for (int y = -1; y <= 2; ++y) {
         for (int z = -1; z <= 1; ++z) {
           Block b = getPlayer().getWorld().getBlockAt(bl.x + x, bl.y + y, bl.z + z);
-          tp.sendPacket(plr, new PacketPlayOutBlockChange(new BlockLocation(bl.x + x, bl.y + y, bl.z + z), b.getType().getId(), b.getData()));
+          tp.sendPacket(plr, new PacketPlayOutBlockChange(new BlockLocation(bl.x + x, bl.y + y, bl.z + z), new BlockData(b)));
         }
       }
     }
@@ -113,9 +115,9 @@ public class CommandBlockGUI extends DataReader<String> {
       for (int y = -1; y <= 2; ++y) {
         for (int z = -1; z <= 1; ++z) {
           if (x == 0 && y == 0 && z == 0 || x == 0 && y == 1 && z == 0) {
-            tp.sendPacket(plr, new PacketPlayOutBlockChange(new BlockLocation(bl.x + x, bl.y + y, bl.z + z), 0, (byte) 0));
+            tp.sendPacket(plr, new PacketPlayOutBlockChange(new BlockLocation(bl.x + x, bl.y + y, bl.z + z), new BlockData(Material.AIR)));
           } else {
-            tp.sendPacket(plr, new PacketPlayOutBlockChange(new BlockLocation(bl.x + x, bl.y + y, bl.z + z), 137, (byte) 0));
+            tp.sendPacket(plr, new PacketPlayOutBlockChange(new BlockLocation(bl.x + x, bl.y + y, bl.z + z), new BlockData(Material.COMMAND_BLOCK)));
             tp.sendPacket(plr, new PacketPlayOutTileEntityData(new BlockLocation(bl.x + x, bl.y + y, bl.z + z), 2, nbt));
           }
         }

@@ -8,8 +8,8 @@ import gyurix.protocol.wrappers.inpackets.PacketPlayInUpdateSign;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutBlockChange;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutOpenSignEditor;
 import gyurix.protocol.wrappers.outpackets.PacketPlayOutUpdateSign;
+import gyurix.spigotutils.BlockData;
 import gyurix.spigotutils.ServerVersion;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -24,6 +24,7 @@ import static gyurix.spigotlib.SU.tp;
  * SignGUI, which can be used
  */
 public class SignGUI extends DataReader<String[]> {
+  private final Block b;
   private final BlockLocation bl;
 
   /**
@@ -45,11 +46,14 @@ public class SignGUI extends DataReader<String[]> {
    */
   public SignGUI(Player plr, Consumer<String[]> resultConsumer, String[] initialLines) {
     super(plr, resultConsumer);
-    Location loc = plr.getLocation();
-    bl = new BlockLocation(loc.getBlockX(), loc.getBlockY() > 128 ? 0 : 255, loc.getBlockZ());
-    tp.sendPacket(plr, new PacketPlayOutBlockChange(bl,
-            (Reflection.ver.isAbove(ServerVersion.v1_14) ? Material.valueOf("OAK_SIGN") : Material.valueOf("SIGN")).getId(),
-            (byte) 0).getVanillaPacket());
+    bl = new BlockLocation(plr.getLocation().getBlockX(), 255, plr.getLocation().getBlockZ());
+    b = bl.getBlock(plr.getWorld());
+    tp.sendPacket(plr, new PacketPlayOutBlockChange(bl, new BlockData(Material.valueOf(Reflection.ver.isAbove(ServerVersion.v1_13) ? "OAK_SIGN" : "SIGN_POST"))));
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     tp.sendPacket(plr, new PacketPlayOutUpdateSign(bl, new ChatTag[]{
             fromColoredText(initialLines[0]), fromColoredText(initialLines[1]),
             fromColoredText(initialLines[2]), fromColoredText(initialLines[3])}));
@@ -64,8 +68,7 @@ public class SignGUI extends DataReader<String[]> {
     String[] res = new String[4];
     for (int i = 0; i < 4; ++i)
       res[i] = p.lines[i].toColoredString();
-    Block b = bl.getBlock(getPlayer().getWorld());
-    tp.sendPacket(getPlayer(), new PacketPlayOutBlockChange(bl, b.getType().getId(), b.getData()).getVanillaPacket());
+    tp.sendPacket(getPlayer(), new PacketPlayOutBlockChange(bl, new BlockData(b)).getVanillaPacket());
     onResult(res);
     return true;
   }

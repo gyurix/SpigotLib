@@ -24,7 +24,7 @@ public class PacketPlayOutBlockAction extends WrappedPacket {
 
   @Override
   public Object getVanillaPacket() {
-    return PacketOutType.BlockAction.newPacket(loc.toNMS(), actionId, actionData, BlockUtils.getNMSBlockType(blockId));
+    return PacketOutType.BlockAction.newPacket(loc.toNMS(), actionId, actionData, BlockUtils.getCombinedId(blockId));
   }
 
   @Override
@@ -33,6 +33,6 @@ public class PacketPlayOutBlockAction extends WrappedPacket {
     loc = new BlockLocation(d[0]);
     actionId = (int) d[1];
     actionData = (int) d[2];
-    blockId = BlockUtils.getNMSBlockTypeId(d[3]);
+    blockId = BlockUtils.getCombinedId(d[3]);
   }
 }

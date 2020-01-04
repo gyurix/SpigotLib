@@ -1,42 +1,80 @@
 package gyurix.spigotutils;
 
-import gyurix.protocol.Reflection;
 import gyurix.protocol.utils.Direction;
 import gyurix.spigotlib.SU;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
-import static gyurix.protocol.Reflection.getMethod;
-import static gyurix.protocol.Reflection.getNMSClass;
+import static gyurix.protocol.Reflection.*;
 import static java.lang.Math.*;
 
 /**
  * Created by GyuriX on 2016. 07. 13..
  */
 public class BlockUtils {
-  private static Method getBlockByIdM, getBlockIdM, fromLegacyDataM, toLegacyDataM, getCombinedIdM;
-  private static Map<Object, Integer> nmsBlockIDMap;
+  private static Method getBlockByIdM;
+  private static Method getCombinedIdM;
+  private static Field matIdF, bdStateF, blockF;
+  private static Map<Integer, Material> materialById;
+  private static Method nmsBlockToMaterialM;
 
   static {
     try {
-      Class regIDCl = getNMSClass("RegistryID");
-      Class blCl = getNMSClass("Block");
-      if (Reflection.ver.isBellow(ServerVersion.v1_11) && Reflection.ver.isAbove(ServerVersion.v1_8))
-        nmsBlockIDMap = (Map<Object, Integer>) Reflection.getFieldData(regIDCl, "a", Reflection.getFirstFieldOfType(blCl, regIDCl).get(null));
-
-      getBlockByIdM = getMethod(blCl, Reflection.ver.isAbove(ServerVersion.v1_13) ? "getByCombinedId" : "getById", int.class);
-      getBlockIdM = getMethod(blCl, "getId", blCl);
-      getCombinedIdM = getMethod(blCl, "getCombinedId", getNMSClass("IBlockData"));
-      fromLegacyDataM = getMethod(blCl, "fromLegacyData", int.class);
-      toLegacyDataM = getMethod(blCl, "toLegacyData", getNMSClass("IBlockData"));
+      Class<?> blCl = getNMSClass("Block");
+      Class<?> bdCl = getNMSClass("IBlockData");
+      blockF = getFirstFieldOfType(bdCl, blCl);
+      matIdF = getField(Material.class, "id");
+      materialById = new HashMap<>();
+      for (Material m : Material.values())
+        materialById.put(matIdF.getInt(m), m);
+      if (ver.isAbove(ServerVersion.v1_13)) {
+        bdStateF = getField(getOBCClass("block.data.CraftBlockData"), "state");
+        nmsBlockToMaterialM = getMethod(getOBCClass("util.CraftMagicNumbers"), "getMaterial", blCl);
+      }
+      getBlockByIdM = getMethod(blCl, "getByCombinedId", int.class);
+      getCombinedIdM = getMethod(blCl, "getCombinedId", bdCl);
     } catch (Throwable e) {
       SU.error(SU.cs, e, "SpigotLib", "gyurix");
     }
+  }
+
+  public static BlockData combinedIdToBlockData(int id) {
+    if (ver.isAbove(ServerVersion.v1_13)) {
+      try {
+        return new BlockData((Material) nmsBlockToMaterialM.invoke(null, blockF.get(combinedIdToNMSBlockData(id))));
+      } catch (Throwable e) {
+        SU.error(SU.cs, e, "SpigotLib", "gyurix");
+      }
+    }
+    return new BlockData(materialById.get(id & 4095), (short) (id >> 12 & 15));
+  }
+
+  public static Object combinedIdToNMSBlockData(int id) {
+    try {
+      return getBlockByIdM.invoke(null, id);
+    } catch (Throwable e) {
+      SU.error(SU.cs, e, "SpigotLib", "gyurix");
+    }
+    return null;
+  }
+
+  public static int getCombinedId(BlockData bd) {
+    if (ver.isAbove(ServerVersion.v1_13)) {
+      try {
+        return getCombinedId(bdStateF.get(bd.getType().createBlockData()));
+      } catch (Throwable e) {
+        SU.error(SU.cs, e, "SpigotLib", "gyurix");
+      }
+    }
+    return (((int) bd.data) << 12) + bd.getType().getId();
   }
 
   public static int getCombinedId(Object nmsBlock) {
@@ -51,55 +89,6 @@ public class BlockUtils {
   public static Vector getDirection(float yaw, float pitch) {
     double xz = cos(toRadians(pitch));
     return new Vector(-xz * sin(toRadians(yaw)), -sin(toRadians(pitch)), xz * cos(toRadians(yaw)));
-  }
-
-  public static Object getNMSBlock(int id, byte data) {
-    try {
-      Object bl = getBlockByIdM.invoke(null, id);
-      if (Reflection.ver.isAbove(ServerVersion.v1_13))
-        return bl;
-      return fromLegacyDataM.invoke(bl, (int) data);
-    } catch (Throwable e) {
-      SU.error(SU.cs, e, "SpigotLib", "gyurix");
-    }
-    return null;
-  }
-
-  public static byte getNMSBlockData(Object nmsBlock) {
-    try {
-      Integer id = nmsBlockIDMap.get(nmsBlock);
-      if (id == null) {
-        SU.cs.sendMessage("§cBlock §e" + nmsBlock + "§c was not found.");
-        return 0;
-      }
-      Object blockType = getBlockByIdM.invoke(null, id);
-      return (byte) (int) toLegacyDataM.invoke(blockType, nmsBlock);
-    } catch (Throwable e) {
-      return 0;
-    }
-  }
-
-  public static int getNMSBlockId(Object nmsBlock) {
-    Integer i = nmsBlockIDMap.get(nmsBlock);
-    return i == null ? -1 : i;
-  }
-
-  public static Object getNMSBlockType(int id) {
-    try {
-      return getBlockByIdM.invoke(null, id);
-    } catch (Throwable e) {
-      SU.error(SU.cs, e, "SpigotLib", "gyurix");
-    }
-    return null;
-  }
-
-  public static int getNMSBlockTypeId(Object nmsBlock) {
-    try {
-      return (int) getBlockIdM.invoke(null, nmsBlock);
-    } catch (Throwable e) {
-      SU.error(SU.cs, e, "SpigotLib", "gyurix");
-      return 0;
-    }
   }
 
   public static float getPitch(Vector vec) {
