@@ -3,6 +3,7 @@ package gyurix.scoreboard;
 import gyurix.scoreboard.team.CollisionRule;
 import gyurix.scoreboard.team.NameTagVisibility;
 import gyurix.scoreboard.team.TeamData;
+import gyurix.spigotlib.SU;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -18,7 +19,7 @@ public class NametagBar extends ScoreboardBar {
   int nextId = 0;
   @Getter
   @Setter
-  private boolean useRealTeamNames;
+  private boolean useRealTeamNames = true;
 
   public NametagBar() {
     super("NB" + id, "NB" + id++, 2);
@@ -77,7 +78,15 @@ public class NametagBar extends ScoreboardBar {
 
   public void removeTeam(String team) {
     currentData.teams.remove(team);
-    update();
+    active.keySet().removeIf((p) -> Bukkit.getPlayerExact(p) == null);
+    loaded.keySet().removeIf((p) -> Bukkit.getPlayerExact(p) == null);
+    for (Map.Entry<String, BarData> e : loaded.entrySet()) {
+      BarData oldBar = e.getValue();
+      TeamData old = oldBar.teams.remove(team);
+      if (old != null) {
+        SU.tp.sendPacket(Bukkit.getPlayerExact(e.getKey()), old.getRemovePacket());
+      }
+    }
   }
 
   public void setCollisionRule(String team, CollisionRule value) {
@@ -125,7 +134,7 @@ public class NametagBar extends ScoreboardBar {
   public void updateTeam(TeamData td) {
     active.keySet().removeIf((p) -> Bukkit.getPlayerExact(p) == null);
     loaded.keySet().removeIf((p) -> Bukkit.getPlayerExact(p) == null);
-    for (Map.Entry<String, BarData> e : active.entrySet()) {
+    for (Map.Entry<String, BarData> e : loaded.entrySet()) {
       BarData oldBar = e.getValue();
       TeamData old = oldBar.teams.get(td.name);
       td.update(Bukkit.getPlayerExact(e.getKey()), old);
