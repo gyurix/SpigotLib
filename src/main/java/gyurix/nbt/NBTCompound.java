@@ -3,7 +3,6 @@ package gyurix.nbt;
 import gyurix.spigotlib.SU;
 import io.netty.buffer.ByteBuf;
 
-import java.lang.Byte;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +17,7 @@ public class NBTCompound extends HashMap<String, NBTTag> implements NBTTag {
 
   public boolean getBoolean(String key) {
     NBTTag tag = get(key);
-    return tag instanceof NBTPrimitive && (Byte) ((NBTPrimitive) tag).getData() == 1;
+    return tag instanceof NBTPrimitive && ((NBTPrimitive) tag).getData().toString().equals("1");
   }
 
   public NBTCompound getCompound(String key) {
