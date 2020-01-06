@@ -143,7 +143,7 @@ public class ItemStackWrapper implements WrappedData {
   }
 
   public boolean isUnbreakable() {
-    return getMetaData().getBoolean("Unbreakable");
+    return getMetaData() != null && getMetaData().getBoolean("Unbreakable");
   }
 
   public void setUnbreakable(boolean unbreakable) {
