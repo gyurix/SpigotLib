@@ -49,9 +49,10 @@ public class ItemStackWrapper implements WrappedData {
     getType = Reflection.getMethod(cmn, "getMaterialFromInternalName", String.class);
     getID = Reflection.getMethod(nmsItem, "getId", nmsItem);
     try {
-      for (Map.Entry<?, ?> e : ((Map<?, ?>) getFieldData(getNMSClass("RegistryMaterials"), "b", getFieldData(nmsItem, "REGISTRY"))).entrySet()) {
-        itemNames.put((Integer) getID.invoke(null, e.getKey()), e.getValue().toString());
-      }
+      if (Reflection.ver.isBellow(ServerVersion.v1_13))
+        for (Map.Entry<?, ?> e : ((Map<?, ?>) getFieldData(getNMSClass("RegistryMaterials"), "b", getFieldData(nmsItem, "REGISTRY"))).entrySet()) {
+          itemNames.put((Integer) getID.invoke(null, e.getKey()), e.getValue().toString());
+        }
     } catch (Throwable err) {
       SU.error(SU.cs, err, "SpigotLib", "gyurix");
     }
