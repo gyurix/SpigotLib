@@ -625,7 +625,7 @@ public class DefaultSerializers {
           comment = "";
           ConfigOptions options = f.getAnnotation(ConfigOptions.class);
           if (options != null) {
-            if (!options.serialize())
+            if (!options.serialize() || Modifier.isTransient(f.getModifiers()))
               continue;
             dffValue = options.defaultValue();
             comment = options.comment();
