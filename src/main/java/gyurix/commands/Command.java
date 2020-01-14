@@ -20,6 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import static gyurix.api.BungeeAPI.executeBungeeCommands;
@@ -384,7 +385,12 @@ public class Command implements StringSerializable {
     }
   }
 
+  @Deprecated
   public static boolean executeAll(CommandSender sender, ArrayList<Command> list, Object... args) {
+    return executeAll(sender, (Collection<Command>) list, args);
+  }
+
+  public static boolean executeAll(CommandSender sender, Collection<Command> list, Object... args) {
     if (sender == null || list == null)
       return false;
     for (Command c : list)
@@ -393,7 +399,12 @@ public class Command implements StringSerializable {
     return true;
   }
 
+  @Deprecated
   public static boolean executeAll(Iterable<String> plns, ArrayList<Command> list, Object... args) {
+    return executeAll(plns, (Collection<Command>) list, args);
+  }
+
+  public static boolean executeAll(Iterable<String> plns, Collection<Command> list, Object... args) {
     if (plns == null || list == null)
       return false;
     for (String pln : plns) {
@@ -406,7 +417,12 @@ public class Command implements StringSerializable {
     return true;
   }
 
+  @Deprecated
   public static boolean executeAll(Iterable<? extends Entity> pls, Entity plr, ArrayList<Command> list, Object... args) {
+    return executeAll(pls, plr, (Collection<Command>) list, args);
+  }
+
+  public static boolean executeAll(Iterable<? extends Entity> pls, Entity plr, Collection<Command> list, Object... args) {
     if (list == null || pls == null)
       return false;
     for (Entity p : pls) {
