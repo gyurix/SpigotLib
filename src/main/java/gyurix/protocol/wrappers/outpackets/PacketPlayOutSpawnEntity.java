@@ -6,6 +6,8 @@ import gyurix.protocol.utils.Vector;
 import gyurix.protocol.wrappers.WrappedPacket;
 import gyurix.spigotutils.LocationData;
 import gyurix.spigotutils.ServerVersion;
+import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.IRegistry;
 
 import java.util.UUID;
 
@@ -37,7 +39,7 @@ public class PacketPlayOutSpawnEntity extends WrappedPacket {
   }
 
   public int convertSpeed(float num) {
-    return (int) (((double) num < -3.9 ? -3.9 : (double) num > 3.9 ? 3.9 : (double) num) * 8000.0);
+    return (int) (((double) num < -3.9 ? -3.9 : Math.min(num, 3.9)) * 8000.0);
   }
 
   @Override
@@ -47,7 +49,8 @@ public class PacketPlayOutSpawnEntity extends WrappedPacket {
             (int) ((double) (pitch * 256.0f) / 360.0), (int) ((double) (yaw * 256.0f) / 360.0), entityTypeId, objectData) :
             PacketOutType.SpawnEntity.newPacket(entityId, (int) (x * 32), (int) (y * 32), (int) (z * 32),
                     convertSpeed(speedX), convertSpeed(speedY), convertSpeed(speedZ),
-                    (int) ((double) (pitch * 256.0f) / 360.0), (int) ((double) (yaw * 256.0f) / 360.0), entityTypeId, objectData);
+                    (int) ((double) (pitch * 256.0f) / 360.0), (int) ((double) (yaw * 256.0f) / 360.0),
+                    Reflection.ver.isAbove(ServerVersion.v1_14) ? IRegistry.ENTITY_TYPE.fromId(entityTypeId) : entityTypeId, objectData);
   }
 
   @Override
@@ -71,7 +74,10 @@ public class PacketPlayOutSpawnEntity extends WrappedPacket {
     speedZ = (float) (int) o[st + 2] / 8000.0f;
     pitch = (float) (int) o[st + 3] / 256.0f * 360.0f;
     yaw = (float) (int) o[st + 4] / 256.0f * 360.0f;
-    entityTypeId = (int) o[st + 5];
+    if (Reflection.ver.isAbove(ServerVersion.v1_14))
+      entityTypeId = IRegistry.ENTITY_TYPE.a((EntityTypes<?>) o[st + 5]);
+    else
+      entityTypeId = (int) o[st + 5];
     objectData = (int) o[st + 6];
   }
 

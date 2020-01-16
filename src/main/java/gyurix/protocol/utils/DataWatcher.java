@@ -15,56 +15,74 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class DataWatcher implements WrappedData, StringSerializable {
-  private static Constructor con;
-  private static Field dwField, itemField, idField;
-  private static Constructor itc;
-  private static Class nmsDW, nmsItem;
-  private static Constructor objcon;
-  private static Map<Class, Object> serializers;
+  private static Constructor<?> con;
+  private static Field dwField, dwoField, itemField, idField;
+  private static Constructor<?> itc;
+  private static Class<?> nmsDW, nmsItem, dwo;
+  private static Constructor<?> objcon;
+  private static Map<Class<?>, Object> serializers;
 
   static {
     try {
       nmsDW = Reflection.getNMSClass("DataWatcher");
       con = Reflection.getConstructor(nmsDW, Reflection.getNMSClass("Entity"));
-      dwField = Reflection.getLastFieldOfType(nmsDW, Map.class);
+      Class<?> mapType = Reflection.getClass("org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap");
+      if (mapType == null)
+        mapType = Reflection.getClass("it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap");
+      if (mapType == null)
+        mapType = Map.class;
+      dwField = Reflection.getLastFieldOfType(nmsDW, mapType);
       if (Reflection.ver.isAbove(ServerVersion.v1_9)) {
-        Class dwr = Reflection.getNMSClass("DataWatcherRegistry");
+        Class<?> dwr = Reflection.getNMSClass("DataWatcherRegistry");
         nmsItem = Reflection.getInnerClass(nmsDW, "Item");
         itc = nmsItem.getConstructors()[0];
         itemField = Reflection.getFirstFieldOfType(nmsItem, Object.class);
-        objcon = Reflection.getConstructor(Reflection.getNMSClass("DataWatcherObject"), int.class, Reflection.getNMSClass("DataWatcherSerializer"));
+        dwo = Reflection.getNMSClass("DataWatcherObject");
+        dwoField = Reflection.getFirstFieldOfType(nmsItem, dwo);
+        idField = Reflection.getFirstFieldOfType(dwo, int.class);
+        objcon = Reflection.getConstructor(dwo, int.class, Reflection.getNMSClass("DataWatcherSerializer"));
         serializers = new HashMap<>();
         serializers.put(Byte.class, dwr.getField("a").get(null));
         serializers.put(Integer.class, dwr.getField("b").get(null));
         serializers.put(Float.class, dwr.getField("c").get(null));
         serializers.put(String.class, dwr.getField("d").get(null));
         serializers.put(ChatAPI.icbcClass, dwr.getField("e").get(null));
-        serializers.put(Reflection.getNMSClass("ItemStack"), dwr.getField("f").get(null));
-        serializers.put(Reflection.getNMSClass("IBlockData"), dwr.getField("g").get(null));
-        serializers.put(Boolean.class, dwr.getField("h").get(null));
-        serializers.put(Reflection.getNMSClass("Vector3f"), dwr.getField("i").get(null));
-        serializers.put(Reflection.getNMSClass("BlockPosition"), dwr.getField("k").get(null));
-        serializers.put(Reflection.getNMSClass("EnumDirection"), dwr.getField("l").get(null));
-        serializers.put(UUID.class, dwr.getField("m").get(null));
+        if (Reflection.ver.isAbove(ServerVersion.v1_14)) {
+          serializers.put(Optional.class, dwr.getField("f").get(null));
+          serializers.put(Reflection.getNMSClass("ItemStack"), dwr.getField("g").get(null));
+          serializers.put(Reflection.getNMSClass("IBlockData"), dwr.getField("h").get(null));
+          serializers.put(Boolean.class, dwr.getField("i").get(null));
+          serializers.put(Reflection.getNMSClass("ParticleParam"), dwr.getField("j").get(null));
+          serializers.put(Reflection.getNMSClass("Vector3f"), dwr.getField("k").get(null));
+          serializers.put(Reflection.getNMSClass("BlockPosition"), dwr.getField("m").get(null));
+          serializers.put(Reflection.getNMSClass("EnumDirection"), dwr.getField("n").get(null));
+        }
+        else {
+          serializers.put(Reflection.getNMSClass("ItemStack"), dwr.getField("f").get(null));
+          serializers.put(Reflection.getNMSClass("IBlockData"), dwr.getField("g").get(null));
+          serializers.put(Boolean.class, dwr.getField("h").get(null));
+          serializers.put(Reflection.getNMSClass("Vector3f"), dwr.getField("i").get(null));
+          serializers.put(Reflection.getNMSClass("BlockPosition"), dwr.getField("k").get(null));
+          serializers.put(Reflection.getNMSClass("EnumDirection"), dwr.getField("l").get(null));
+          serializers.put(UUID.class, dwr.getField("m").get(null));
+        }
       } else {
         nmsItem = Reflection.getNMSClass(Reflection.ver.isAbove(ServerVersion.v1_8) ? "DataWatcher$WatchableObject" : "WatchableObject");
-        SU.cs.sendMessage("§eNMS ITEM = " + nmsItem);
         itc = nmsItem.getConstructors()[0];
-        SU.cs.sendMessage("§eITC = " + itc);
         itemField = Reflection.getFirstFieldOfType(nmsItem, Object.class);
         idField = Reflection.getField(nmsItem, "b");
         if (Reflection.ver.isAbove(ServerVersion.v1_8))
-          serializers = (Map<Class, Object>) Reflection.getFirstFieldOfType(nmsDW, Map.class).get(null);
+          serializers = (Map<Class<?>, Object>) Reflection.getFirstFieldOfType(nmsDW, Map.class).get(null);
         else {
           serializers = new HashMap<>();
           Object mapObj = Reflection.getField(nmsDW, "classToId").get(null);
           if (mapObj instanceof TObjectIntMap) {
-            ((TObjectIntMap) mapObj).forEachEntry((o, i) -> {
-              serializers.put((Class) o, i);
+            ((TObjectIntMap<?>) mapObj).forEachEntry((o, i) -> {
+              serializers.put((Class<?>) o, i);
               return true;
             });
           } else if (mapObj instanceof Object2IntOpenHashMap) {
-            ((Object2IntOpenHashMap) mapObj).forEach((o, i) -> serializers.put((Class) o, i));
+            ((Object2IntOpenHashMap<?>) mapObj).forEach((o, i) -> serializers.put((Class<?>) o, i));
           }
         }
       }
@@ -97,8 +115,9 @@ public class DataWatcher implements WrappedData, StringSerializable {
         return;
       }
       Map<Integer, Object> m = (Map<Integer, Object>) dwField.get(nmsData);
-      for (Entry<Integer, Object> e : m.entrySet())
+      for (Entry<Integer, Object> e : m.entrySet()) {
         map.put(e.getKey(), itemField.get(e.getValue()));
+      }
     } catch (Throwable e) {
       SU.error(SU.cs, e, "SpigotLib", "gyurix");
     }
@@ -127,6 +146,7 @@ public class DataWatcher implements WrappedData, StringSerializable {
     ArrayList<WrappedItem> out = new ArrayList<>();
     for (Object o : in) {
       try {
+        System.out.println("WRAP - " + o);
         out.add(new WrappedItem(o));
       } catch (Throwable e) {
         SU.error(SU.cs, e, "SpigotLib", "gyuriX");
@@ -184,7 +204,10 @@ public class DataWatcher implements WrappedData, StringSerializable {
     public WrappedItem(Object o) {
       try {
         data = WrapperFactory.wrap(itemField.get(o));
-        id = idField.getInt(o);
+        if (Reflection.ver.isAbove(ServerVersion.v1_9))
+          id = idField.getInt(dwoField.get(o));
+        else
+          id = idField.getInt(o);
       } catch (Throwable e) {
         SU.error(SU.cs, e, "SpigotLib", "gyurix");
       }
@@ -203,6 +226,4 @@ public class DataWatcher implements WrappedData, StringSerializable {
       return null;
     }
   }
-
-
 }

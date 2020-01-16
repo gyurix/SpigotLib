@@ -240,7 +240,7 @@ public class JsonAPI {
           JsonSettings settings = f.getAnnotation(JsonSettings.class);
           String fn = f.getName();
           String fnLower = fn.toLowerCase();
-          boolean serialize = !(fnLower.equals("self") || fnLower.equals("parent") || fnLower.equals("instance"));
+          boolean serialize = !(fnLower.equals("self") || fnLower.equals("parent") || fnLower.equals("instance") || fnLower.equals("empty"));
           String defaultValue = null;
           if (settings != null) {
             serialize = settings.serialize();
