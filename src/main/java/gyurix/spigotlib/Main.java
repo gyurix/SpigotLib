@@ -12,6 +12,7 @@ import gyurix.datareader.DataReader;
 import gyurix.economy.EconomyAPI;
 import gyurix.economy.custom.ExpBalanceType;
 import gyurix.economy.custom.VaultBalanceType;
+import gyurix.hologram.HologramAPI;
 import gyurix.inventory.CloseableGUI;
 import gyurix.inventory.CustomGUI;
 import gyurix.mysql.MySQLDatabase;
@@ -43,6 +44,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServiceRegisterEvent;
 import org.bukkit.event.server.ServiceUnregisterEvent;
@@ -177,6 +179,13 @@ public class Main extends JavaPlugin implements Listener {
         Player plr = (Player) e.getWhoClicked();
         error(plr.hasPermission("spigotlib.debug") ? plr : cs, err, SU.getPlugin(top.getHolder().getClass()).getName(), "gyurix");
       }
+  }
+  @EventHandler
+  public void onDeath(PlayerRespawnEvent e){
+    HologramAPI.getHolograms().values().forEach(h-> {
+      h.getLineEntities().forEach(hl->hl.viewers.remove(e.getPlayer().getName()));
+      h.checkVisibility();
+    });
   }
 
   @EventHandler

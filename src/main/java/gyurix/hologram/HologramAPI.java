@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import java.util.HashMap;
 
 public class HologramAPI {
+  @Getter
   static HashMap<String, Hologram> holograms = new HashMap<>();
   static int nextHologramId = 459786;
   @Getter

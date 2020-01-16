@@ -5,10 +5,7 @@ import gyurix.protocol.Reflection;
 import gyurix.protocol.utils.DataWatcher;
 import gyurix.protocol.utils.DataWatcher.WrappedItem;
 import gyurix.protocol.utils.Vector;
-import gyurix.protocol.wrappers.outpackets.PacketPlayOutEntityDestroy;
-import gyurix.protocol.wrappers.outpackets.PacketPlayOutEntityMetadata;
-import gyurix.protocol.wrappers.outpackets.PacketPlayOutEntityTeleport;
-import gyurix.protocol.wrappers.outpackets.PacketPlayOutSpawnEntityLiving;
+import gyurix.protocol.wrappers.outpackets.*;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.LocationData;
 import gyurix.spigotutils.ServerVersion;
@@ -25,6 +22,7 @@ import static gyurix.api.VariableAPI.fillVariables;
 
 public class HologramLine {
   public Object destroyP;
+  public Object spawnP;
   public int id = HologramAPI.nextHologramId++;
   public LocationData loc;
   public ArrayList<WrappedItem> metaData = new ArrayList<>();
@@ -43,6 +41,8 @@ public class HologramLine {
       makeMeta1_8();
 
     destroyP = new PacketPlayOutEntityDestroy(id).getVanillaPacket();
+    if (Reflection.ver.isBellow(ServerVersion.v1_8))
+      spawnP = new PacketPlayOutSpawnEntity(id, 78, uid, loc, new Vector()).getVanillaPacket();
   }
 
   private void applyText(String plText) {
@@ -165,11 +165,17 @@ public class HologramLine {
 
   public void show(final Player plr) {
     String plText = fixEmpty(fillVariables(text, plr));
-    SU.tp.sendPacket(plr, getSpawnPacket());
+    applyText(plText);
+    if (Reflection.ver.isAbove(ServerVersion.v1_9))
+      SU.tp.sendPacket(plr, getSpawnPacket());
+    else {
+      SU.tp.sendPacket(plr, spawnP);
+      SU.tp.sendPacket(plr, new PacketPlayOutEntityMetadata(id, metaData));
+    }
     viewers.put(plr.getName(), plText);
   }
 
-  public void teleport(LocationData ld,boolean skipPackets) {
+  public void teleport(LocationData ld, boolean skipPackets) {
     this.loc = ld;
     if (!skipPackets) {
       Object teleport = new PacketPlayOutEntityTeleport(id, this.loc).getVanillaPacket();
