@@ -38,7 +38,7 @@ public class CloseableGUI implements InventoryHolder {
 
   public final void close() {
     int time = TPSMeter.totalTicks;
-    if (time == lastCloseTick) {
+    if (firstClose != null) {
       SU.cs.sendMessage("§cDetected double closed GUI:");
       String pln = getPlugin().getName();
       SU.error(SU.cs, firstClose, pln, "gyurix");
