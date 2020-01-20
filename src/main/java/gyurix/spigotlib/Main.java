@@ -343,7 +343,7 @@ public class Main extends JavaPlugin implements Listener {
           cs.sendMessage("§2[§aSpigotLib§2]§e Migrating economy data from old Economy " + econ.getName() + "... ");
           EconomyAPI.setVaultHookType(NONE);
           for (OfflinePlayer op : Bukkit.getOfflinePlayers()) {
-            EconomyAPI.setBalance(op.getUniqueId(), new BigDecimal(econ.getBalance(op)));
+            EconomyAPI.setBalance(op.getUniqueId(), BigDecimal.valueOf(econ.getBalance(op)));
             log(this, "Done player " + op.getName());
           }
           EconomyAPI.setVaultHookType(PROVIDER);
@@ -363,10 +363,10 @@ public class Main extends JavaPlugin implements Listener {
           if (rspEcon != null)
             econ = rspEcon.getProvider();
         }
-        RegisteredServiceProvider rspPerm = srv.getServicesManager().getRegistration(Permission.class);
+        RegisteredServiceProvider<Permission> rspPerm = srv.getServicesManager().getRegistration(Permission.class);
         if (rspPerm != null)
           perm = (Permission) rspPerm.getProvider();
-        RegisteredServiceProvider rspChat = srv.getServicesManager().getRegistration(Chat.class);
+        RegisteredServiceProvider<Chat> rspChat = srv.getServicesManager().getRegistration(Chat.class);
         if (rspChat != null)
           chat = (Chat) rspChat.getProvider();
       }

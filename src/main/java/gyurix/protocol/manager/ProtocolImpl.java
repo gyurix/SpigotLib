@@ -9,6 +9,7 @@ import gyurix.protocol.event.PacketOutEvent;
 import gyurix.protocol.wrappers.WrappedPacket;
 import gyurix.spigotlib.SU;
 import gyurix.spigotutils.EntityUtils;
+import gyurix.spigotutils.ServerVersion;
 import io.netty.channel.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -16,14 +17,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static gyurix.protocol.Reflection.*;
 import static gyurix.spigotlib.Main.pl;
@@ -33,9 +31,12 @@ public final class ProtocolImpl extends Protocol {
           playerConnectionF = getField(getNMSClass("EntityPlayer"), "playerConnection"),
           networkManagerF = getField(getNMSClass("PlayerConnection"), "networkManager"),
           channelF = getField(getNMSClass("NetworkManager"), "channel");
-  private static final Map<String, Channel> channelLookup = new HashMap<>();
-  private static final Class minecraftServerClass = getNMSClass("MinecraftServer");
-  private static final Class serverConnectionClass = getNMSClass("ServerConnection");
+  private static final Map<String, Channel> channelLookup = Collections.synchronizedMap(new HashMap<>());
+  private static final Class<?> minecraftServerClass = getNMSClass("MinecraftServer");
+  private static final Map<String, Object> networkManagers = Collections.synchronizedMap(new HashMap<>());
+  private static final Method sendPacketM = getMethod(getNMSClass("NetworkManager"),
+          ver.isAbove(ServerVersion.v1_9) ? "sendPacket" : "handle", getNMSClass("Packet"));
+  private static final Class<?> serverConnectionClass = getNMSClass("ServerConnection");
   private static Object oldH;
   private static Field oldHChildF;
   private ChannelFuture cf;
@@ -52,12 +53,14 @@ public final class ProtocolImpl extends Protocol {
       try {
         Object nmsPlayer = EntityUtils.getNMSEntity(plr);
         Object playerConnection = playerConnectionF.get(nmsPlayer);
+        if (playerConnection == null)
+          return null;
         Object networkManager = networkManagerF.get(playerConnection);
+        networkManagers.put(plr.getName(), networkManager);
         Channel channel = (Channel) channelF.get(networkManager);
-        SU.cs.sendMessage("Channel is " + channel);
         channelLookup.put(plr.getName(), c = channel);
-      } catch (Throwable e) {
-        SU.error(SU.cs, e, "SpigotLib", "gyurix");
+      } catch (Throwable err) {
+        SU.error(SU.cs, err, "SpigotLib", "gyurix");
       }
     return c;
   }
@@ -72,9 +75,9 @@ public final class ProtocolImpl extends Protocol {
 
   @Override
   public void init() throws Throwable {
-    Object minecraftServer = getFirstFieldOfType(Reflection.getOBCClass("CraftServer"), minecraftServerClass).get(SU.srv);
+    Object minecraftServer = getFirstFieldOfType(getOBCClass("CraftServer"), minecraftServerClass).get(SU.srv);
     Object serverConnection = getFirstFieldOfType(minecraftServerClass, serverConnectionClass).get(minecraftServer);
-    cf = (ChannelFuture) ((List) getFirstFieldOfType(serverConnectionClass, List.class).get(serverConnection)).iterator().next();
+    cf = (ChannelFuture) ((List<?>) getFirstFieldOfType(serverConnectionClass, List.class).get(serverConnection)).iterator().next();
     registerServerChannelHook();
     SU.srv.getOnlinePlayers().forEach(this::injectPlayer);
   }
@@ -107,7 +110,7 @@ public final class ProtocolImpl extends Protocol {
   public void registerServerChannelHook() throws Throwable {
     Channel serverCh = cf.channel();
     oldH = serverCh.pipeline().get(Reflection.getClass("io.netty.bootstrap.ServerBootstrap$ServerBootstrapAcceptor"));
-    oldHChildF = Reflection.getField(oldH.getClass(), "childHandler");
+    oldHChildF = getField(oldH.getClass(), "childHandler");
     serverCh.pipeline().addFirst("SpigotLibServer", new ServerChannelHook((ChannelHandler) oldHChildF.get(oldH)));
   }
 
@@ -116,6 +119,17 @@ public final class ProtocolImpl extends Protocol {
     try {
       ((Channel) ch).pipeline().remove(handler);
     } catch (Throwable ignored) {
+    }
+  }
+
+  @Override
+  public void sendPacket(Player player, Object packet) {
+    try {
+      if (!player.isOnline())
+        return;
+      sendPacketM.invoke(getNetworkManager(player), packet);
+    } catch (Throwable e) {
+      SU.error(SU.cs, e, "SpigotLib", "gyurix");
     }
   }
 
@@ -135,14 +149,26 @@ public final class ProtocolImpl extends Protocol {
     removeHandler(cf.channel(), "SpigotLibServer");
   }
 
-
-  @EventHandler(priority = EventPriority.LOWEST)
-  public void onPlayerJoin(PlayerJoinEvent e) {
-    injectPlayer(e.getPlayer());
+  public Object getNetworkManager(Player plr) {
+    Object nm = networkManagers.get(plr.getName());
+    if (nm == null)
+      try {
+        Object nmsPlayer = EntityUtils.getNMSEntity(plr);
+        Object playerConnection = playerConnectionF.get(nmsPlayer);
+        if (playerConnection == null)
+          return null;
+        Object networkManager = networkManagerF.get(playerConnection);
+        networkManagers.put(plr.getName(), nm = networkManager);
+        Channel channel = (Channel) channelF.get(networkManager);
+        channelLookup.put(plr.getName(), channel);
+      } catch (Throwable err) {
+        SU.error(SU.cs, err, "SpigotLib", "gyurix");
+      }
+    return nm;
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
-  public void onPlayerLogin(PlayerLoginEvent e) {
+  public void onPlayerJoin(PlayerJoinEvent e) {
     injectPlayer(e.getPlayer());
   }
 
@@ -166,6 +192,7 @@ public final class ProtocolImpl extends Protocol {
         if (e.getType() == PacketInType.LoginInStart) {
           GameProfile profile = (GameProfile) getGameProfile.get(packet);
           channelLookup.put(profile.getName(), channel);
+          networkManagers.put(profile.getName(), ctx.pipeline().get("packet_handler"));
         }
         dispatchPacketInEvent(e);
         packet = e.getPacket();
@@ -198,7 +225,7 @@ public final class ProtocolImpl extends Protocol {
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
       if (childHandler.getClass().getName().equals("lilypad.bukkit.connect.injector.NettyChannelInitializer"))
-        Reflection.getField(childHandler.getClass(), "oldChildHandler").set(childHandler, oldHChildF.get(oldH));
+        getField(childHandler.getClass(), "oldChildHandler").set(childHandler, oldHChildF.get(oldH));
       Channel c = (Channel) msg;
       c.pipeline().addLast("SpigotLibInit", new ChannelInboundHandlerAdapter() {
         @Override

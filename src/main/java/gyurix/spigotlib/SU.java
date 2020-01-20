@@ -464,7 +464,7 @@ public final class SU {
   public static ConfigFile getPlayerConfig(final UUID plr) {
     String pln = plr == null ? "CONSOLE" : plr.toString();
     if (pf.data.mapData == null)
-      pf.data.mapData = new LinkedHashMap();
+      pf.data.mapData = new LinkedHashMap<>();
     if (PlayerFile.backend == BackendType.MYSQL && !loadedPlayers.contains(plr)) {
       SU.error(SU.cs, new Throwable("Trying to get the config of player " + plr + ", who is not loaded"), "SpigotLib", "gyurix");
       return null;
@@ -478,7 +478,7 @@ public final class SU {
    * @param cl - The checkable class
    * @return The plugin
    */
-  public static Plugin getPlugin(Class cl) {
+  public static Plugin getPlugin(Class<?> cl) {
     ClassLoader loader = cl.getClassLoader();
     if (loader.getClass().getName().equals("org.bukkit.plugin.java.PluginClassLoader"))
       return (Plugin) Reflection.getFieldData(loader.getClass(), "plugin", loader);
@@ -552,11 +552,11 @@ public final class SU {
           loadPlayerConfig(p.getUniqueId());
         }
       }
-      Class mcServerClass = Reflection.getNMSClass("MinecraftServer");
-      Class entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
-      Class craftPlayerClass = Reflection.getOBCClass("entity.CraftPlayer");
-      Class pIMClass = Reflection.getNMSClass("PlayerInteractManager");
-      Class worldServerClass = Reflection.getNMSClass("WorldServer");
+      Class<?> mcServerClass = Reflection.getNMSClass("MinecraftServer");
+      Class<?> entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
+      Class<?> craftPlayerClass = Reflection.getOBCClass("entity.CraftPlayer");
+      Class<?> pIMClass = Reflection.getNMSClass("PlayerInteractManager");
+      Class<?> worldServerClass = Reflection.getNMSClass("WorldServer");
 
       entityF = Reflection.getField(Reflection.getOBCClass("entity.CraftEntity"), "entity");
       pingF = Reflection.getNMSClass("EntityPlayer").getField("ping");
