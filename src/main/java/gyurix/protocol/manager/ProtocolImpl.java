@@ -127,6 +127,8 @@ public final class ProtocolImpl extends Protocol {
     try {
       if (!player.isOnline())
         return;
+      if (packet instanceof WrappedPacket)
+        packet = ((WrappedPacket) packet).getVanillaPacket();
       sendPacketM.invoke(getNetworkManager(player), packet);
     } catch (Throwable e) {
       SU.error(SU.cs, e, "SpigotLib", "gyurix");
