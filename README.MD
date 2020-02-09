@@ -20,12 +20,23 @@ for Spigot plugin development. It's not only perfect for developers,
 but it's also good for server owners, because they can use it's API
 testing commands, which are really useful.
 
-
-|`Important links`|
+| Important links |
 |---|
 [**Official Discord Group**](https://discord.gg/Jr3bKpq) |
 [**Official Download Page**](https://www.spigotmc.org/resources/spigotlib.5925/) |
 [**Online JavaDoc**](https://gyurix.github.io/SpigotLib/) |
+
+## Compiling with Maven
+
+Before compiling this project with Maven after cloning it you need to add
+the following jar files to the **libs** folder:
+- Spigot-1.14.jar
+- PaperSpigot-1.12.2.jar
+- PaperSpigot-1.7.10.jar
+
+They need to be called exactly as listed above.
+
+I am not allowed to share these binaries in this repo, because of their license agreement. 
 
 # Why should you use SpigotLib?
 If you are a **Minecraft server owner**, then you should use it for one of the following purposes:
@@ -120,8 +131,6 @@ Before complaining about something doesn't work, please CONTACT ME.
 [**Discord Group**](https://discord.gg/Jr3bKpq)
 
 **Author's Discord:** gyuriX#8413
-
-**Skype:** gyurixdev
 
 **[Email](mailto:barathgy@gmail.com?subject=SpigotLib&body=Hello%2C%0A%0AI%20need%20some%20support%20in%20using%20your%20SpigotLib%20plugin.%0A%0AMy%20server%20version%20is%3A%201.8.8%0A%0AI%20am%20using%20the%20following%20plugins%20on%20my%20server%3A%0A-%20SpigotLib%0A-%20Vault%0A-%20Essentials%0A%0AThanks%2C%0ASpigotMc-Username)**
 
