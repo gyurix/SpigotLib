@@ -1,7 +1,6 @@
 package gyurix.inventory;
 
 import gyurix.spigotlib.SU;
-import gyurix.spigotutils.TPSMeter;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -13,11 +12,10 @@ import org.bukkit.plugin.Plugin;
 public class CloseableGUI implements InventoryHolder {
   protected Inventory inv;
   protected Player plr;
-  private RuntimeException firstClose;
+  protected RuntimeException firstClose;
   @Getter
   @Setter
   private boolean forceClose;
-  private int lastCloseTick;
 
   public CloseableGUI(Player plr) {
     this.plr = plr;
@@ -37,7 +35,6 @@ public class CloseableGUI implements InventoryHolder {
   }
 
   public final void close() {
-    int time = TPSMeter.totalTicks;
     if (firstClose != null) {
       SU.cs.sendMessage("§cDetected double closed GUI:");
       String pln = getPlugin().getName();
@@ -46,7 +43,6 @@ public class CloseableGUI implements InventoryHolder {
       return;
     }
     firstClose = new RuntimeException("First close");
-    lastCloseTick = time;
     if (forceClose)
       onForceClose();
     else
