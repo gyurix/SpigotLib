@@ -20,12 +20,9 @@ public class ScoreboardAPI {
 
   public static void playerLeave(Player plr) {
     String pln = plr.getName();
-    for (ScoreboardBar sb : nametags.remove(pln).loaded)
-      sb.drop(plr);
-    for (ScoreboardBar sb : sidebars.remove(pln).loaded)
-      sb.drop(plr);
-    for (ScoreboardBar sb : tabbars.remove(pln).loaded)
-      sb.drop(plr);
+    unload(plr, nametags.remove(pln));
+    unload(plr, sidebars.remove(pln));
+    unload(plr, tabbars.remove(pln));
   }
 
   private static boolean set(Player plr, PlayerBars info, ScoreboardBar to) {
@@ -84,6 +81,18 @@ public class ScoreboardAPI {
       out[2] = in.substring(id);
     }
     return out;
+  }
+
+  public static void unload(Player plr, PlayerBars bars) {
+    if (bars == null || bars.loaded == null)
+      return;
+    for (ScoreboardBar bar : bars.loaded) {
+      try {
+        bar.drop(plr);
+      } catch (Throwable e) {
+        SU.error(SU.cs, e, "SpigotLib", "gyurix");
+      }
+    }
   }
 }
 
