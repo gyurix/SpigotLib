@@ -1,12 +1,14 @@
 package gyurix.economy;
 
+import gyurix.configfile.PostLoadable;
+import gyurix.spigotutils.NullUtils;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 @Data
-public class BalanceData {
+public class BalanceData implements PostLoadable {
   /**
    * Default amount of this balance, what new players and new banks get
    */
@@ -27,27 +29,24 @@ public class BalanceData {
    * Text written before amount
    */
   protected String prefix = "";
-
   /**
    * Text written before amount, if amount is plural
    */
   protected String prefixPlural;
-
   /**
    * Text written after amount, if amount
    */
   protected String suffix = "";
-
   /**
    * Text written after amount, if amount is plural
    */
   protected String suffixPlural;
-
   /**
    * Use K (10^3), M (10^6), B (10^9), T (10^12) suffixes instead of
    * the whole balance amount
    */
   protected boolean useKMBT;
+  private DecimalFormat df;
 
   private BalanceData() {
     this.name = null;
@@ -62,6 +61,7 @@ public class BalanceData {
   public BalanceData(String name) {
     this.name = name;
     this.fullName = name;
+    postLoad();
   }
 
   /**
@@ -80,10 +80,11 @@ public class BalanceData {
     this.suffix = bd.suffix;
     this.suffixPlural = bd.suffixPlural;
     this.useKMBT = bd.useKMBT;
+    postLoad();
   }
 
   /**
-   * Formats the given amount of balance
+   * Formats the given amount of balance with applying both prefix and suffix
    *
    * @param amount - The balance amount
    * @return The formatting result
@@ -92,33 +93,56 @@ public class BalanceData {
     if (amount == null)
       amount = new BigDecimal(0);
     boolean pl = !(amount.compareTo(new BigDecimal(-1)) >= 0 && amount.compareTo(new BigDecimal(1)) <= 0);
-    String pf = pl ? getPrefixPlural() : prefix;
-    String sf = pl ? getSuffixPlural() : suffix;
-    String f = useKMBT ? getKMBT(amount) : format == null ? amount.toString() : new DecimalFormat(format).format(amount);
+    String pf = NullUtils.to0(pl ? getPrefixPlural() : prefix);
+    String sf = NullUtils.to0(pl ? getSuffixPlural() : suffix);
+    String f = getKMBT(amount);
     return pf + f + sf;
   }
 
+  /**
+   * Formats the given amount of balance without applying prefix or suffix
+   *
+   * @param amount - The balance amount
+   * @return The formatting result
+   */
+  public String formatRaw(BigDecimal amount) {
+    return getKMBT(amount == null ? new BigDecimal(0) : amount);
+  }
+
   private String getKMBT(BigDecimal amount) {
-    BigDecimal t = new BigDecimal(1000_000_000_000L);
-    BigDecimal b = new BigDecimal(1000_000_000L);
-    BigDecimal m = new BigDecimal(1000_000L);
-    BigDecimal k = new BigDecimal(1000L);
-    if (amount.compareTo(t) > -1)
-      return amount.divide(t, BigDecimal.ROUND_DOWN).longValue() + "T";
-    if (amount.compareTo(b) > -1)
-      return amount.divide(b, BigDecimal.ROUND_DOWN).longValue() + "B";
-    if (amount.compareTo(m) > -1)
-      return amount.divide(m, BigDecimal.ROUND_DOWN).longValue() + "M";
-    if (amount.compareTo(k) > -1)
-      return amount.divide(k, BigDecimal.ROUND_DOWN).longValue() + "K";
-    return amount.toString();
+    if (useKMBT) {
+      BigDecimal qi = new BigDecimal(1000_000_000_000_000_000L);
+      BigDecimal q = new BigDecimal(1000_000_000_000_000L);
+      BigDecimal t = new BigDecimal(1000_000_000_000L);
+      BigDecimal b = new BigDecimal(1000_000_000L);
+      BigDecimal m = new BigDecimal(1000_000L);
+      BigDecimal k = new BigDecimal(1000L);
+      if (amount.compareTo(qi) > -1)
+        return df.format(amount.divide(q, BigDecimal.ROUND_DOWN)) + "Qi";
+      if (amount.compareTo(q) > -1)
+        return df.format(amount.divide(q, BigDecimal.ROUND_DOWN)) + "Q";
+      if (amount.compareTo(t) > -1)
+        return df.format(amount.divide(t, BigDecimal.ROUND_DOWN)) + "T";
+      if (amount.compareTo(b) > -1)
+        return df.format(amount.divide(b, BigDecimal.ROUND_DOWN)) + "B";
+      if (amount.compareTo(m) > -1)
+        return df.format(amount.divide(m, BigDecimal.ROUND_DOWN)) + "M";
+      if (amount.compareTo(k) > -1)
+        return df.format(amount.divide(k, BigDecimal.ROUND_DOWN)) + "K";
+    }
+    return df.format(amount.toString());
   }
 
   public String getPrefixPlural() {
-    return prefixPlural != null ? prefixPlural : prefix;
+    return NullUtils.to0(prefixPlural != null ? prefixPlural : prefix);
   }
 
   public String getSuffixPlural() {
-    return suffixPlural != null ? suffixPlural : suffix;
+    return NullUtils.to0(suffixPlural != null ? suffixPlural : suffix);
+  }
+
+  @Override
+  public void postLoad() {
+    df = new DecimalFormat(format == null ? "###,###,###,###,###,###,##0.00" : format);
   }
 }
