@@ -146,6 +146,6 @@ public class BalanceData implements PostLoadable {
 
   @Override
   public void postLoad() {
-    df = new DecimalFormat(format == null ? "###,###,###,###,###,###,##0.00" : format);
+    df = new DecimalFormat(format == null ? "###,###,###,###,###,###,##0.##" : format);
   }
 }
