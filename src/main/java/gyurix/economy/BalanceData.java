@@ -133,7 +133,7 @@ public class BalanceData implements PostLoadable {
       if (amount.compareTo(k) > -1)
         return df.format(amount.divide(k, BigDecimal.ROUND_DOWN)) + "K";
     }
-    return df.format(amount.toString());
+    return df.format(amount);
   }
 
   public String getPrefixPlural() {
