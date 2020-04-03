@@ -121,7 +121,7 @@ public class BalanceData implements PostLoadable {
       BigDecimal m = new BigDecimal(1000_000L);
       BigDecimal k = new BigDecimal(1000L);
       if (amount.compareTo(qi) > -1)
-        return df.format(amount.divide(q, BigDecimal.ROUND_DOWN)) + "Qi";
+        return df.format(amount.divide(qi, BigDecimal.ROUND_DOWN)) + "Qi";
       if (amount.compareTo(q) > -1)
         return df.format(amount.divide(q, BigDecimal.ROUND_DOWN)) + "Q";
       if (amount.compareTo(t) > -1)
