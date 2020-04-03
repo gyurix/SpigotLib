@@ -231,7 +231,7 @@ public class ConfigData implements Comparable<ConfigData> {
         ConfigData v = d.getValue();
         String value = d.getValue().toString();
         if (d.getKey().comment != null)
-          out.append("\n#").append(d.getKey().comment.replace("\n", "\n#")).append('\n');
+          out.append("\n#").append(d.getKey().comment.replace("\n", "\n#"));
         if (v.mapData != null)
           value = value.replace("\n", "\n  ");
         if (!value.startsWith("\n") && !value.isEmpty())
