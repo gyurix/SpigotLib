@@ -1,5 +1,6 @@
 package gyurix.economy;
 
+import gyurix.configfile.ConfigSerialization.ConfigOptions;
 import gyurix.configfile.PostLoadable;
 import gyurix.spigotutils.NullUtils;
 import lombok.Data;
@@ -46,6 +47,8 @@ public class BalanceData implements PostLoadable {
    * the whole balance amount
    */
   protected boolean useKMBT;
+
+  @ConfigOptions(serialize = false)
   private DecimalFormat df;
 
   private BalanceData() {
