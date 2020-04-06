@@ -121,6 +121,16 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
     try {
       Method m = cl.getMethod("valueOf", String.class);
       try {
+        if (Number.class.isAssignableFrom(cl)) {
+          String mults = "kmbtqi";
+          int mult = mults.indexOf(Character.toLowerCase(arg.charAt(arg.length() - 1)));
+          if (mult > -1) {
+            StringBuilder argBuilder = new StringBuilder(arg.replaceAll("[ kKmMbBtTqQiI]", ""));
+            for (int i = 0; i <= mult; ++i)
+              argBuilder.append("000");
+            arg = argBuilder.toString();
+          }
+        }
         return m.invoke(null, arg);
       } catch (Throwable e) {
         return m.invoke(null, arg.toUpperCase());
@@ -230,7 +240,7 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
       ArgRange as = parameters[id].getAnnotation(ArgRange.class);
       if (as != null) {
         Comparable min = (Comparable) convert(as.min(), parameters[id].getParameterizedType());
-        Comparable max = (Comparable) convert(as.min(), parameters[id].getParameterizedType());
+        Comparable max = (Comparable) convert(as.max(), parameters[id].getParameterizedType());
         return min.compareTo(res) <= 0 && max.compareTo(res) >= 0;
       }
     }
@@ -285,7 +295,7 @@ public class CommandMatcher implements Comparable<CommandMatcher> {
       ArgRange as = parameters[i].getAnnotation(ArgRange.class);
       if (as != null) {
         Comparable min = (Comparable) convert(as.min(), parameters[i].getParameterizedType());
-        Comparable max = (Comparable) convert(as.min(), parameters[i].getParameterizedType());
+        Comparable max = (Comparable) convert(as.max(), parameters[i].getParameterizedType());
         if (min.compareTo(res) > 0) {
           lang.msg("", sender, "command.toolow", "type", getParameterName(parameters[i]), "value", min);
           return;
