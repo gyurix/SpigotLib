@@ -60,6 +60,7 @@ import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import static gyurix.economy.EconomyAPI.VaultHookType.*;
@@ -85,7 +86,7 @@ public class Main extends JavaPlugin implements Listener {
   /**
    * Current version of the plugin, stored here to not be able to be abused so easily by server owners, by changing the plugin.yml file
    */
-  public static final String version = "10.2.5";
+  public static final String version = "10.2.6";
   /**
    * Data directory of the plugin (plugins/SpigotLib folder)
    */
@@ -260,9 +261,10 @@ public class Main extends JavaPlugin implements Listener {
       mysql.close();
     }
     log(this, "§4[§cShutdown§4]§e Unloading plugins depending on SpigotLib...");
+    HashSet<Plugin> unloaded=new HashSet<>();
     for (Plugin p : depend) {
       log(this, "§4[§cShutdown§4]§e Unloading plugin §f" + p.getName() + "§e...");
-      unloadPlugin(p);
+      unloadPlugin(unloaded, p);
     }
     pf = null;
     if (TPSMeter.meter != null) {

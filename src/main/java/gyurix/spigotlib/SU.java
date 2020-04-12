@@ -919,20 +919,27 @@ public final class SU {
     return false;
   }
 
+  public static void unloadPlugin(Plugin p) {
+    unloadPlugin(new HashSet<>(), p);
+  }
+
   /**
    * Unloads a plugin
    *
    * @param p - The unloadable plugin
    */
-  public static void unloadPlugin(Plugin p) {
+  public static void unloadPlugin(HashSet<Plugin> unloaded, Plugin p) {
     try {
+      if (unloaded.contains(p))
+        return;
+      unloaded.add(p);
       if (!p.isEnabled())
         return;
       String pn = p.getName();
       for (Plugin p2 : pm.getPlugins()) {
         PluginDescriptionFile pdf = p2.getDescription();
         if (pdf.getDepend() != null && pdf.getDepend().contains(pn) || pdf.getSoftDepend() != null && pdf.getSoftDepend().contains(pn))
-          unloadPlugin(p2);
+          unloadPlugin(unloaded, p2);
       }
       pm.disablePlugin(p);
       ((List) pluginsF.get(pm)).remove(p);
