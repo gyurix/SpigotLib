@@ -64,7 +64,7 @@ public class NBTCompound extends HashMap<String, NBTTag> implements NBTTag {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     for (Entry<String, NBTTag> e : entrySet()) {
-      sb.append("\n\u00a7e").append((Object) e.getKey()).append(":\u00a7b ").append(e.getValue());
+      sb.append("\n\u00a7e").append(e.getKey()).append(":\u00a7b ").append(e.getValue());
     }
     return sb.length() == 0 ? "{}" : "{" + sb.substring(1) + "}";
   }

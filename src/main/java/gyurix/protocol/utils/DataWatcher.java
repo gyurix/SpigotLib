@@ -159,7 +159,7 @@ public class DataWatcher implements WrappedData, StringSerializable {
   public Object toNMS() {
     Object dw = null;
     try {
-      dw = con.newInstance((Object) null);
+      dw = con.newInstance(null);
       Map<Integer, Object> m = (Map<Integer, Object>) dwField.get(dw);
       for (Entry<Integer, Object> e : map.entrySet()) {
         Object o = WrapperFactory.unwrap(e.getValue());
