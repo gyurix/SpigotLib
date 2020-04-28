@@ -31,6 +31,7 @@ public class PacketPlayInCustomPayload extends WrappedPacket implements StringSe
       data = new byte[buf.readableBytes()];
       buf.readBytes(data);
       buf.resetReaderIndex();
+      return;
     }
     data = (byte[]) d[d.length - 1];
   }
