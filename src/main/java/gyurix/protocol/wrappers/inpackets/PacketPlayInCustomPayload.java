@@ -28,7 +28,7 @@ public class PacketPlayInCustomPayload extends WrappedPacket implements StringSe
     channel = (String) d[0];
     if (Reflection.ver.isAbove(ServerVersion.v1_8)) {
       ByteBuf buf = ((ByteBuf) d[d.length - 1]);
-      data = new byte[buf.readableBytes()];
+      data = new byte[buf.writerIndex()];
       buf.readBytes(data);
       buf.resetReaderIndex();
       return;
