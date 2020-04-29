@@ -45,13 +45,16 @@ public class PacketPlayOutCustomPayload extends WrappedPacket {
 
   @Override
   public void loadVanillaPacket(Object obj) {
-    Object[] data = PacketOutType.CustomPayload.getPacketData(obj);
-    channel = (String) data[0];
+    Object[] d = PacketOutType.CustomPayload.getPacketData(obj);
+    channel = (String) d[0];
     try {
-      if (ver.isAbove(ServerVersion.v1_8))
-        this.data = ((ByteBuf) f.get(data[1])).array();
-      else
-        this.data = (byte[]) data[1];
+      if (ver.isAbove(ServerVersion.v1_8)) {
+        ByteBuf buf = (ByteBuf) f.get(d[1]);
+        data = new byte[buf.writerIndex()];
+        buf.readBytes(this.data);
+        buf.resetReaderIndex();
+      } else
+        this.data = (byte[]) d[1];
     } catch (Throwable e) {
       SU.error(SU.cs, e, "SpigotLib", "gyurix");
     }
