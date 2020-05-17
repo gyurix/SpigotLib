@@ -5,6 +5,7 @@ import gyurix.api.VariableAPI;
 import gyurix.chat.ChatTag;
 import gyurix.nbt.NBTCompound;
 import gyurix.nbt.NBTList;
+import gyurix.nbt.NBTPrimitive;
 import gyurix.protocol.utils.ItemStackWrapper;
 import gyurix.spigotlib.Items;
 import gyurix.spigotlib.Main;
@@ -573,7 +574,11 @@ public class ItemUtils {
         out.append(" +").append(getEnchantName(e.getKey())).append(':').append(e.getValue());
       }
     }
-
+    if (in.getType().name().contains("MONSTER_EGG")) {
+      NBTPrimitive idNbt = (NBTPrimitive) new ItemStackWrapper(in).getMetaData().getCompound("EntityTag").get("id");
+      if (idNbt != null && idNbt.getData() instanceof String)
+        out.append(" mob:").append(((String) idNbt.getData()).replace("minecraft:", ""));
+    }
     return out.toString();
   }
 
@@ -887,10 +892,10 @@ public class ItemUtils {
             String[] s2 = s[1].split(":");
             if (ver.isAbove(v1_8)) {
               bmeta.addCustomEffect(new PotionEffect(type, Integer.valueOf(s2[0]), Integer.valueOf(s2[1]),
-                      !ArrayUtils.contains(s2, "na"), !ArrayUtils.contains(s2, "np")), false);
+                !ArrayUtils.contains(s2, "na"), !ArrayUtils.contains(s2, "np")), false);
             } else {
               bmeta.addCustomEffect(new PotionEffect(type, Integer.valueOf(s2[0]), Integer.valueOf(s2[1]),
-                      !ArrayUtils.contains(s2, "na")), false);
+                !ArrayUtils.contains(s2, "na")), false);
             }
           }
         } catch (Throwable e) {
@@ -925,8 +930,17 @@ public class ItemUtils {
       }
     }
     out.setItemMeta(meta);
+    if (out.getType().name().equals("MONSTER_EGG")) {
+      for (String[] s : remaining) {
+        if (s[0].equals("MOB")) {
+          ItemStackWrapper isw = new ItemStackWrapper(out);
+          isw.getMetaData().getCompound("EntityTag").set("id", "minecraft:" + s[1].toLowerCase());
+          return isw.toBukkitStack();
+        }
+      }
+    }
     if (!attributes.isEmpty()) {
-      ItemStackWrapper wr = new ItemStackWrapper(out);
+      ItemStackWrapper isw = new ItemStackWrapper(out);
       NBTList attrs = new NBTList();
       AtomicInteger id = new AtomicInteger();
       attributes.forEach((k) -> {
@@ -945,8 +959,8 @@ public class ItemUtils {
         attr.set("UUIDMost", rand.nextLong());
         attrs.add(attr);
       });
-      wr.getMetaData().set("AttributeModifiers", attrs);
-      out = wr.toBukkitStack();
+      isw.getMetaData().set("AttributeModifiers", attrs);
+      out = isw.toBukkitStack();
     }
     return out;
   }
