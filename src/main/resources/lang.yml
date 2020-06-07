@@ -93,7 +93,8 @@ en:
     &b&l➯ &e/sl&f reload
     &b&l➯ &e/sl&f save
     &b&l➯ &e/sl&f vars
-    &b&l➯ &e/sl&f velocity
+    &b&l➯ &e/sl&f velocity [x] [y] [z]
+    &b&l➯ &e/sl&f world [worldName]
     invalidcmd: &cThe requested command doesn't exists!
     command:
       noperm: &cYou don't have permission for using this command.
@@ -121,6 +122,10 @@ en:
     noconsole: &cSorry, this feature is not accessible from the console currently
     noperm: &4&lACCESS DENIED
     notdone: &cSorry, this feature is not yet done!
+    world:
+      list: Available worlds:&b <worlds>
+      tp: Teleported to world &b<world>&e.
+      wrong: &cWorld &e<world>&c does not exist.
     perms:
       allowformat: &a<perm>
       denyformat: &c<perm>

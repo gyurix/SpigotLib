@@ -82,7 +82,7 @@ public class Main extends JavaPlugin implements Listener {
   /**
    * The list of SpigotLib subcommands used for tab completion.
    */
-  public static final String[] commands = {"chm", "abm", "sym", "title", "vars", "perm", "lang", "save", "reload", "velocity", "setamount", "item"};
+  public static final String[] commands = {"chm", "abm", "sym", "title", "vars", "perm", "lang", "save", "reload", "velocity", "world", "setamount", "item"};
   /**
    * Current version of the plugin, stored here to not be able to be abused so easily by server owners, by changing the plugin.yml file
    */
@@ -181,13 +181,6 @@ public class Main extends JavaPlugin implements Listener {
         error(plr.hasPermission("spigotlib.debug") ? plr : cs, err, SU.getPlugin(top.getHolder().getClass()).getName(), "gyurix");
       }
   }
-  @EventHandler
-  public void onDeath(PlayerRespawnEvent e){
-    HologramAPI.getHolograms().values().forEach(h-> {
-      h.getLineEntities().forEach(hl->hl.viewers.remove(e.getPlayer().getName()));
-      h.checkVisibility();
-    });
-  }
 
   @EventHandler
   public void onClose(InventoryCloseEvent e) {
@@ -202,46 +195,12 @@ public class Main extends JavaPlugin implements Listener {
     }
   }
 
-  public void onLoad() {
-    pl = this;
-    try {
-      srv = getServer();
-      cs = srv.getConsoleSender();
-      if (cs == null)
-        return;
-      pm = srv.getPluginManager();
-      msg = srv.getMessenger();
-      sm = srv.getServicesManager();
-      sch = srv.getScheduler();
-      js = new ScriptEngineManager().getEngineByName("JavaScript");
-      dir = getDataFolder();
-      cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aReflectionAPI§e...");
-      Reflection.init();
-      pluginsF = Reflection.getField(pm.getClass(), "plugins");
-      lookupNamesF = Reflection.getField(pm.getClass(), "lookupNames");
-    } catch (Throwable e) {
-      log(this, "§cFailed to get default Bukkit managers :-( The plugin is shutting down...");
-      error(cs, e, "SpigotLib", "gyurix");
-      pm.disablePlugin(this);
-      return;
-    }
-    try {
-      ConfigHook.registerSerializers();
-      ConfigHook.registerVariables();
-      CommandMatcher.registerCustomMatchers();
-    } catch (Throwable e) {
-      log(this, "§cFailed to load config hook :-( The plugin is shutting down...");
-      error(cs, e, "SpigotLib", "gyurix");
-      pm.disablePlugin(this);
-      return;
-    }
-    try {
-      load();
-    } catch (Throwable e) {
-      log(this, "Failed to load plugin, trying to reset the config...");
-      error(cs, e, "SpigotLib", "gyurix");
-      resetConfig();
-    }
+  @EventHandler
+  public void onDeath(PlayerRespawnEvent e) {
+    HologramAPI.getHolograms().values().forEach(h -> {
+      h.getLineEntities().forEach(hl -> hl.viewers.remove(e.getPlayer().getName()));
+      h.checkVisibility();
+    });
   }
 
   public void onDisable() {
@@ -261,7 +220,7 @@ public class Main extends JavaPlugin implements Listener {
       mysql.close();
     }
     log(this, "§4[§cShutdown§4]§e Unloading plugins depending on SpigotLib...");
-    HashSet<Plugin> unloaded=new HashSet<>();
+    HashSet<Plugin> unloaded = new HashSet<>();
     for (Plugin p : depend) {
       log(this, "§4[§cShutdown§4]§e Unloading plugin §f" + p.getName() + "§e...");
       unloadPlugin(unloaded, p);
@@ -380,6 +339,48 @@ public class Main extends JavaPlugin implements Listener {
       VariableAPI.init();
       cs.sendMessage("§2[§aSpigotLib§2]§a Started SpigotLib §e" + version + "§a properly.");
     }, 1);
+  }
+
+  public void onLoad() {
+    pl = this;
+    try {
+      srv = getServer();
+      cs = srv.getConsoleSender();
+      if (cs == null)
+        return;
+      pm = srv.getPluginManager();
+      msg = srv.getMessenger();
+      sm = srv.getServicesManager();
+      sch = srv.getScheduler();
+      js = new ScriptEngineManager().getEngineByName("JavaScript");
+      dir = getDataFolder();
+      cs.sendMessage("§2[§aSpigotLib§2]§e Loading §aReflectionAPI§e...");
+      Reflection.init();
+      pluginsF = Reflection.getField(pm.getClass(), "plugins");
+      lookupNamesF = Reflection.getField(pm.getClass(), "lookupNames");
+    } catch (Throwable e) {
+      log(this, "§cFailed to get default Bukkit managers :-( The plugin is shutting down...");
+      error(cs, e, "SpigotLib", "gyurix");
+      pm.disablePlugin(this);
+      return;
+    }
+    try {
+      ConfigHook.registerSerializers();
+      ConfigHook.registerVariables();
+      CommandMatcher.registerCustomMatchers();
+    } catch (Throwable e) {
+      log(this, "§cFailed to load config hook :-( The plugin is shutting down...");
+      error(cs, e, "SpigotLib", "gyurix");
+      pm.disablePlugin(this);
+      return;
+    }
+    try {
+      load();
+    } catch (Throwable e) {
+      log(this, "Failed to load plugin, trying to reset the config...");
+      error(cs, e, "SpigotLib", "gyurix");
+      resetConfig();
+    }
   }
 
   @EventHandler(priority = EventPriority.MONITOR)

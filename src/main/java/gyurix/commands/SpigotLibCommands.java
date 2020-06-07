@@ -14,6 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +25,7 @@ import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static gyurix.spigotlib.Config.PlayerFile.backend;
@@ -222,6 +224,22 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
             lang.msg(sender, "velocity.set");
           }
           return true;
+        case "world": {
+          if (args.length == 0) {
+            lang.msg(sender, "world.list", "worlds", Bukkit.getWorlds().stream().map(World::getName).sorted().collect(Collectors.joining(", ")));
+            return true;
+          }
+          World w = Bukkit.getWorld(args[0]);
+          if (w == null) {
+            lang.msg(sender, "world.wrong", "world", args[0]);
+            return true;
+          }
+          for (Player p : pls) {
+            p.teleport(w.getSpawnLocation());
+            lang.msg(sender, "world.tp", "world", w.getName());
+          }
+          return true;
+        }
         case "migratetodb":
           pf.db = mysql;
           pf.dbKey = "key";
