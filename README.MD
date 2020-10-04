@@ -25,6 +25,7 @@ testing commands, which are really useful.
 [**Official Discord Group**](https://discord.gg/Jr3bKpq) |
 [**Official Download Page**](https://www.spigotmc.org/resources/spigotlib.5925/) |
 [**Online JavaDoc**](https://gyurix.github.io/SpigotLib/) |
+[**Download**](https://github.com/gyurix/SpigotLib/releases) |
 
 ## Compiling with Maven
 
