@@ -11,12 +11,6 @@ import gyurix.spigotutils.TPSMeter;
  */
 public class Config {
   /**
-   * Allow access to every SpigotLib command for the plugins author,
-   * so he could debug other plugins quickly without needing to ask you
-   * for changing his perms all the time
-   */
-  public static boolean allowAllPermsForAuthor;
-  /**
    * Amount of async threads used in AnimationAPI for running animations smoothly
    */
   public static int animationApiThreads;

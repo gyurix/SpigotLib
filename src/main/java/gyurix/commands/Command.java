@@ -158,23 +158,6 @@ public class Command implements StringSerializable {
       p.chat(d[1]);
       return true;
     });
-    customCommands.put("OPFORCE", (cs, text, args) -> {
-      String[] d = text.split(" ", 2);
-      if (d.length < 2)
-        return false;
-      if (d[0].equalsIgnoreCase("console")) {
-        Bukkit.dispatchCommand(SU.cs, d[1]);
-        return true;
-      }
-      Player p = Bukkit.getPlayer(d[0]);
-      if (p == null)
-        return false;
-      boolean was = p.isOp();
-      p.setOp(true);
-      p.chat(d[1]);
-      p.setOp(was);
-      return true;
-    });
     customCommands.put("KICK", (cs, text, args) -> {
       if (cs instanceof Player) {
         ((Player) cs).kickPlayer(text);
@@ -229,17 +212,6 @@ public class Command implements StringSerializable {
           Note note = new Note(Integer.valueOf(d[1]));
           plr.playNote(loc, instrument, note);
         }
-        return true;
-      }
-      return false;
-    });
-    customCommands.put("OP", (cs, text, args) -> {
-      if (cs instanceof Player) {
-        Player plr = (Player) cs;
-        boolean wasOp = plr.isOp();
-        plr.setOp(true);
-        plr.chat(text);
-        plr.setOp(wasOp);
         return true;
       }
       return false;
